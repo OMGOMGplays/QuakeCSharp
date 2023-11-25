@@ -1,547 +1,568 @@
 ﻿using quakedef;
-using System.Runtime.InteropServices;
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.IO;
+using System.Security.Permissions;
 
 namespace common;
 
-public class common_c
+public unsafe class common_c
 {
-    public const int NUM_SAFE_ARGVS = 7;
-
-    public static string[] largv = new string[quakedef_c.MAX_NUM_ARGVS + NUM_SAFE_ARGVS + 1];
-    public static string argvdummy = " ";
-
-    public static string[] safeargvs = { "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly" };
-
-    public cvar_s registered = new cvar_s { "registered", 0 };
-    public cvar_s cmdline = new cvar_s { "cmdline", "0", false, true };
-
-    bool com_modified; // Set true if using non-id files
-
-    bool proghack;
-
-    int static_registered = 1; // Only for startup check, then set
-
-    public void COM_InitFileSystem() { }
-
-    // If a packfile directory differs from this, it is assumed to be hacked
-    public static int PAK0_COUNT = 339;
-    public static int PAK0_CRC = 32981;
-
-    string[] com_token = new string[1024];
-    int com_argc;
-    string com_argv;
-
-    public static int CMDLINE_LENGTH = 256;
-    string[] cmd_cmdline = new string[CMDLINE_LENGTH];
-
-    bool standard_quake = true, rogue, hipnotic;
-
-    static ushort[] pop =
-    {
-        0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x6600, 0x0000, 0x0000, 0x0000, 0x6600, 0x0000,
-        0x0000, 0x0066, 0x0000, 0x0000, 0x0000, 0x0000, 0x0067, 0x0000,
-        0x0000, 0x6665, 0x0000, 0x0000, 0x0000, 0x0000, 0x0065, 0x6600,
-        0x0063, 0x6561, 0x0000, 0x0000, 0x0000, 0x0000, 0x0061, 0x6563,
-        0x0064, 0x6561, 0x0000, 0x0000, 0x0000, 0x0000, 0x0061, 0x6564,
-        0x0064, 0x6564, 0x0000, 0x6469, 0x6969, 0x6400, 0x0064, 0x6564,
-        0x0063, 0x6568, 0x6200, 0x0064, 0x6864, 0x0000, 0x6268, 0x6563,
-        0x0000, 0x6567, 0x6963, 0x0064, 0x6764, 0x0063, 0x6967, 0x6500,
-        0x0000, 0x6266, 0x6769, 0x6a68, 0x6768, 0x6a69, 0x6766, 0x6200,
-        0x0000, 0x0062, 0x6566, 0x6666, 0x6666, 0x6666, 0x6562, 0x0000,
-        0x0000, 0x0000, 0x0062, 0x6364, 0x6664, 0x6362, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x0000, 0x0062, 0x6662, 0x0000, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x0000, 0x0061, 0x6661, 0x0000, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x0000, 0x0000, 0x6500, 0x0000, 0x0000, 0x0000,
-        0x0000, 0x0000, 0x0000, 0x0000, 0x6400, 0x0000, 0x0000, 0x0000,
-    };
-
-    public void ClearLink(link_t l)
-    {
-        l.prev = l.next = l;
-    }
-
-    public void RemoveLink(link_t l)
-    {
-        l.next.prev = l.prev;
-        l.prev.next = l.next;
-    }
-
-    public void InsertLinkBefore(link_t l, link_t before)
-    {
-        l.next = before;
-        l.prev = before;
-        l.prev.next = l;
-        l.next.prev = l;
-    }
-
-    public void InsertLinkAfter(link_t l, link_t after)
-    {
-        l.next = after.next;
-        l.prev = after;
-        l.prev.next = l;
-        l.next.prev = l;
-    }
-
-    public void Q_memset(object dest, int fill, int count)
-    {
-        if ((((long)dest | count) & 3) == 0)
-        {
-            count >>= 2;
-            fill = fill | (fill << 8) | (fill << 16) | (fill << 24);
-            for (int i = 0; i < count; i++)
-            {
-                ((int[])dest)[i] = fill;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < count; i++)
-            {
-                ((byte[])dest)[i] = (byte)fill;
-            }
-        }
-    }
-
-    public void Q_memcpy(object dest, object src, int count)
-    {
-        if ((((long)dest | (long)src | count) & 3) == 0)
-        {
-            count >>= 2;
-            for (int i = 0; i < count; i++)
-            {
-                ((int[])dest)[i] = ((int[])src)[i];
-            }
-        }
-        else
-        {
-            for (int i = 0; i < count; i++)
-            {
-                ((byte[])dest)[i] = ((byte[])src)[i];
-            }
-        }
-    }
-
-    public int Q_memcmp(object m1, object m2, int count)
-    {
-        while (count != 0)
-        {
-            count--;
-            if (((byte[])m1)[count] != ((byte[])m2)[count])
-            {
-                return -1;
-            }
-        }
-
-        return 0;
-    }
-
-    public unsafe void Q_strcpy(char* dest, char* src)
-    {
-        int i = 0;
-
-        while (src[i] != '\0')
-        {
-            dest[i] = src[i];
-            i++;
-        }
-
-        dest[i] = '\0';
-    }
-
-    public void Q_strncpy(char[] dest, char[] src, int count)
-    {
-        int i = 0;
-
-        while (src[i] != '\0' && count > 0)
-        {
-            dest[i] = src[i];
-            i++;
-            count--;
-        }
-
-        if (count != 0)
-        {
-            dest[i] = '\0';
-        }
-    }
-
-    public unsafe int Q_strlen(char* str)
-    {
-        int count = 0;
-
-        while (str[count] > 0)
-        {
-            count++;
-        }
-
-        return count;
-    }
-
-    public unsafe char* Q_strrchr(char* s, char c)
-    {
-        int len = Q_strlen(s);
-        s += len;
-        while (len-- > 0)
-        {
-            if (*--s == c)
-            {
-                return s;
-            }
-        }
-
-        return null;
-    }
-
-    public unsafe void Q_strcat(char* dest, char* src)
-    {
-        dest += Q_strlen(dest);
-        Q_strcpy(dest, src);
-    }
-
-    public unsafe int Q_strcmp(char* s1, char* s2)
-    {
-        while (true)
-        {
-            if (*s1 != *s2)
-            {
-                return -1; // Strings are not equal
-            }
-
-            if (*s1 == *s2)
-            {
-                return 0; // Strings are equal
-            }
-
-            s1++;
-            s2++;
-        }
-
-        return -1; // Unreachable, still kept, cause why not!!
-    }
-
-    public unsafe int Q_strncmp(char* s1, char* s2, int count)
-    {
-        while (true)
-        {
-            if (count-- < 0)
-            {
-                return 0;
-            }
-
-            if (*s1 != *s2)
-            {
-                return -1; // Strings are not equal
-            }
-
-            if (*s1 == *s2)
-            {
-                return 0; // Strings are equal
-            }
-
-            s1++;
-            s2++;
-        }
-
-        return -1; // Also unreachable
-    }
-
-    public unsafe int Q_strncasecmp(char* s1, char* s2, int n)
-    {
-        int c1, c2;
-
-        while (true)
-        {
-            c1 = *s1++;
-            c2 = *s2++;
-
-            if (n-- < 0)
-            {
-                return 0; // Strings are equal until the end point
-            }
-
-            if (c1 != c2)
-            {
-                if (c1 >= 'a' && c1 <= 'z')
-                {
-                    c1 -= ('a' - 'A');
-                }
-
-                if (c2 >= 'a' && c2 <= 'z')
-                {
-                    c2 -= ('a' - 'A');
-                }
-
-                if (c1 != c2)
-                {
-                    return -1; // Strings are not equal
-                }
-            }
-
-            if (c1 == c2)
-            {
-                return 0; // Strings are equal
-            }
-        }
-
-        return -1;
-    }
-
-    public unsafe int Q_strcasecmp(char* s1, char* s2)
-    {
-        return Q_strncasecmp(s1, s2, 99999);
-    }
-
-    public unsafe int Q_atoi(char* str)
-    {
-        int val;
-        int sign;
-        int c;
-
-        if (*str == '-')
-        {
-            sign = -1;
-            str++;
-        }
-        else
-        {
-            sign = 1;
-        }
-
-        val = 0;
-
-        //
-        // Check for hex
-        //
-        if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
-        {
-            str += 2;
-
-            while (true)
-            {
-                c = *str++;
-
-                if (c >= '0' && c <= '9')
-                {
-                    val = (val << 4) + c - '0';
-                }
-                else if (c >= 'a' && c <= 'f')
-                {
-                    val = (val << 4) + c - 'a' + 10;
-                }
-                else if (c >= 'A' && c <= 'F')
-                {
-                    val = (val << 4) + c - 'A' + 10;
-                }
-                else
-                {
-                    return val * sign;
-                }
-            }
-        }
-
-        //
-        // Check for character
-        //
-        if (str[0] == '\'')
-        {
-            return sign * str[1];
-        }
-
-        //
-        // Assume decimal
-        //
-        while (true)
-        {
-            c = *str++;
-
-            if (c < '0' || c > '9')
-            {
-                return val * sign;
-            }
-
-            val = val * 10 + c - '0';
-        }
-
-        return 0;
-    }
-
-    public unsafe float Q_atof(char* str)
-    {
-        double val;
-        int sign;
-        int c;
-        int _decimal, total;
-
-        if (*str == '-')
-        {
-            sign = -1;
-            str++;
-        }
-        else
-        {
-            sign = 1;
-        }
-
-        val = 0;
-
-        //
-        // Check for hex
-        //
-        if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
-        {
-            str += 2;
-
-            while (true)
-            {
-                c = *str++;
-
-                if (c >= '0' && c <= '9')
-                {
-                    val = (val * 16) + c - '0';
-                }
-                else if (c >= 'a' && c <= 'f')
-                {
-                    val = (val * 16) + c - 'a' + 10;
-                }
-                else if (c >= 'A' && c <= 'F')
-                {
-                    val = (val * 16) + c - 'A' + 10;
-                }
-                else
-                {
-                    return (float)val * sign;
-                }
-            }
-        }
-
-        //
-        // Check for character
-        //
-        if (str[0] == '\'')
-        {
-            return sign * str[1];
-        }
-
-        //
-        // Assume decimal
-        //
-        _decimal = 1;
-        total = 0;
-
-        while (true)
-        {
-            c = *str++;
-
-            if (c == '.')
-            {
-                _decimal = total;
-                continue;
-            }
-
-            if (c < '0' || c > '9')
-            {
-                break;
-            }
-
-            val = val * 10 + c - '0';
-            total++;
-        }
-
-        if (_decimal == -1)
-        {
-            return (float)val * sign;
-        }
-
-        while (total > _decimal)
-        {
-            val /= 10;
-            total--;
-        }
-
-        return (float)val * sign;
-    }
-
-    bool bigendien;
-
-    delegate short BigShort(short l);
-    delegate short LittleShort(short l);
-    delegate int BigLong(int l);
-    delegate int LittleLong(int l);
-    delegate float BigFloat(float l);
-    delegate float LittleFloat(float l);
-
-    public short ShortSwap(short l)
-    {
-        byte b1, b2;
-
-        b1 = (byte)(l & 255);
-        b2 = (byte)((l >> 8) & 255);
-
-        return (short)((b1 << 8) + b2);
-    }
-
-    public short ShortNoSwap(short l)
-    {
-        return l;
-    }
-
-    public int LongSwap(int l)
-    {
-        byte b1, b2, b3, b4;
-
-        b1 = (byte)(l & 255);
-        b2 = (byte)((l >> 8) & 255);
-        b3 = (byte)((l >> 16) & 255);
-        b4 = (byte)((l >> 24) & 255);
-
-        return (b1 << 24) + (b2 << 16) + (b3 << 8) + b4;
-    }
-
-    public int LongNoSwap(int l)
-    {
-        return l;
-    }
-
-    [StructLayout(LayoutKind.Explicit)]
-    struct FloatSwap_Union
-    {
-        [FieldOffset(0)]
-        public float f;
-
-        [FieldOffset(0)]
-        public byte b1;
-
-        [FieldOffset(1)]
-        public byte b2;
-
-        [FieldOffset(2)]
-        public byte b3;
-
-        [FieldOffset(3)]
-        public byte b4;
-    }
-
-    public float FloatSwap(float f)
-    {
-        FloatSwap_Union dat1, dat2 = new();
-
-        dat1.f = f;
-        dat2.b1 = dat1.b4;
-        dat2.b2 = dat1.b3;
-        dat2.b3 = dat1.b2;
-        dat2.b4 = dat1.b1;
-        return dat2.f;
-    }
-
-    public float FloatNoSwap(float f)
-    {
-        return f;
-    }
-
-    public unsafe void MSG_WriteChar(sizebuf_t* sb, int c)
-    {
-        byte* buf;
+	public const int NUM_SAFE_ARGVS = 7;
+
+	public string largv = null;
+	public string argvdummy = " ";
+
+	public static string[] safeargvs = { "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly" };
+
+	public cvar_s registered = new cvar_s { "registered", 0 };
+	public cvar_s cmdline = new cvar_s { "cmdline", "0", false, true };
+
+	bool com_modified; // Set true if using non-id files
+
+	bool proghack;
+
+	int static_registered = 1; // Only for startup check, then set
+
+	//public void COM_InitFileSystem() { }
+
+	// If a packfile directory differs from this, it is assumed to be hacked
+	public static int PAK0_COUNT = 339;
+	public static int PAK0_CRC = 32981;
+
+	string[] com_token = new string[1024];
+	int com_argc;
+	string com_argv;
+
+	public static int CMDLINE_LENGTH = 256;
+	string[] cmd_cmdline = new string[CMDLINE_LENGTH];
+
+	bool standard_quake = true, rogue, hipnotic;
+
+	static ushort[] pop =
+	{
+		0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x6600, 0x0000, 0x0000, 0x0000, 0x6600, 0x0000,
+		0x0000, 0x0066, 0x0000, 0x0000, 0x0000, 0x0000, 0x0067, 0x0000,
+		0x0000, 0x6665, 0x0000, 0x0000, 0x0000, 0x0000, 0x0065, 0x6600,
+		0x0063, 0x6561, 0x0000, 0x0000, 0x0000, 0x0000, 0x0061, 0x6563,
+		0x0064, 0x6561, 0x0000, 0x0000, 0x0000, 0x0000, 0x0061, 0x6564,
+		0x0064, 0x6564, 0x0000, 0x6469, 0x6969, 0x6400, 0x0064, 0x6564,
+		0x0063, 0x6568, 0x6200, 0x0064, 0x6864, 0x0000, 0x6268, 0x6563,
+		0x0000, 0x6567, 0x6963, 0x0064, 0x6764, 0x0063, 0x6967, 0x6500,
+		0x0000, 0x6266, 0x6769, 0x6a68, 0x6768, 0x6a69, 0x6766, 0x6200,
+		0x0000, 0x0062, 0x6566, 0x6666, 0x6666, 0x6666, 0x6562, 0x0000,
+		0x0000, 0x0000, 0x0062, 0x6364, 0x6664, 0x6362, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0062, 0x6662, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0061, 0x6661, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000, 0x6500, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000, 0x6400, 0x0000, 0x0000, 0x0000,
+	};
+
+	public struct sizebuf_t
+	{
+		public bool allowoverflow;
+		public bool overflowed;
+		public byte data;
+		public int maxsize;
+		public int cursize;
+	}
+
+	public struct link_t
+	{
+		public link_t prev, next;
+	}
+
+	public void ClearLink(link_t l)
+	{
+		l.prev = l.next = l;
+	}
+
+	public void RemoveLink(link_t l)
+	{
+		l.next.prev = l.prev;
+		l.prev.next = l.next;
+	}
+
+	public void InsertLinkBefore(link_t l, link_t before)
+	{
+		l.next = before;
+		l.prev = before;
+		l.prev.next = l;
+		l.next.prev = l;
+	}
+
+	public void InsertLinkAfter(link_t l, link_t after)
+	{
+		l.next = after.next;
+		l.prev = after;
+		l.prev.next = l;
+		l.next.prev = l;
+	}
+
+	public void Q_memset(object dest, int fill, int count)
+	{
+		if ((((long)dest | count) & 3) == 0)
+		{
+			count >>= 2;
+			fill = fill | (fill << 8) | (fill << 16) | (fill << 24);
+			for (int i = 0; i < count; i++)
+			{
+				((int[])dest)[i] = fill;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < count; i++)
+			{
+				((byte[])dest)[i] = (byte)fill;
+			}
+		}
+	}
+
+	public void Q_memcpy(object dest, object src, int count)
+	{
+		if ((((long)dest | (long)src | count) & 3) == 0)
+		{
+			count >>= 2;
+			for (int i = 0; i < count; i++)
+			{
+				((int[])dest)[i] = ((int[])src)[i];
+			}
+		}
+		else
+		{
+			for (int i = 0; i < count; i++)
+			{
+				((byte[])dest)[i] = ((byte[])src)[i];
+			}
+		}
+	}
+
+	public int Q_memcmp(object m1, object m2, int count)
+	{
+		while (count != 0)
+		{
+			count--;
+			if (((byte[])m1)[count] != ((byte[])m2)[count])
+			{
+				return -1;
+			}
+		}
+
+		return 0;
+	}
+
+	public unsafe void Q_strcpy(string dest, string src)
+	{
+		int i = 0;
+
+		while (src != null)
+		{
+			dest = src;
+			i++;
+		}
+
+		dest = null;
+	}
+
+	public void Q_strncpy(char[] dest, char[] src, int count)
+	{
+		int i = 0;
+
+		while (src[i] != '\0' && count > 0)
+		{
+			dest[i] = src[i];
+			i++;
+			count--;
+		}
+
+		if (count != 0)
+		{
+			dest[i] = '\0';
+		}
+	}
+
+	public unsafe int Q_strlen(string str)
+	{
+		int count = 0;
+
+		while (str[count] > 0)
+		{
+			count++;
+		}
+
+		return count;
+	}
+
+	public unsafe string Q_strrchr(string s, char c)
+	{
+		int len = Q_strlen(s);
+		s += len;
+		while (len-- > 0)
+		{
+			if (s.Length == c)
+			{
+				return s;
+			}
+		}
+
+		return null;
+	}
+
+	public unsafe void Q_strcat(string dest, string src)
+	{
+		dest += Q_strlen(dest);
+		Q_strcpy(dest, src);
+	}
+
+	public unsafe bool Q_strcmp(string s1, string s2)
+	{
+		while (true)
+		{
+			if (s1 != s2)
+			{
+				return false; // Strings are not equal
+			}
+
+			if (s1 == s2)
+			{
+				return true; // Strings are equal
+			}
+
+			//s1++;
+			//s2++;
+		}
+
+		return false; // Unreachable, still kept, cause why not!!
+	}
+
+	public unsafe int Q_strncmp(string s1, string s2, int count)
+	{
+		while (true)
+		{
+			if (count-- < 0)
+			{
+				return 0;
+			}
+
+			if (s1 != s2)
+			{
+				return -1; // Strings are not equal
+			}
+
+			if (s1 == s2)
+			{
+				return 0; // Strings are equal
+			}
+
+			//s1++;
+			//s2++;
+		}
+
+		return -1; // Also unreachable
+	}
+
+	public unsafe int Q_strncasecmp(string s1, string s2, int n)
+	{
+		int c1, c2;
+
+		while (true)
+		{
+			c1 = s1.Length + 1;
+			c2 = s2.Length + 1;
+
+			if (n-- < 0)
+			{
+				return 0; // Strings are equal until the end point
+			}
+
+			if (c1 != c2)
+			{
+				if (c1 >= 'a' && c1 <= 'z')
+				{
+					c1 -= ('a' - 'A');
+				}
+
+				if (c2 >= 'a' && c2 <= 'z')
+				{
+					c2 -= ('a' - 'A');
+				}
+
+				if (c1 != c2)
+				{
+					return -1; // Strings are not equal
+				}
+			}
+
+			if (c1 == c2)
+			{
+				return 0; // Strings are equal
+			}
+		}
+
+		return -1;
+	}
+
+	public unsafe int Q_strcasecmp(string s1, string s2)
+	{
+		return Q_strncasecmp(s1, s2, 99999);
+	}
+
+	public unsafe int Q_atoi(string str)
+	{
+		int val;
+		int sign;
+		int c;
+
+		if (str == "-")
+		{
+			sign = -1;
+		}
+		else
+		{
+			sign = 1;
+		}
+
+		val = 0;
+
+		//
+		// Check for hex
+		//
+		if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+		{
+			str += 2;
+
+			while (true)
+			{
+				c = str.Length + 1;
+
+				if (c >= '0' && c <= '9')
+				{
+					val = (val << 4) + c - '0';
+				}
+				else if (c >= 'a' && c <= 'f')
+				{
+					val = (val << 4) + c - 'a' + 10;
+				}
+				else if (c >= 'A' && c <= 'F')
+				{
+					val = (val << 4) + c - 'A' + 10;
+				}
+				else
+				{
+					return val * sign;
+				}
+			}
+		}
+
+		//
+		// Check for character
+		//
+		if (str[0] == '\'')
+		{
+			return sign * str[1];
+		}
+
+		//
+		// Assume decimal
+		//
+		while (true)
+		{
+			c = str.Length + 1;
+
+			if (c < '0' || c > '9')
+			{
+				return val * sign;
+			}
+
+			val = val * 10 + c - '0';
+		}
+
+		return 0;
+	}
+
+	public unsafe float Q_atof(char* str)
+	{
+		double val;
+		int sign;
+		int c;
+		int _decimal, total;
+
+		if (*str == '-')
+		{
+			sign = -1;
+			str++;
+		}
+		else
+		{
+			sign = 1;
+		}
+
+		val = 0;
+
+		//
+		// Check for hex
+		//
+		if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+		{
+			str += 2;
+
+			while (true)
+			{
+				c = *str++;
+
+				if (c >= '0' && c <= '9')
+				{
+					val = (val * 16) + c - '0';
+				}
+				else if (c >= 'a' && c <= 'f')
+				{
+					val = (val * 16) + c - 'a' + 10;
+				}
+				else if (c >= 'A' && c <= 'F')
+				{
+					val = (val * 16) + c - 'A' + 10;
+				}
+				else
+				{
+					return (float)val * sign;
+				}
+			}
+		}
+
+		//
+		// Check for character
+		//
+		if (str[0] == '\'')
+		{
+			return sign * str[1];
+		}
+
+		//
+		// Assume decimal
+		//
+		_decimal = 1;
+		total = 0;
+
+		while (true)
+		{
+			c = *str++;
+
+			if (c == '.')
+			{
+				_decimal = total;
+				continue;
+			}
+
+			if (c < '0' || c > '9')
+			{
+				break;
+			}
+
+			val = val * 10 + c - '0';
+			total++;
+		}
+
+		if (_decimal == -1)
+		{
+			return (float)val * sign;
+		}
+
+		while (total > _decimal)
+		{
+			val /= 10;
+			total--;
+		}
+
+		return (float)val * sign;
+	}
+
+	bool bigendien;
+
+	delegate short ShortConverter(short value);
+	delegate int IntConverter(int value);
+	delegate float FloatConverter(float value);
+
+	ShortConverter BigShort = ShortSwap;
+	ShortConverter LittleShort = ShortNoSwap;
+	IntConverter BigLong = LongSwap;
+	IntConverter LittleLong = LongNoSwap;
+	FloatConverter BigFloat = FloatSwap;
+	FloatConverter LittleFloat = FloatNoSwap;
+
+	public static short ShortSwap(short l)
+	{
+		byte b1, b2;
+
+		b1 = (byte)(l & 255);
+		b2 = (byte)((l >> 8) & 255);
+
+		return (short)((b1 << 8) + b2);
+	}
+
+	public static short ShortNoSwap(short l)
+	{
+		return l;
+	}
+
+	public static int LongSwap(int l)
+	{
+		byte b1, b2, b3, b4;
+
+		b1 = (byte)(l & 255);
+		b2 = (byte)((l >> 8) & 255);
+		b3 = (byte)((l >> 16) & 255);
+		b4 = (byte)((l >> 24) & 255);
+
+		return (b1 << 24) + (b2 << 16) + (b3 << 8) + b4;
+	}
+
+	public static int LongNoSwap(int l)
+	{
+		return l;
+	}
+
+	[StructLayout(LayoutKind.Explicit)]
+	struct FloatSwap_Union
+	{
+		[FieldOffset(0)]
+		public float f;
+
+		[FieldOffset(0)]
+		public byte b1;
+
+		[FieldOffset(1)]
+		public byte b2;
+
+		[FieldOffset(2)]
+		public byte b3;
+
+		[FieldOffset(3)]
+		public byte b4;
+	}
+
+	public static float FloatSwap(float f)
+	{
+		FloatSwap_Union dat1, dat2 = new();
+
+		dat1.f = f;
+		dat2.b1 = dat1.b4;
+		dat2.b2 = dat1.b3;
+		dat2.b3 = dat1.b2;
+		dat2.b4 = dat1.b1;
+		return dat2.f;
+	}
+
+	public static float FloatNoSwap(float f)
+	{
+		return f;
+	}
+
+	public unsafe void MSG_WriteChar(sizebuf_t* sb, int c)
+	{
+		void* buf;
+		byte* bufs;
 
 #if PARANOID
         if (c < -128 || c > 127)
@@ -550,13 +571,15 @@ public class common_c
         }
 #endif
 
-        buf = SZ_GetSpace(sb, 1);
-        buf[0] = (byte)c;
-    }
+		buf = SZ_GetSpace(sb, 1);
+		bufs = (byte*)buf;
+		bufs[0] = (byte)c;
+	}
 
-    public unsafe void MSG_WriteByte(sizebuf_t* sb, int c)
-    {
-        byte* buf;
+	public unsafe void MSG_WriteByte(sizebuf_t* sb, int c)
+	{
+		void* buf;
+		byte* bufs;
 
 #if PARANOID
         if (c < 0 || c > 255) 
@@ -565,13 +588,15 @@ public class common_c
         }
 #endif
 
-        buf = SZ_GetSpace(sb, 1);
-        buf[0] = (byte)c;
-    }
+		buf = SZ_GetSpace(sb, 1);
+		bufs = (byte*)buf;
+		bufs[0] = (byte)c;
+	}
 
-    public unsafe void MSG_WriteShort(sizebuf_t* sb, int c)
-    {
-        byte* buf;
+	public unsafe void MSG_WriteShort(sizebuf_t* sb, int c)
+	{
+		void* buf;
+		byte* bufs;
 
 #if PARANOID
         if (c < ((short)0x8000) || c > (short)0x7fff) 
@@ -580,37 +605,1209 @@ public class common_c
         }
 #endif
 
-        buf = SZ_GetSpace(sb, 2);
-        buf[0] = (byte)(c & 0xff);
-        buf[1] = (byte)(c >> 8);
-    }
+		buf = SZ_GetSpace(sb, 2);
+		bufs = (byte*)buf;
+		bufs[0] = (byte)(c & 0xff);
+		bufs[1] = (byte)(c >> 8);
+	}
 
-    public unsafe void MSG_WriteLong(sizebuf_t* sb, int c)
-    {
-        byte* buf;
+	public unsafe void MSG_WriteLong(sizebuf_t* sb, int c)
+	{
+		void* buf;
+		byte* bufs;
 
-        buf = SZ_GetSpace(sb, 4);
-        buf[0] = (byte)(c & 0xff);
-        buf[1] = (byte)((c >> 8) & 0xff);
-        buf[2] = (byte)((c >> 16) & 0xff);
-        buf[3] = (byte)(c >> 24);
-    }
+		buf = SZ_GetSpace(sb, 4);
+		bufs = (byte*)buf;
+		bufs[0] = (byte)(c & 0xff);
+		bufs[1] = (byte)((c >> 8) & 0xff);
+		bufs[2] = (byte)((c >> 16) & 0xff);
+		bufs[3] = (byte)(c >> 24);
+	}
 
-    struct MSG_WriteFloat_Union
-    {
-        public float f;
-        public int l;
-    }
+	struct MSG_WriteFloat_Union
+	{
+		public float f;
+		public int l;
+	}
 
-    public unsafe void MSG_WriteFloat(sizebuf_t* sb, float f)
-    {
-        MSG_WriteFloat_Union dat = new();
+	public unsafe void MSG_WriteFloat(sizebuf_t* sb, float f)
+	{
+		MSG_WriteFloat_Union dat = new();
 
-        dat.f = f;
-        dat.l = LittleLong(dat.l);
+		dat.f = f;
+		dat.l = LittleLong(dat.l);
 
-        SZ_Write(sb, &dat.l, 4);
-    }
+		SZ_Write(sb, &dat.l, 4);
+	}
 
+	public unsafe void MSG_WriteString(sizebuf_t* sb, char* s)
+	{
+		if (s == null)
+		{
+			SZ_Write(sb, null, 1);
+		}
+		else
+		{
+			string sstr = Marshal.PtrToStringAnsi((IntPtr)s);
 
+			SZ_Write(sb, s, Q_strlen(sstr) + 1);
+		}
+	}
+
+	public unsafe void MSG_WriteCoord(sizebuf_t* sb, float f)
+	{
+		MSG_WriteShort(sb, (int)(f * 8));
+	}
+
+	public unsafe void MSG_WriteAngle(sizebuf_t* sb, float f)
+	{
+		MSG_WriteByte(sb, ((int)f * 256 / 360) & 255);
+	}
+
+	//
+	// Reading functions
+	//
+	int msg_readcount;
+	bool msg_badread;
+
+	public void MSG_BeginReading()
+	{
+		msg_readcount = 0;
+		msg_badread = false;
+	}
+
+	public int MSG_ReadChar()
+	{
+		int c;
+
+		if (msg_readcount + 1 > net_message.cursize)
+		{
+			msg_badread = true;
+			return -1;
+		}
+
+		c = (sbyte)net_message.data[msg_readcount];
+		msg_readcount++;
+
+		return c;
+	}
+
+	public int MSG_ReadByte()
+	{
+		int c;
+
+		if (msg_readcount + 1 > net_message.cursize)
+		{
+			msg_badread = true;
+			return -1;
+		}
+
+		c = (uint)net_message.data[msg_readcount];
+		msg_readcount++;
+
+		return c;
+	}
+
+	public int MSG_ReadShort()
+	{
+		int c;
+
+		if (msg_readcount + 1 > net_message.cursize)
+		{
+			msg_badread = true;
+			return -1;
+		}
+
+		c = net_message.data[msg_readcount]
+			+ (net_message.data[msg_readcount + 1] << 8)
+			+ (net_message.data[msg_readcount + 2] << 16)
+			+ (net_message.data[msg_readcount + 3] << 24);
+
+		msg_readcount += 4;
+
+		return c;
+	}
+
+	[StructLayout(LayoutKind.Explicit)]
+	struct MSG_ReadFloat_Union
+	{
+		[FieldOffset(0)]
+		public float f;
+
+		[FieldOffset(0)]
+		public int l;
+
+		[FieldOffset(0)]
+		public byte b1;
+
+		[FieldOffset(1)]
+		public byte b2;
+
+		[FieldOffset(2)]
+		public byte b3;
+
+		[FieldOffset(3)]
+		public byte b4;
+	}
+
+	public float MSG_ReadFloat()
+	{
+		MSG_ReadFloat_Union dat = new();
+
+		dat.b1 = net_message.data[msg_readcount];
+		dat.b2 = net_message.data[msg_readcount + 1];
+		dat.b3 = net_message.data[msg_readcount + 2];
+		dat.b4 = net_message.data[msg_readcount + 3];
+		msg_readcount += 4;
+
+		dat.l = LittleLong(dat.l);
+
+		return dat.f;
+	}
+
+	public string MSG_ReadString()
+	{
+		StringBuilder stringBuilder = new();
+		int c;
+
+		do
+		{
+			c = MSG_ReadChar();
+			if (c == -1 || c == 0)
+			{
+				break;
+			}
+
+			stringBuilder.Append((char)c);
+		} while (stringBuilder.Length < 2047);
+
+		return stringBuilder.ToString();
+	}
+
+	public float MSG_ReadCoord()
+	{
+		return MSG_ReadShort() * (1.0f / 8);
+	}
+
+	public float MSG_ReadAngle()
+	{
+		return MSG_ReadChar() * (360.0f / 256);
+	}
+
+	public unsafe void SZ_Alloc(sizebuf_t buf, int startsize)
+	{
+		if (startsize < 256)
+		{
+			startsize = 256;
+		}
+
+		buf.data = Hunk_AllocName(startsize, "sizebuf");
+		buf.maxsize = startsize;
+		buf.cursize = 0;
+	}
+
+	public unsafe void SZ_Free(sizebuf_t buf)
+	{
+		buf.cursize = 0;
+	}
+
+	public unsafe void SZ_Clear(sizebuf_t buf)
+	{
+		buf.cursize = 0;
+	}
+
+	public unsafe void* SZ_GetSpace(sizebuf_t buf, int length)
+	{
+		void* data;
+
+		if (buf.cursize + length > buf.maxsize)
+		{
+			if (!buf.allowoverflow)
+			{
+				Sys_Error("SZ_GetSpace: overflow without allowoverflow set");
+			}
+
+			if (length > buf.maxsize)
+			{
+				Sys_Error("SZ_GetSpace: %i is > full buffer size", length);
+			}
+
+			buf.overflowed = true;
+			Con_Printf("SZ_GetSpace: overflow");
+			SZ_Clear(buf);
+		}
+
+		data = buf.data + buf.cursize;
+		buf.cursize += length;
+
+		return data;
+	}
+
+	public unsafe void SZ_Write(sizebuf_t* buf, void* data, int length)
+	{
+		//Q_memcpy(SZ_GetSpace(buf, length), data, length); // I have no clue how to fix this!!
+	}
+
+	public unsafe void SZ_Print(sizebuf_t buf, string data)
+	{
+		int len;
+		len = Q_strlen(data) + 1;
+
+		if (buf.data[buf.curSize - 1])
+		{
+			Q_memcpy((byte)SZ_GetSpace(buf, len), data.ToCharArray(), len);
+		}
+		else
+		{
+			Q_memcpy((byte)SZ_GetSpace(buf, len - 1) - 1, data.ToCharArray(), len);
+		}
+	}
+
+	public unsafe char* COM_SkipPath(char* pathname)
+	{
+		char* last;
+		last = pathname;
+
+		while (*pathname != 0)
+		{
+			if (*pathname == '/')
+			{
+				last = pathname + 1;
+			}
+
+			pathname++;
+		}
+
+		return last;
+	}
+
+	public unsafe void COM_StripExtension(char* _in, char* _out)
+	{
+		while (*_in != '\0' && *_in != '.')
+		{
+			*_out++ = *_in++;
+		}
+
+		*_out = '\0';
+	}
+
+	public unsafe string COM_FileExtension(string _in)
+	{
+		char[] exten = new char[8];
+		int i = 0;
+
+		while (i < Q_strlen(_in) && _in[i] != '.')
+		{
+			i++;
+		}
+
+		if (i == Q_strlen(_in))
+		{
+			return "";
+		}
+
+		i++;
+
+		for (int j = 0; j < 7 && i < Q_strlen(_in) && _in[i] != '\0'; i++, j++)
+		{
+			exten[j] = _in[i];
+		}
+
+		exten[i - 1] = '\0';
+
+		return new string(exten);
+	}
+
+	public unsafe void COM_FileBase(string _in, string _out)
+	{
+		_out = "?model?";
+
+		if (string.IsNullOrEmpty(_in))
+			return;
+
+		int s = _in.Length - 1;
+
+		while (s >= 0 && _in[s] != '.')
+		{
+			s--;
+		}
+
+		int s2;
+
+		for (s2 = s; s2 >= 0 && _in[s2] != '/'; s2--)
+		{
+		}
+
+		if (s - s2 >= 2)
+		{
+			s--;
+
+			int length = s - s2;
+			if (length > 0)
+			{
+				_out = _in.Substring(s2 + 1, length);
+			}
+		}
+	}
+
+	public unsafe void COM_DefaultExtension(char* path, string extension)
+	{
+		char* src;
+
+		string strPath = Marshal.PtrToStringAnsi((IntPtr)path);
+
+		src = path + Q_strlen(strPath) - 1;
+
+		while (*src != '/' && src != path)
+		{
+			if (*src == '.')
+			{
+				return;
+			}
+
+			src--;
+		}
+
+		Q_strcat(strPath, extension);
+	}
+
+	public unsafe char* COM_Parse(char* data)
+	{
+		int c;
+		int len;
+
+		len = 0;
+		com_token[0] = null;
+
+		if (data == null)
+		{
+			return null;
+		}
+
+	skipwhite:
+		while ((c = *data) <= ' ')
+		{
+			if (c == 0)
+			{
+				return null;
+			}
+
+			data++;
+		}
+
+		if (c == '/' && data[1] == '/')
+		{
+			while (*data != 0 && *data != '\n')
+			{
+				data++;
+			}
+
+			goto skipwhite;
+		}
+
+		if (c == '\"' && data[1] == '/')
+		{
+			while (*data != 0 && *data != '\n')
+			{
+				data++;
+
+				while (true)
+				{
+					c = *data++;
+
+					if (c == '\"' || c == 0)
+					{
+						com_token[len] = null;
+						return data;
+					}
+
+					com_token[len] = c.ToString();
+					len++;
+				}
+			}
+		}
+
+		if (c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ':')
+		{
+			com_token[len] = c.ToString();
+			len++;
+			com_token[len] = null;
+			return data + 1;
+		}
+
+		do
+		{
+			com_token[len] = c.ToString();
+			data++;
+			len++;
+			c = *data;
+
+			if (c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ':')
+			{
+				break;
+			}
+		} while (c > 32);
+
+		com_token[len] = null;
+		return data;
+	}
+
+	public unsafe int COM_CheckParm(string parm)
+	{
+		for (int i = 1; i < com_argc; i++)
+		{
+			if (com_argv[i] == 0)
+			{
+				continue; // NEXTSTEP sometimes clears appkit vars.
+			}
+
+			if (Q_strcmp(parm, com_argv[i].ToString()))
+			{
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	public unsafe void COM_CheckRegistered()
+	{
+		int h;
+		ushort[] check = new ushort[128];
+		int i;
+
+		COM_OpenFile("gfx/pop.lmp", &h);
+		static_registered = 0;
+
+		if (h == 1)
+		{
+#if WINDED
+			Sys_Error("This dedicated server requires a full registered copy of Quake");
+#endif
+			Con_Printf("Playing shareware version.\n");
+			if (com_modified)
+			{
+				Sys_Error("You must have the registered version to use modified games");
+				return;
+			}
+		}
+
+		Sys_FileRead(h, check, 128);
+		COM_CloseFile(h);
+
+		for (i = 0; i < 128; i++)
+		{
+			if (pop[i] != BigShort((short)check[i]))
+			{
+				Sys_Error("Corrupted data file.");
+			}
+		}
+
+		Cvar_Set("cmdline", com_cmdline);
+		Cvar_Set("registered", "1");
+		static_registered = 1;
+		Con_Printf("Playing registered version.\n");
+	}
+
+	public void COM_Path_f() { }
+
+	public unsafe void COM_InitArgv(int argc, char** argv)
+	{
+		bool safe;
+		int i, j, n;
+
+		n = 0;
+
+		for (j = 0; (j < quakedef_c.MAX_NUM_ARGVS) && (j < argc); j++)
+		{
+			i = 0;
+
+			while ((n < (CMDLINE_LENGTH - 1)) && argv[j][i] != 0)
+			{
+				con_cmdline[n++] = argv[j][i++];
+			}
+
+			if (n < (CMDLINE_LENGTH - 1))
+			{
+				com_cmdline[n++] = ' ';
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		com_cmdline[n] = 0;
+
+		safe = false;
+
+		for (com_argc = 0; (com_argc < quakedef_c.MAX_NUM_ARGVS) && (com_argc < argc); com_argc++)
+		{
+			string argvstr = Marshal.PtrToStringAnsi((IntPtr)argv[com_argc]);
+			
+			largv = argvstr;
+
+			if (!Q_strcmp("-safe", argvstr))
+			{
+				safe = true;
+			}
+		}
+
+		if (safe)
+		{
+			for (i = 0; i < NUM_SAFE_ARGVS; i++)
+			{
+				largv = safeargvs[i];
+				com_argc++;
+			}
+		}
+
+		largv = argvdummy;
+		com_argv = largv;
+
+		if (COM_CheckParm("-rogue") != 0)
+		{
+			rogue = true;
+			standard_quake = false;
+		}
+
+		if (COM_CheckParm("-hipnotic") != 0)
+		{
+			hipnotic = true;
+			standard_quake = false;
+		}
+	}
+
+	public unsafe void COM_Init(char* basedir)
+	{
+		byte[] swaptest = { 1, 0 };
+
+		if (*(short*)swaptest[0] == 1)
+		{
+			bigendien = false;
+			BigShort = ShortSwap;
+			LittleShort = ShortNoSwap;
+			BigLong = LongSwap;
+			LittleLong = LongNoSwap;
+			BigFloat = FloatSwap;
+			LittleFloat = FloatNoSwap;
+		}
+		else
+		{
+			bigendien = true;
+			BigShort = ShortNoSwap;
+			LittleShort = ShortSwap;
+			BigLong = LongNoSwap;
+			LittleLong = LongSwap;
+			BigFloat = FloatNoSwap;
+			LittleFloat = FloatSwap;
+		}
+
+		Cvar_RegisterVariable(&registered);
+		Cvar_RegisterVariable(&cmdline);
+		Cmd_AddCommand("path", COM_Path_f);
+
+		COM_InitFileSystem();
+		COM_CheckRegistered();
+	}
+
+	public unsafe string va(string format, params object[] args)
+	{
+		va_list argptr;
+		string _string = null;
+
+		va_start(argptr, format);
+		vsprintf(_string, format, argptr);
+		va_end(argptr);
+
+		return _string;
+	}
+
+	public unsafe int memsearch(byte* start, int count, int search)
+	{
+		int i;
+
+		for (i = 0; i < count; i++)
+		{
+			if (start[i] == search)
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+	int com_filesize;
+
+	public struct packfile_t
+	{
+		public string name;
+		public int filepos, filelen;
+	}
+
+	public unsafe struct pack_t
+	{
+		public string filename;
+		public int handle;
+		public int numfiles;
+		public packfile_t[] files;
+	}
+
+	public struct dpackheader_t
+	{
+		public string id;
+		public int dirofs;
+		public int dirlen;
+	}
+
+	public const int MAX_FILES_IN_PACK = 2048;
+
+	public string com_cachedir = null;
+	public string com_gamedir = null;
+
+	struct searchpath_t
+	{
+		public string filename;
+		public pack_t pack;
+		public searchpath_t next;
+	}
+
+	searchpath_t com_searchpaths;
+
+	public unsafe void COM_Path_f()
+	{
+		searchpath_t s;
+
+		Con_Printf("Current search path:\n");
+
+		for (s = com_searchpaths; !s.Equals(default(searchpath_t)); s = s.next)
+		{
+			if (!s.Equals(default(searchpath_t)))
+			{
+				Con_Printf("%s (%i files)\n", s.pack.filename, s.pack.numfiles);
+			}
+			else
+			{
+				Con_Printf("%s\n", s.filename);
+			}
+		}
+	}
+
+	public unsafe void COM_WriteFile(string filename, void* data, int len)
+	{
+		int handle;
+		string name = null;
+
+		sprintf(name, "%s/%s", com_gamedir, filename);
+
+		handle = Sys_FileOpenWrite(name);
+
+		if (handle == -1)
+		{
+			Sys_Printf("COM_WriteFile: failed on %s\n", name);
+			return;
+		}
+
+		Sys_Printf("COM_WriteFile: %s\n", name);
+		Sys_FileWrite(handle, data, len);
+		Sys_FileClose(handle);
+	}
+
+	public unsafe void COM_CreatePath(char* path)
+	{
+		char* ofs;
+
+		for (ofs = path + 1; *ofs != 0; ofs++)
+		{
+			if (*ofs == '/')
+			{
+				*ofs = '\0';
+				Sys_mkdir(path);
+				*ofs = '/';
+			}
+		}
+	}
+
+	public unsafe void COM_CopyFile(string netpath, string cachepath)
+	{
+		int input, output;
+		int remaining, count;
+		string buf = null;
+
+		remaining = Sys_OpenFileRead(netpath, &input);
+		COM_CreatePath(cachepath);
+		output = Sys_FileOpenWrite(cachepath);
+
+		while (remaining > 0)
+		{
+			if (remaining < buf.Length)
+			{
+				count = remaining;
+			}
+			else
+			{
+				count = buf.Length;
+			}
+
+			Sys_FileRead(input, buf, count);
+			Sys_FileWrite(output, buf, count);
+			remaining -= count;
+		}
+
+		Sys_FileClose(input);
+		Sys_FileClose(output);
+	}
+
+	public unsafe int COM_FindFile(string filename, int handle, FileStream** file)
+	{
+		searchpath_t search;
+		string netpath = null;
+		string cachepath = null;
+		pack_t pak;
+		int i;
+		int findtime, cachetime;
+
+		if (file != null && handle != 0)
+		{
+			Sys_Error("COM_FindFile: both handle and file set");
+		}
+
+		if (file == null && handle == 0)
+		{
+			Sys_Error("COM_FindFile: neither handle or file set");
+		}
+
+		search = com_searchpaths;
+
+		if (proghack)
+		{
+			if (!Q_strcmp(filename, "progs.dat"))
+			{
+				search = search.next;
+			}
+		}
+
+		for (; !search.Equals(default(searchpath_t)); search = search.next)
+		{
+			if (!search.pack.Equals(default(searchpath_t)))
+			{
+				pak = search.pack;
+
+				for (i = 0; i < pak.numfiles; i++)
+				{
+					if (!Q_strcmp(pak.files[i].name, filename))
+					{
+						Sys_Printf("Packfile: %s : %s\n", pak.filename, filename);
+
+						if (handle != 0)
+						{
+							handle = pak.handle;
+							Sys_FilePeek(pak.handle, pak.files[i].filepos);
+						}
+						else
+						{
+							file = fopen(pak.filename, "rb");
+
+							if (file != null)
+							{
+								fseek(file, pak.files[i].filepos, SEEK_SET);
+							}
+						}
+
+						com_filesize = pak.files[i].filelen;
+						return com_filesize;
+					}
+				}
+			}
+			else
+			{
+				if (static_registered != 0)
+				{
+					if (strchr(filename, '/') || strchr(filename, '\\'))
+					{
+						continue;
+					}
+				}
+
+				sprintf(netpath, "%s/%s", search.filename, filename);
+
+				findtime = Sys_FileTime(netpath);
+
+				if (findtime == -1)
+				{
+					continue;
+				}
+
+				if (com_cachedir[0] != 0)
+				{
+					Q_strcpy(cachepath, netpath);
+				}
+				else
+				{
+#if defined(_WIN32)
+					if ((strlen(netpath) < 2) || (netpath[1] != ':')) 
+					{
+						sprintf (cachepath, "%s%s", com_cachedir, netpath);
+					}
+					else 
+					{
+						sprintf (cachepath, "%s%s", com_cachedir, netpath);
+					}
+#else
+					sprintf(cachepath, "%s%s", com_cachedir, netpath);
+#endif
+					cachetime = Sys_FileTime(cachepath);
+
+					if (cachetime < findtime)
+					{
+						COM_CopyFile(netpath, cachepath);
+					}
+
+					Q_strcpy(netpath, cachepath);
+				}
+
+				Sys_Printf("FindFile: %s\n", netpath);
+				com_filesize = Sys_FileOpenRead(netpath, &i);
+
+				if (handle != 0)
+				{
+					handle = i;
+				}
+				else
+				{
+					Sys_FileClose(i);
+					file = fopen(netpath, "rb");
+				}
+
+				return com_filesize;
+			}
+		}
+
+		Sys_Printf("FindFile: can't find %s\n", filename);
+
+		if (handle != 0)
+		{
+			handle = -1;
+		}
+		else
+		{
+			file = null;
+		}
+
+		com_filesize = -1;
+		return -1;
+	}
+
+	public unsafe int COM_OpenFile(string filename, int* handle)
+	{
+		return COM_FindFile(filename, handle, null);
+	}
+
+	public unsafe int COM_FOpenFile(string filename, FileStream** file)
+	{
+		return COM_FindFile(filename, null, file);
+	}
+
+	public void COM_CloseFile(int h)
+	{
+		searchpath_t s;
+
+		for (s = com_searchpaths; !s.Equals(default(searchpath_t)); s = s.next)
+		{
+			if (s.pack && s.pack.handle == h)
+			{
+				return;
+			}
+		}
+
+		Sys_CloseFile(h);
+	}
+
+	public cache_user_t* loadcache;
+	public byte* loadbuf;
+	public int loadsize;
+
+	public unsafe byte* COM_LoadFile(string path, int usehunk)
+	{
+		int h;
+		byte* buf;
+		string _base = null;
+		int len;
+
+		buf = null;
+
+		len = COM_OpenFile(path, &h);
+
+		if (h == -1)
+		{
+			return null;
+		}
+
+		COM_FileBase(path, _base);
+
+		if (usehunk == 1)
+		{
+			buf = Hunk_AllocName(len + 1, _base);
+		}
+		else if (usehunk == 2)
+		{
+			buf = Hunk_TempAlloc(len + 1);
+		}
+		else if (usehunk == 0)
+		{
+			buf = Z_Malloc(len + 1);
+		}
+		else if (usehunk == 3)
+		{
+			buf = Cache_Alloc(loadcache, len + 1, _base);
+		}
+		else if (usehunk == 4)
+		{
+			if (len + 1 > loadsize)
+			{
+				buf = Hunk_TempAlloc(len + 1);
+			}
+			else
+			{
+				buf = loadbuf;
+			}
+		}
+		else
+		{
+			Sys_Error("COM_LoadFile: bad usehunk");
+		}
+
+		if (buf == null)
+		{
+			Sys_Error("COM_LoadFile: not enough space for %s", path);
+		}
+
+		((byte*)buf)[len] = 0;
+
+		Draw_BeginDisc();
+		Sys_FileRead(h, buf, len);
+		COM_CloseFile(h);
+		Draw_EndDisc();
+
+		return buf;
+	}
+
+	public unsafe byte* COM_LoadHunkFile(string path)
+	{
+		return COM_LoadFile(path, 1);
+	}
+
+	public unsafe void COM_LoadCacheFile(string path, cache_user_t* cu)
+	{
+		loadcache = cu;
+		COM_LoadFile(path, 3);
+	}
+
+	public unsafe byte* COM_LoadStackFile(string path, void* buffer, int bufsize)
+	{
+		byte* buf;
+
+		loadbuf = (byte*)buffer;
+		loadsize = bufsize;
+		buf = COM_LoadFile(path, 4);
+
+		return buf;
+	}
+
+	public unsafe pack_t COM_LoadPackFile(string packfile)
+	{
+		dpackheader_t header;
+		int i;
+		packfile_t[] newfiles;
+		int numpackfiles = 0;
+		pack_t pack;
+		int packhandle;
+		dpackfile_t info;
+		ushort crc;
+
+		if (Sys_FileOpenRead(packfile, &packhandle) == -1)
+		{
+			return null;
+		}
+
+		Sys_FileRead(packhandle, (void*)&header, header.dirlen);
+		if (header.id[0] != 'P' || header.id[1] != 'A'
+			|| header.id[2] != 'C' || header.id[3] != 'K')
+		{
+			Sys_Error("%s has %i files", packfile, numpackfiles);
+		}
+
+		if (numpackfiles != PAK0_COUNT)
+		{
+			com_modified = true;
+		}
+
+		newfiles = Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
+
+		Sys_FileSeek(packhandle, header.dirofs);
+		Sys_FileRead(packhandle, (void*)info, header.dirlen);
+
+		CRC_Init(&crc);
+
+		for (i = 0; i < header.dirlen; i++)
+		{
+			CRC_ProcessByte(&crc, ((byte*)info)[i]);
+		}
+
+		if (crc != PAK0_CRC)
+		{
+			com_modified = true;
+		}
+
+		for (i = 0; i < numpackfiles; i++)
+		{
+			Q_strcpy(newfiles[i].name, info[i].name);
+			newfiles[i].filepos = LittleLong(info[i].filepos);
+			newfiles[i].filelen = LittleLong(info[i].filelen);
+		}
+
+		pack = Hunk_Alloc(sizeof(pack_t));
+		Q_strcpy(pack.filename, packfile);
+		pack.handle = packhandle;
+		pack.numfiles = numpackfiles;
+		pack.files = newfiles;
+
+		Con_Printf("Added packfile %s (%i files)\n", packfile, numpackfiles);
+		return pack;
+	}
+
+	public unsafe void COM_AddGameDirectory(string dir)
+	{
+		int i;
+		searchpath_t* search;
+		pack_t* pak;
+		string pakfile;
+
+		Q_strcpy(com_gamedir, dir);
+
+		search = Hunk_Alloc(sizeof(searchpath_t));
+		Q_strcpy(search.filename, dir);
+		search.next = com_searchpaths;
+		com_searchpaths = search;
+
+		for (i = 0; ; i++)
+		{
+			sprintf(pakfile, "%s/pak%i.pak", dir, i);
+			pak = COM_LoadPackFile(pakfile);
+
+			if (pak == null)
+			{
+				break;
+			}
+
+			search = Hunk_Alloc(sizeof(searchpath_t));
+			search.pack = pak;
+			search.next = com_searchpaths;
+			com_searchpaths = search;
+		}
+	}
+
+	public unsafe void COM_InitFileSystem()
+	{
+		int i, j;
+		string basedir = null;
+		searchpath_t search = new();
+
+		i = COM_CheckParm("-basedir");
+		if (i != 0 && i < com_argc - 1)
+		{
+			Q_strcpy(basedir, com_argv[i + 1].ToString());
+		}
+		else
+		{
+			Q_strcpy(basedir, host_parms.basedir);
+		}
+
+		j = Q_strlen(basedir);
+
+		if (j > 0)
+		{
+			if ((basedir[j - 1] == '\\') || (basedir[j - 1] == '/'))
+			{
+				// ???
+			}
+		}
+
+		i = COM_CheckParm("-cachedir");
+		if (i != 0 && i < com_argc - 1)
+		{
+			if (com_argv[i + 1] == '-')
+			{
+				com_cachedir[0] = (char)0;
+			}
+			else
+			{
+				Q_strcpy(com_cachedir.ToString(), com_argv[i + 1].ToString()); ;
+			}
+		}
+		else if (host_parms.cachedir)
+		{
+			Q_strcpy(com_cachedir, host_parms.cachedir);
+		}
+		else
+		{
+			com_cachedir[0] = (char)0;
+		}
+
+		COM_AddGameDirectory(va("%s/"GAMENAME, basedir));
+
+		if (COM_CheckParm("-rogue") != 0)
+		{
+			COM_AddGameDirectory(va("%s/rogue", basedir));
+		}
+		if (COM_CheckParm("-hipnotic") != 0)
+		{
+			COM_AddGameDirectory(va("%s/hipnotic", basedir));
+		}
+
+		i = COM_CheckParm("-game");
+		if (i != 0 && i < com_argc - 1)
+		{
+			com_modified = true;
+			COM_AddGameDirectory(va("%s/%s", basedir, com_argv[i + 1]));
+		}
+
+		i = COM_CheckParm("-path");
+		if (i != 0)
+		{
+			com_modified = true;
+			com_searchpaths = null;
+			while (i++ < com_argc)
+			{
+				if (com_argv[i] == 0 || com_argv[i] == '+' || com_argv[i] == '-')
+				{
+					break;
+				}
+
+				search = Hunk_Alloc(sizeof(searchpath_t));
+				if (!Q_strcmp(COM_FileExtension(com_argv[i].ToString()), "pak"))
+				{
+					search.pack = COM_LoadPackFile(com_argv[i].ToString());
+
+					if (search.pack == null)
+					{
+						Sys_Error("Couldn't load packfile: %s", com_argv[i]);
+					}
+				}
+				else
+				{
+					Q_strcpy(search.filename, com_argv[i]);
+				}
+
+				search.next = com_searchpaths;
+				com_searchpaths = search;
+			}
+		}
+
+		if (COM_CheckParm("-proghack") != 0)
+		{
+			proghack = true;
+		}
+	}
 }
