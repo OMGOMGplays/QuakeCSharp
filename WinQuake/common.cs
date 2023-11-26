@@ -1,28 +1,22 @@
-﻿using quakedef;
-using System.Collections.Immutable;
-using System.Diagnostics;
-using System.IO;
-using System.Security.Permissions;
+﻿namespace Quake;
 
-namespace common;
-
-public unsafe class common_c
+public unsafe class common
 {
 	public const int NUM_SAFE_ARGVS = 7;
 
-	public string largv = null;
-	public string argvdummy = " ";
+	public static string largv = null;
+	public static string argvdummy = " ";
 
 	public static string[] safeargvs = { "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly" };
 
-	public cvar_s registered = new cvar_s { "registered", 0 };
-	public cvar_s cmdline = new cvar_s { "cmdline", "0", false, true };
+	public static cvar_t registered = new cvar_t { "registered", 0 };
+	public static cvar_t cmdline = new cvar_t { "cmdline", "0", false, true };
 
-	bool com_modified; // Set true if using non-id files
+	public static bool com_modified; // Set true if using non-id files
 
-	bool proghack;
+	public static bool proghack;
 
-	int static_registered = 1; // Only for startup check, then set
+	static int static_registered = 1; // Only for startup check, then set
 
 	//public void COM_InitFileSystem() { }
 
@@ -30,14 +24,14 @@ public unsafe class common_c
 	public static int PAK0_COUNT = 339;
 	public static int PAK0_CRC = 32981;
 
-	string[] com_token = new string[1024];
-	int com_argc;
-	string com_argv;
+	public static string[] com_token = new string[1024];
+	public static int com_argc;
+	public static string com_argv;
 
 	public static int CMDLINE_LENGTH = 256;
 	string[] cmd_cmdline = new string[CMDLINE_LENGTH];
 
-	bool standard_quake = true, rogue, hipnotic;
+	public static bool standard_quake = true, rogue, hipnotic;
 
 	static ushort[] pop =
 	{
@@ -63,7 +57,7 @@ public unsafe class common_c
 	{
 		public bool allowoverflow;
 		public bool overflowed;
-		public byte data;
+		public int data;
 		public int maxsize;
 		public int cursize;
 	}
@@ -100,7 +94,7 @@ public unsafe class common_c
 		l.next.prev = l;
 	}
 
-	public void Q_memset(object dest, int fill, int count)
+	public static void Q_memset(object dest, int fill, int count)
 	{
 		if ((((long)dest | count) & 3) == 0)
 		{
@@ -120,7 +114,7 @@ public unsafe class common_c
 		}
 	}
 
-	public void Q_memcpy(object dest, object src, int count)
+	public static void Q_memcpy(object dest, object src, int count)
 	{
 		if ((((long)dest | (long)src | count) & 3) == 0)
 		{
@@ -139,7 +133,7 @@ public unsafe class common_c
 		}
 	}
 
-	public int Q_memcmp(object m1, object m2, int count)
+	public static int Q_memcmp(object m1, object m2, int count)
 	{
 		while (count != 0)
 		{
@@ -153,7 +147,7 @@ public unsafe class common_c
 		return 0;
 	}
 
-	public unsafe void Q_strcpy(string dest, string src)
+	public static void Q_strcpy(string dest, string src)
 	{
 		int i = 0;
 
@@ -166,7 +160,7 @@ public unsafe class common_c
 		dest = null;
 	}
 
-	public void Q_strncpy(char[] dest, char[] src, int count)
+	public static void Q_strncpy(char[] dest, char[] src, int count)
 	{
 		int i = 0;
 
@@ -183,7 +177,7 @@ public unsafe class common_c
 		}
 	}
 
-	public unsafe int Q_strlen(string str)
+	public static int Q_strlen(string str)
 	{
 		int count = 0;
 
@@ -195,7 +189,7 @@ public unsafe class common_c
 		return count;
 	}
 
-	public unsafe string Q_strrchr(string s, char c)
+	public static string Q_strrchr(string s, char c)
 	{
 		int len = Q_strlen(s);
 		s += len;
@@ -210,13 +204,13 @@ public unsafe class common_c
 		return null;
 	}
 
-	public unsafe void Q_strcat(string dest, string src)
+	public static void Q_strcat(string dest, string src)
 	{
 		dest += Q_strlen(dest);
 		Q_strcpy(dest, src);
 	}
 
-	public unsafe bool Q_strcmp(string s1, string s2)
+	public static bool Q_strcmp(string s1, string s2)
 	{
 		while (true)
 		{
@@ -309,7 +303,7 @@ public unsafe class common_c
 		return Q_strncasecmp(s1, s2, 99999);
 	}
 
-	public unsafe int Q_atoi(string str)
+	public static int Q_atoi(string str)
 	{
 		int val;
 		int sign;
@@ -478,18 +472,18 @@ public unsafe class common_c
 		return (float)val * sign;
 	}
 
-	bool bigendien;
+	static bool bigendien;
 
-	delegate short ShortConverter(short value);
-	delegate int IntConverter(int value);
-	delegate float FloatConverter(float value);
+	public delegate short ShortConverter(short value);
+	public delegate int IntConverter(int value);
+	public delegate float FloatConverter(float value);
 
-	ShortConverter BigShort = ShortSwap;
-	ShortConverter LittleShort = ShortNoSwap;
-	IntConverter BigLong = LongSwap;
-	IntConverter LittleLong = LongNoSwap;
-	FloatConverter BigFloat = FloatSwap;
-	FloatConverter LittleFloat = FloatNoSwap;
+	public static ShortConverter BigShort = ShortSwap;
+	public static ShortConverter LittleShort = ShortNoSwap;
+	public static IntConverter BigLong = LongSwap;
+	public static IntConverter LittleLong = LongNoSwap;
+	public static FloatConverter BigFloat = FloatSwap;
+	public static FloatConverter LittleFloat = FloatNoSwap;
 
 	public static short ShortSwap(short l)
 	{
@@ -559,15 +553,15 @@ public unsafe class common_c
 		return f;
 	}
 
-	public unsafe void MSG_WriteChar(sizebuf_t* sb, int c)
+	public unsafe void MSG_WriteChar(sizebuf_t sb, int c)
 	{
-		void* buf;
+		int buf;
 		byte* bufs;
 
 #if PARANOID
         if (c < -128 || c > 127)
         {
-            Sys_Error("MSG_WriteChar: range error");
+            sys_win.Sys_Error("MSG_WriteChar: range error");
         }
 #endif
 
@@ -576,15 +570,15 @@ public unsafe class common_c
 		bufs[0] = (byte)c;
 	}
 
-	public unsafe void MSG_WriteByte(sizebuf_t* sb, int c)
+	public static void MSG_WriteByte(sizebuf_t sb, int c)
 	{
-		void* buf;
+		int buf;
 		byte* bufs;
 
 #if PARANOID
         if (c < 0 || c > 255) 
         {
-            Sys_Error("MSG_WriteByte: range error");
+            sys_win.Sys_Error("MSG_WriteByte: range error");
         }
 #endif
 
@@ -593,15 +587,15 @@ public unsafe class common_c
 		bufs[0] = (byte)c;
 	}
 
-	public unsafe void MSG_WriteShort(sizebuf_t* sb, int c)
+	public static void MSG_WriteShort(sizebuf_t sb, int c)
 	{
-		void* buf;
+		int buf;
 		byte* bufs;
 
 #if PARANOID
         if (c < ((short)0x8000) || c > (short)0x7fff) 
         {
-            Sys_Error("MSG_WriteShort: range error");
+            sys_win.Sys_Error("MSG_WriteShort: range error");
         }
 #endif
 
@@ -611,9 +605,9 @@ public unsafe class common_c
 		bufs[1] = (byte)(c >> 8);
 	}
 
-	public unsafe void MSG_WriteLong(sizebuf_t* sb, int c)
+	public unsafe void MSG_WriteLong(sizebuf_t sb, int c)
 	{
-		void* buf;
+		int buf;
 		byte* bufs;
 
 		buf = SZ_GetSpace(sb, 4);
@@ -630,21 +624,21 @@ public unsafe class common_c
 		public int l;
 	}
 
-	public unsafe void MSG_WriteFloat(sizebuf_t* sb, float f)
+	public unsafe void MSG_WriteFloat(sizebuf_t sb, float f)
 	{
 		MSG_WriteFloat_Union dat = new();
 
 		dat.f = f;
 		dat.l = LittleLong(dat.l);
 
-		SZ_Write(sb, &dat.l, 4);
+		SZ_Write(sb, dat.l, 4);
 	}
 
-	public unsafe void MSG_WriteString(sizebuf_t* sb, char* s)
+	public static void MSG_WriteString(sizebuf_t sb, char s)
 	{
 		if (s == null)
 		{
-			SZ_Write(sb, null, 1);
+			SZ_Write(sb, 0, 1);
 		}
 		else
 		{
@@ -654,12 +648,12 @@ public unsafe class common_c
 		}
 	}
 
-	public unsafe void MSG_WriteCoord(sizebuf_t* sb, float f)
+	public static void MSG_WriteCoord(sizebuf_t sb, float f)
 	{
 		MSG_WriteShort(sb, (int)(f * 8));
 	}
 
-	public unsafe void MSG_WriteAngle(sizebuf_t* sb, float f)
+	public static void MSG_WriteAngle(sizebuf_t sb, float f)
 	{
 		MSG_WriteByte(sb, ((int)f * 256 / 360) & 255);
 	}
@@ -794,46 +788,46 @@ public unsafe class common_c
 		return MSG_ReadChar() * (360.0f / 256);
 	}
 
-	public unsafe void SZ_Alloc(sizebuf_t buf, int startsize)
+	public static void SZ_Alloc(sizebuf_t buf, int startsize)
 	{
 		if (startsize < 256)
 		{
 			startsize = 256;
 		}
 
-		buf.data = Hunk_AllocName(startsize, "sizebuf");
+		buf.data = (int)zone.Hunk_AllocName(startsize, "sizebuf");
 		buf.maxsize = startsize;
 		buf.cursize = 0;
 	}
 
-	public unsafe void SZ_Free(sizebuf_t buf)
+	public static void SZ_Free(sizebuf_t buf)
 	{
 		buf.cursize = 0;
 	}
 
-	public unsafe void SZ_Clear(sizebuf_t buf)
+	public static void SZ_Clear(sizebuf_t buf)
 	{
 		buf.cursize = 0;
 	}
 
-	public unsafe void* SZ_GetSpace(sizebuf_t buf, int length)
+	public static int SZ_GetSpace(sizebuf_t buf, int length)
 	{
-		void* data;
+		int data;
 
 		if (buf.cursize + length > buf.maxsize)
 		{
 			if (!buf.allowoverflow)
 			{
-				Sys_Error("SZ_GetSpace: overflow without allowoverflow set");
+				sys_win.Sys_Error("SZ_GetSpace: overflow without allowoverflow set");
 			}
 
 			if (length > buf.maxsize)
 			{
-				Sys_Error("SZ_GetSpace: %i is > full buffer size", length);
+				sys_win.Sys_Error("SZ_GetSpace: %i is > full buffer size", length);
 			}
 
 			buf.overflowed = true;
-			Con_Printf("SZ_GetSpace: overflow");
+			console.Con_Printf("SZ_GetSpace: overflow");
 			SZ_Clear(buf);
 		}
 
@@ -843,17 +837,17 @@ public unsafe class common_c
 		return data;
 	}
 
-	public unsafe void SZ_Write(sizebuf_t* buf, void* data, int length)
+	public static void SZ_Write(sizebuf_t buf, int data, int length)
 	{
-		//Q_memcpy(SZ_GetSpace(buf, length), data, length); // I have no clue how to fix this!!
+		Q_memcpy(SZ_GetSpace(buf, length), data, length);
 	}
 
-	public unsafe void SZ_Print(sizebuf_t buf, string data)
+	public static void SZ_Print(sizebuf_t buf, string data)
 	{
 		int len;
 		len = Q_strlen(data) + 1;
 
-		if (buf.data[buf.curSize - 1])
+		if (buf.data == buf.cursize - 1)
 		{
 			Q_memcpy((byte)SZ_GetSpace(buf, len), data.ToCharArray(), len);
 		}
@@ -863,7 +857,7 @@ public unsafe class common_c
 		}
 	}
 
-	public unsafe char* COM_SkipPath(char* pathname)
+	public static char* COM_SkipPath(char* pathname)
 	{
 		char* last;
 		last = pathname;
@@ -881,7 +875,7 @@ public unsafe class common_c
 		return last;
 	}
 
-	public unsafe void COM_StripExtension(char* _in, char* _out)
+	public static void COM_StripExtension(char* _in, char* _out)
 	{
 		while (*_in != '\0' && *_in != '.')
 		{
@@ -891,7 +885,7 @@ public unsafe class common_c
 		*_out = '\0';
 	}
 
-	public unsafe string COM_FileExtension(string _in)
+	public static string COM_FileExtension(string _in)
 	{
 		char[] exten = new char[8];
 		int i = 0;
@@ -918,7 +912,7 @@ public unsafe class common_c
 		return new string(exten);
 	}
 
-	public unsafe void COM_FileBase(string _in, string _out)
+	public static void COM_FileBase(string _in, string _out)
 	{
 		_out = "?model?";
 
@@ -950,7 +944,7 @@ public unsafe class common_c
 		}
 	}
 
-	public unsafe void COM_DefaultExtension(char* path, string extension)
+	public static void COM_DefaultExtension(char* path, string extension)
 	{
 		char* src;
 
@@ -971,7 +965,7 @@ public unsafe class common_c
 		Q_strcat(strPath, extension);
 	}
 
-	public unsafe char* COM_Parse(char* data)
+	public static char* COM_Parse(char* data)
 	{
 		int c;
 		int len;
@@ -1052,7 +1046,7 @@ public unsafe class common_c
 		return data;
 	}
 
-	public unsafe int COM_CheckParm(string parm)
+	public static int COM_CheckParm(string parm)
 	{
 		for (int i = 1; i < com_argc; i++)
 		{
@@ -1070,7 +1064,7 @@ public unsafe class common_c
 		return 0;
 	}
 
-	public unsafe void COM_CheckRegistered()
+	public static void COM_CheckRegistered()
 	{
 		int h;
 		ushort[] check = new ushort[128];
@@ -1082,43 +1076,43 @@ public unsafe class common_c
 		if (h == 1)
 		{
 #if WINDED
-			Sys_Error("This dedicated server requires a full registered copy of Quake");
+			sys_win.Sys_Error("This dedicated server requires a full registered copy of Quake");
 #endif
-			Con_Printf("Playing shareware version.\n");
+			console.Con_Printf("Playing shareware version.\n");
 			if (com_modified)
 			{
-				Sys_Error("You must have the registered version to use modified games");
+				sys_win.Sys_Error("You must have the registered version to use modified games");
 				return;
 			}
 		}
 
-		Sys_FileRead(h, check, 128);
+		sys_win.Sys_FileRead(h, check, 128);
 		COM_CloseFile(h);
 
 		for (i = 0; i < 128; i++)
 		{
 			if (pop[i] != BigShort((short)check[i]))
 			{
-				Sys_Error("Corrupted data file.");
+				sys_win.Sys_Error("Corrupted data file.");
 			}
 		}
 
 		Cvar_Set("cmdline", com_cmdline);
 		Cvar_Set("registered", "1");
 		static_registered = 1;
-		Con_Printf("Playing registered version.\n");
+		console.Con_Printf("Playing registered version.\n");
 	}
 
-	public void COM_Path_f() { }
+	//public static void COM_Path_f() { }
 
-	public unsafe void COM_InitArgv(int argc, char** argv)
+	public static void COM_InitArgv(int argc, char** argv)
 	{
 		bool safe;
 		int i, j, n;
 
 		n = 0;
 
-		for (j = 0; (j < quakedef_c.MAX_NUM_ARGVS) && (j < argc); j++)
+		for (j = 0; (j < quakedef.MAX_NUM_ARGVS) && (j < argc); j++)
 		{
 			i = 0;
 
@@ -1141,10 +1135,10 @@ public unsafe class common_c
 
 		safe = false;
 
-		for (com_argc = 0; (com_argc < quakedef_c.MAX_NUM_ARGVS) && (com_argc < argc); com_argc++)
+		for (com_argc = 0; (com_argc < quakedef.MAX_NUM_ARGVS) && (com_argc < argc); com_argc++)
 		{
 			string argvstr = Marshal.PtrToStringAnsi((IntPtr)argv[com_argc]);
-			
+
 			largv = argvstr;
 
 			if (!Q_strcmp("-safe", argvstr))
@@ -1178,7 +1172,7 @@ public unsafe class common_c
 		}
 	}
 
-	public unsafe void COM_Init(char* basedir)
+	public static void COM_Init(char* basedir)
 	{
 		byte[] swaptest = { 1, 0 };
 
@@ -1211,7 +1205,7 @@ public unsafe class common_c
 		COM_CheckRegistered();
 	}
 
-	public unsafe string va(string format, params object[] args)
+	public static string va(string format, params object[] args)
 	{
 		va_list argptr;
 		string _string = null;
@@ -1238,7 +1232,7 @@ public unsafe class common_c
 		return -1;
 	}
 
-	int com_filesize;
+	public static int com_filesize;
 
 	public struct packfile_t
 	{
@@ -1263,33 +1257,33 @@ public unsafe class common_c
 
 	public const int MAX_FILES_IN_PACK = 2048;
 
-	public string com_cachedir = null;
-	public string com_gamedir = null;
+	public static string com_cachedir = null;
+	public static string com_gamedir = null;
 
 	struct searchpath_t
 	{
 		public string filename;
 		public pack_t pack;
-		public searchpath_t next;
+		public searchpath_t* next;
 	}
 
-	searchpath_t com_searchpaths;
+	public static searchpath_t* com_searchpaths;
 
 	public unsafe void COM_Path_f()
 	{
-		searchpath_t s;
+		searchpath_t* s;
 
-		Con_Printf("Current search path:\n");
+		console.Con_Printf("Current search path:\n");
 
-		for (s = com_searchpaths; !s.Equals(default(searchpath_t)); s = s.next)
+		for (s = com_searchpaths; !s->Equals(default(searchpath_t)); s = s->next)
 		{
-			if (!s.Equals(default(searchpath_t)))
+			if (!s->Equals(default(searchpath_t)))
 			{
-				Con_Printf("%s (%i files)\n", s.pack.filename, s.pack.numfiles);
+				console.Con_Printf($"{s->pack.filename} ({s->pack.numfiles} files)\n");
 			}
 			else
 			{
-				Con_Printf("%s\n", s.filename);
+				console.Con_Printf($"{s->filename}\n");
 			}
 		}
 	}
@@ -1301,17 +1295,17 @@ public unsafe class common_c
 
 		sprintf(name, "%s/%s", com_gamedir, filename);
 
-		handle = Sys_FileOpenWrite(name);
+		handle = sys_win.Sys_FileOpenWrite(name);
 
 		if (handle == -1)
 		{
-			Sys_Printf("COM_WriteFile: failed on %s\n", name);
+			sys_win.Sys_Printf("COM_WriteFile: failed on %s\n", name);
 			return;
 		}
 
-		Sys_Printf("COM_WriteFile: %s\n", name);
-		Sys_FileWrite(handle, data, len);
-		Sys_FileClose(handle);
+		sys_win.Sys_Printf("COM_WriteFile: %s\n", name);
+		sys_win.Sys_FileWrite(handle, data, len);
+		sys_win.Sys_FileClose(handle);
 	}
 
 	public unsafe void COM_CreatePath(char* path)
@@ -1322,22 +1316,24 @@ public unsafe class common_c
 		{
 			if (*ofs == '/')
 			{
+				string pathstr = Marshal.PtrToStringAnsi((IntPtr)path);
+
 				*ofs = '\0';
-				Sys_mkdir(path);
+				sys_win.Sys_mkdir(pathstr);
 				*ofs = '/';
 			}
 		}
 	}
 
-	public unsafe void COM_CopyFile(string netpath, string cachepath)
+	public static void COM_CopyFile(string netpath, string cachepath)
 	{
 		int input, output;
 		int remaining, count;
 		string buf = null;
 
-		remaining = Sys_OpenFileRead(netpath, &input);
+		remaining = sys_win.Sys_OpenFileRead(netpath, &input);
 		COM_CreatePath(cachepath);
-		output = Sys_FileOpenWrite(cachepath);
+		output = sys_win.Sys_FileOpenWrite(cachepath);
 
 		while (remaining > 0)
 		{
@@ -1350,71 +1346,61 @@ public unsafe class common_c
 				count = buf.Length;
 			}
 
-			Sys_FileRead(input, buf, count);
-			Sys_FileWrite(output, buf, count);
+			sys_win.Sys_FileRead(input, buf, count);
+			sys_win.Sys_FileWrite(output, buf, count);
 			remaining -= count;
 		}
 
-		Sys_FileClose(input);
-		Sys_FileClose(output);
+		sys_win.Sys_FileClose(input);
+		sys_win.Sys_FileClose(output);
 	}
 
-	public unsafe int COM_FindFile(string filename, int handle, FileStream** file)
+	public static int COM_FindFile(string filename, int handle, FileStream file)
 	{
-		searchpath_t search;
-		string netpath = null;
-		string cachepath = null;
+		searchpath_t* search = com_searchpaths;
+		string netpath = new string(' ', quakedef.MAX_OSPATH);
+		string cachepath = new string(' ', quakedef.MAX_OSPATH);
 		pack_t pak;
 		int i;
 		int findtime, cachetime;
 
-		if (file != null && handle != 0)
-		{
-			Sys_Error("COM_FindFile: both handle and file set");
-		}
+		if ((file != null) && (handle != 0))
+			sys_win.Sys_Error("COM_FindFile: both handle and file set");
+		if ((file == null) && (handle == 0))
+			sys_win.Sys_Error("COM_FindFile: neither handle or file set");
 
-		if (file == null && handle == 0)
-		{
-			Sys_Error("COM_FindFile: neither handle or file set");
-		}
-
-		search = com_searchpaths;
-
+		// search through the path, one element at a time
 		if (proghack)
 		{
-			if (!Q_strcmp(filename, "progs.dat"))
-			{
-				search = search.next;
-			}
+			// gross hack to use quake 1 progs with quake 2 maps
+			if (filename.Equals("progs.dat"))
+				search = search->next;
 		}
 
-		for (; !search.Equals(default(searchpath_t)); search = search.next)
+		for (; search != null; search = search->next)
 		{
-			if (!search.pack.Equals(default(searchpath_t)))
+			// is the element a pak file?
+			if (!search->Equals(default))
 			{
-				pak = search.pack;
-
+				// look through all the pak file elements
+				pak = search->pack;
 				for (i = 0; i < pak.numfiles; i++)
 				{
-					if (!Q_strcmp(pak.files[i].name, filename))
+					if (pak.files[i].name.Equals(filename))
 					{
-						Sys_Printf("Packfile: %s : %s\n", pak.filename, filename);
-
+						// found it!
+						sys_win.Sys_Printf($"PackFile: {pak.filename} : {filename}\n");
 						if (handle != 0)
 						{
 							handle = pak.handle;
-							Sys_FilePeek(pak.handle, pak.files[i].filepos);
+							sys_win.Sys_FileSeek(pak.handle, pak.files[i].filepos);
 						}
 						else
 						{
-							file = fopen(pak.filename, "rb");
-
+							file = new FileStream(pak.filename, FileMode.Open, FileAccess.Read);
 							if (file != null)
-							{
-								fseek(file, pak.files[i].filepos, SEEK_SET);
-							}
+								file.Seek(pak.files[i].filepos, SeekOrigin.Begin);
 						}
-
 						com_filesize = pak.files[i].filelen;
 						return com_filesize;
 					}
@@ -1422,122 +1408,97 @@ public unsafe class common_c
 			}
 			else
 			{
-				if (static_registered != 0)
+				// check a file in the directory tree
+				if (static_registered == 0)
 				{
-					if (strchr(filename, '/') || strchr(filename, '\\'))
-					{
+					// if not a registered version, don't ever go beyond base
+					if (filename.Contains("/") || filename.Contains("\\"))
 						continue;
-					}
 				}
 
-				sprintf(netpath, "%s/%s", search.filename, filename);
+				netpath = Path.Combine(search->filename, filename);
 
-				findtime = Sys_FileTime(netpath);
-
+				findtime = sys_win.Sys_FileTime(netpath);
 				if (findtime == -1)
-				{
 					continue;
-				}
 
-				if (com_cachedir[0] != 0)
+				// see if the file needs to be updated in the cache
+				if (string.IsNullOrEmpty(com_cachedir))
 				{
-					Q_strcpy(cachepath, netpath);
+					cachepath = netpath;
 				}
 				else
 				{
-#if defined(_WIN32)
-					if ((strlen(netpath) < 2) || (netpath[1] != ':')) 
-					{
-						sprintf (cachepath, "%s%s", com_cachedir, netpath);
-					}
-					else 
-					{
-						sprintf (cachepath, "%s%s", com_cachedir, netpath);
-					}
-#else
-					sprintf(cachepath, "%s%s", com_cachedir, netpath);
-#endif
-					cachetime = Sys_FileTime(cachepath);
+					cachepath = Path.Combine(com_cachedir, netpath.Substring(2));
+					cachetime = sys_win.Sys_FileTime(cachepath);
 
 					if (cachetime < findtime)
-					{
 						COM_CopyFile(netpath, cachepath);
-					}
-
-					Q_strcpy(netpath, cachepath);
+					netpath = cachepath;
 				}
 
-				Sys_Printf("FindFile: %s\n", netpath);
-				com_filesize = Sys_FileOpenRead(netpath, &i);
-
+				sys_win.Sys_Printf($"FindFile: {netpath}\n");
+				com_filesize = sys_win.Sys_FileOpenRead(netpath, out i);
 				if (handle != 0)
-				{
 					handle = i;
-				}
 				else
 				{
-					Sys_FileClose(i);
-					file = fopen(netpath, "rb");
+					sys_win.Sys_FileClose(i);
+					file = new FileStream(netpath, FileMode.Open, FileAccess.Read);
 				}
-
 				return com_filesize;
 			}
 		}
 
-		Sys_Printf("FindFile: can't find %s\n", filename);
+		sys_win.Sys_Printf($"FindFile: can't find {filename}\n");
 
 		if (handle != 0)
-		{
 			handle = -1;
-		}
 		else
-		{
 			file = null;
-		}
-
 		com_filesize = -1;
 		return -1;
 	}
 
-	public unsafe int COM_OpenFile(string filename, int* handle)
+	public static int COM_OpenFile(string filename, int handle)
 	{
 		return COM_FindFile(filename, handle, null);
 	}
 
-	public unsafe int COM_FOpenFile(string filename, FileStream** file)
+	public static int COM_FOpenFile(string filename, FileStream file)
 	{
-		return COM_FindFile(filename, null, file);
+		return COM_FindFile(filename, 0, file);
 	}
 
-	public void COM_CloseFile(int h)
+	public static void COM_CloseFile(int h)
 	{
-		searchpath_t s;
+		searchpath_t* s;
 
-		for (s = com_searchpaths; !s.Equals(default(searchpath_t)); s = s.next)
+		for (s = com_searchpaths; !s->Equals(default(searchpath_t)); s = s->next)
 		{
-			if (s.pack && s.pack.handle == h)
+			if (s->pack && s->pack.handle == h)
 			{
 				return;
 			}
 		}
 
-		Sys_CloseFile(h);
+		sys_win.Sys_CloseFile(h);
 	}
 
-	public cache_user_t* loadcache;
-	public byte* loadbuf;
-	public int loadsize;
+	public static zone.cache_user_t* loadcache;
+	public static byte* loadbuf;
+	public static int loadsize;
 
-	public unsafe byte* COM_LoadFile(string path, int usehunk)
+	public static byte* COM_LoadFile(string path, int usehunk)
 	{
-		int h;
+		int h = 0;
 		byte* buf;
 		string _base = null;
 		int len;
 
 		buf = null;
 
-		len = COM_OpenFile(path, &h);
+		len = COM_OpenFile(path, h);
 
 		if (h == -1)
 		{
@@ -1556,7 +1517,7 @@ public unsafe class common_c
 		}
 		else if (usehunk == 0)
 		{
-			buf = Z_Malloc(len + 1);
+			buf = (byte*)zone.Z_Malloc(len + 1);
 		}
 		else if (usehunk == 3)
 		{
@@ -1575,36 +1536,36 @@ public unsafe class common_c
 		}
 		else
 		{
-			Sys_Error("COM_LoadFile: bad usehunk");
+			sys_win.Sys_Error("COM_LoadFile: bad usehunk");
 		}
 
 		if (buf == null)
 		{
-			Sys_Error("COM_LoadFile: not enough space for %s", path);
+			sys_win.Sys_Error("COM_LoadFile: not enough space for %s", path);
 		}
 
-		((byte*)buf)[len] = 0;
+		buf[len] = 0;
 
 		Draw_BeginDisc();
-		Sys_FileRead(h, buf, len);
+		sys_win.Sys_FileRead(h, buf, len);
 		COM_CloseFile(h);
 		Draw_EndDisc();
 
 		return buf;
 	}
 
-	public unsafe byte* COM_LoadHunkFile(string path)
+	public static byte* COM_LoadHunkFile(string path)
 	{
 		return COM_LoadFile(path, 1);
 	}
 
-	public unsafe void COM_LoadCacheFile(string path, cache_user_t* cu)
+	public static void COM_LoadCacheFile(string path, zone.cache_user_t cu)
 	{
 		loadcache = cu;
 		COM_LoadFile(path, 3);
 	}
 
-	public unsafe byte* COM_LoadStackFile(string path, void* buffer, int bufsize)
+	public static byte* COM_LoadStackFile(string path, void* buffer, int bufsize)
 	{
 		byte* buf;
 
@@ -1615,7 +1576,7 @@ public unsafe class common_c
 		return buf;
 	}
 
-	public unsafe pack_t COM_LoadPackFile(string packfile)
+	public static pack_t COM_LoadPackFile(string packfile)
 	{
 		dpackheader_t header;
 		int i;
@@ -1626,16 +1587,16 @@ public unsafe class common_c
 		dpackfile_t info;
 		ushort crc;
 
-		if (Sys_FileOpenRead(packfile, &packhandle) == -1)
+		if (sys_win.Sys_FileOpenRead(packfile, &packhandle) == -1)
 		{
 			return null;
 		}
 
-		Sys_FileRead(packhandle, (void*)&header, header.dirlen);
+		sys_win.Sys_FileRead(packhandle, (void*)&header, header.dirlen);
 		if (header.id[0] != 'P' || header.id[1] != 'A'
 			|| header.id[2] != 'C' || header.id[3] != 'K')
 		{
-			Sys_Error("%s has %i files", packfile, numpackfiles);
+			sys_win.Sys_Error("%s has %i files", packfile, numpackfiles);
 		}
 
 		if (numpackfiles != PAK0_COUNT)
@@ -1643,10 +1604,10 @@ public unsafe class common_c
 			com_modified = true;
 		}
 
-		newfiles = Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
+		newfiles = zone.Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
 
-		Sys_FileSeek(packhandle, header.dirofs);
-		Sys_FileRead(packhandle, (void*)info, header.dirlen);
+		sys_win.Sys_FileSeek(packhandle, header.dirofs);
+		sys_win.Sys_FileRead(packhandle, (void*)info, header.dirlen);
 
 		CRC_Init(&crc);
 
@@ -1667,13 +1628,13 @@ public unsafe class common_c
 			newfiles[i].filelen = LittleLong(info[i].filelen);
 		}
 
-		pack = Hunk_Alloc(sizeof(pack_t));
+		pack = zone.Hunk_Alloc(sizeof(pack_t));
 		Q_strcpy(pack.filename, packfile);
 		pack.handle = packhandle;
 		pack.numfiles = numpackfiles;
 		pack.files = newfiles;
 
-		Con_Printf("Added packfile %s (%i files)\n", packfile, numpackfiles);
+		console.Con_Printf($"Added packfile {packfile} ({numpackfiles} files)\n");
 		return pack;
 	}
 
@@ -1681,29 +1642,29 @@ public unsafe class common_c
 	{
 		int i;
 		searchpath_t* search;
-		pack_t* pak;
-		string pakfile;
+		pack_t pak;
+		string pakfile = null;
 
 		Q_strcpy(com_gamedir, dir);
 
-		search = Hunk_Alloc(sizeof(searchpath_t));
-		Q_strcpy(search.filename, dir);
-		search.next = com_searchpaths;
+		search = (searchpath_t*)zone.Hunk_Alloc(sizeof(searchpath_t));
+		Q_strcpy(search->filename, dir);
+		search->next = com_searchpaths;
 		com_searchpaths = search;
 
 		for (i = 0; ; i++)
 		{
-			sprintf(pakfile, "%s/pak%i.pak", dir, i);
+			Console.WriteLine($"{dir}/pak{i}.pak");
 			pak = COM_LoadPackFile(pakfile);
 
-			if (pak == null)
+			if (!search->pack.Equals(default(searchpath_t)))
 			{
 				break;
 			}
 
-			search = Hunk_Alloc(sizeof(searchpath_t));
-			search.pack = pak;
-			search.next = com_searchpaths;
+			search = (searchpath_t*)zone.Hunk_Alloc(sizeof(searchpath_t));
+			search->pack = pak;
+			search->next = com_searchpaths;
 			com_searchpaths = search;
 		}
 	}
@@ -1712,7 +1673,7 @@ public unsafe class common_c
 	{
 		int i, j;
 		string basedir = null;
-		searchpath_t search = new();
+		searchpath_t* search = default;
 
 		i = COM_CheckParm("-basedir");
 		if (i != 0 && i < com_argc - 1)
@@ -1721,7 +1682,7 @@ public unsafe class common_c
 		}
 		else
 		{
-			Q_strcpy(basedir, host_parms.basedir);
+			Q_strcpy(basedir, quakedef.host_parms.basedir);
 		}
 
 		j = Q_strlen(basedir);
@@ -1739,23 +1700,23 @@ public unsafe class common_c
 		{
 			if (com_argv[i + 1] == '-')
 			{
-				com_cachedir[0] = (char)0;
+				com_cachedir = "";
 			}
 			else
 			{
 				Q_strcpy(com_cachedir.ToString(), com_argv[i + 1].ToString()); ;
 			}
 		}
-		else if (host_parms.cachedir)
+		else if (quakedef.host_parms.cachedir == null)
 		{
-			Q_strcpy(com_cachedir, host_parms.cachedir);
+			Q_strcpy(com_cachedir, quakedef.host_parms.cachedir);
 		}
 		else
 		{
-			com_cachedir[0] = (char)0;
+			com_cachedir = "";
 		}
 
-		COM_AddGameDirectory(va("%s/"GAMENAME, basedir));
+		COM_AddGameDirectory(va($"%s/{quakedef.GAMENAME}", basedir));
 
 		if (COM_CheckParm("-rogue") != 0)
 		{
@@ -1777,7 +1738,7 @@ public unsafe class common_c
 		if (i != 0)
 		{
 			com_modified = true;
-			com_searchpaths = null;
+			com_searchpaths = default;
 			while (i++ < com_argc)
 			{
 				if (com_argv[i] == 0 || com_argv[i] == '+' || com_argv[i] == '-')
@@ -1785,22 +1746,22 @@ public unsafe class common_c
 					break;
 				}
 
-				search = Hunk_Alloc(sizeof(searchpath_t));
+				search = (searchpath_t*)zone.Hunk_Alloc(sizeof(searchpath_t));
 				if (!Q_strcmp(COM_FileExtension(com_argv[i].ToString()), "pak"))
 				{
-					search.pack = COM_LoadPackFile(com_argv[i].ToString());
+					search->pack = COM_LoadPackFile(com_argv[i].ToString());
 
-					if (search.pack == null)
+					if (!search->pack.Equals(default(searchpath_t)))
 					{
-						Sys_Error("Couldn't load packfile: %s", com_argv[i]);
+						sys_win.Sys_Error("Couldn't load packfile: %s", com_argv[i]);
 					}
 				}
 				else
 				{
-					Q_strcpy(search.filename, com_argv[i]);
+					Q_strcpy(search->filename, com_argv[i].ToString());
 				}
 
-				search.next = com_searchpaths;
+				search->next = com_searchpaths;
 				com_searchpaths = search;
 			}
 		}

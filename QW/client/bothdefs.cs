@@ -1,12 +1,12 @@
-﻿namespace bothdefs;
+﻿namespace Quake;
 
-public class bothdefs_c
+public class bothdefs
 {
     public const double GLQUAKE_VERSION = 1.00;
     public const double VERSION = 2.40;
     public const double LINUX_VERSION = 0.98;
 
-#if (defined(_M_IX86) || defined(__i386__)) && !defined(id386)
+#if (_M_IX86 || __i386__) && !id386
         public const bool id386 = true;
 #else
     public const bool id386 = false;
