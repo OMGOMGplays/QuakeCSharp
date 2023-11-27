@@ -1,8 +1,6 @@
-﻿using System.Net.Sockets;
+﻿namespace Quake;
 
-namespace Quake;
-
-public unsafe class sys_win
+public unsafe class sys_win_c
 {
 	public static cvar_t sys_nostdout = new cvar_t { "sys_nostdout", "0" };
 
@@ -139,31 +137,31 @@ public unsafe class sys_win
 
 	int main(int argc, char** argv)
 	{
-		quakedef.quakeparms_t parms;
+		quakedef_c.quakeparms_t parms;
 		double newtime, time, oldtime;
 		char cwd;
 		timeval timeout;
 		fd_set fdset;
 		int t;
 
-		common.COM_InitArgv(argc, argv);
+		common_c.COM_InitArgv(argc, argv);
 
-		parms.argc = common.com_argc;
-		parms.argv = common.com_argv;
+		parms.argc = common_c.com_argc;
+		parms.argv = common_c.com_argv;
 
 		parms.memsize = 16 * 1024 * 1024;
 
-		if ((t = common.COM_CheckParm("-heapsize")) != 0 && t + 1 < common.com_argc)
+		if ((t = common_c.COM_CheckParm("-heapsize")) != 0 && t + 1 < common_c.com_argc)
 		{
-			parms.memsize = common.Q_atoi(common.com_argv[t + 1].ToString()) * 1024;
+			parms.memsize = common_c.Q_atoi(common_c.com_argv[t + 1].ToString()) * 1024;
 		}
 
-		if ((t = common.COM_CheckParm("-mem")) != 0 && t + 1 < common.com_argc)
+		if ((t = common_c.COM_CheckParm("-mem")) != 0 && t + 1 < common_c.com_argc)
 		{
-			parms.memsize = common.Q_atoi(common.com_argv[t + 1].ToString()) * 1024 * 1024;
+			parms.memsize = common_c.Q_atoi(common_c.com_argv[t + 1].ToString()) * 1024 * 1024;
 		}
 
-		parms.membase = zone.Z_Malloc(parms.memsize);
+		parms.membase = zone_c.Z_Malloc(parms.memsize);
 
 		if (parms.membase == null)
 		{

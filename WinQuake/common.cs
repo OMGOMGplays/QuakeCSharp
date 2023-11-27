@@ -1,6 +1,6 @@
 ﻿namespace Quake;
 
-public unsafe class common
+public unsafe class common_c
 {
 	public const int NUM_SAFE_ARGVS = 7;
 
@@ -298,7 +298,7 @@ public unsafe class common
 		return -1;
 	}
 
-	public unsafe int Q_strcasecmp(string s1, string s2)
+	public static int Q_strcasecmp(string s1, string s2)
 	{
 		return Q_strncasecmp(s1, s2, 99999);
 	}
@@ -795,7 +795,7 @@ public unsafe class common
 			startsize = 256;
 		}
 
-		buf.data = (int)zone.Hunk_AllocName(startsize, "sizebuf");
+		buf.data = (int)zone_c.Hunk_AllocName(startsize, "sizebuf");
 		buf.maxsize = startsize;
 		buf.cursize = 0;
 	}
@@ -818,16 +818,16 @@ public unsafe class common
 		{
 			if (!buf.allowoverflow)
 			{
-				sys_win.Sys_Error("SZ_GetSpace: overflow without allowoverflow set");
+				sys_win_c.Sys_Error("SZ_GetSpace: overflow without allowoverflow set");
 			}
 
 			if (length > buf.maxsize)
 			{
-				sys_win.Sys_Error("SZ_GetSpace: %i is > full buffer size", length);
+				sys_win_c.Sys_Error("SZ_GetSpace: %i is > full buffer size", length);
 			}
 
 			buf.overflowed = true;
-			console.Con_Printf("SZ_GetSpace: overflow");
+			console_c.Con_Printf("SZ_GetSpace: overflow");
 			SZ_Clear(buf);
 		}
 
@@ -1078,29 +1078,29 @@ public unsafe class common
 #if WINDED
 			sys_win.Sys_Error("This dedicated server requires a full registered copy of Quake");
 #endif
-			console.Con_Printf("Playing shareware version.\n");
+			console_c.Con_Printf("Playing shareware version.\n");
 			if (com_modified)
 			{
-				sys_win.Sys_Error("You must have the registered version to use modified games");
+				sys_win_c.Sys_Error("You must have the registered version to use modified games");
 				return;
 			}
 		}
 
-		sys_win.Sys_FileRead(h, check, 128);
+		sys_win_c.Sys_FileRead(h, check, 128);
 		COM_CloseFile(h);
 
 		for (i = 0; i < 128; i++)
 		{
 			if (pop[i] != BigShort((short)check[i]))
 			{
-				sys_win.Sys_Error("Corrupted data file.");
+				sys_win_c.Sys_Error("Corrupted data file.");
 			}
 		}
 
 		Cvar_Set("cmdline", com_cmdline);
 		Cvar_Set("registered", "1");
 		static_registered = 1;
-		console.Con_Printf("Playing registered version.\n");
+		console_c.Con_Printf("Playing registered version.\n");
 	}
 
 	//public static void COM_Path_f() { }
@@ -1112,7 +1112,7 @@ public unsafe class common
 
 		n = 0;
 
-		for (j = 0; (j < quakedef.MAX_NUM_ARGVS) && (j < argc); j++)
+		for (j = 0; (j < quakedef_c.MAX_NUM_ARGVS) && (j < argc); j++)
 		{
 			i = 0;
 
@@ -1135,7 +1135,7 @@ public unsafe class common
 
 		safe = false;
 
-		for (com_argc = 0; (com_argc < quakedef.MAX_NUM_ARGVS) && (com_argc < argc); com_argc++)
+		for (com_argc = 0; (com_argc < quakedef_c.MAX_NUM_ARGVS) && (com_argc < argc); com_argc++)
 		{
 			string argvstr = Marshal.PtrToStringAnsi((IntPtr)argv[com_argc]);
 
@@ -1273,39 +1273,39 @@ public unsafe class common
 	{
 		searchpath_t* s;
 
-		console.Con_Printf("Current search path:\n");
+		console_c.Con_Printf("Current search path:\n");
 
 		for (s = com_searchpaths; !s->Equals(default(searchpath_t)); s = s->next)
 		{
 			if (!s->Equals(default(searchpath_t)))
 			{
-				console.Con_Printf($"{s->pack.filename} ({s->pack.numfiles} files)\n");
+				console_c.Con_Printf($"{s->pack.filename} ({s->pack.numfiles} files)\n");
 			}
 			else
 			{
-				console.Con_Printf($"{s->filename}\n");
+				console_c.Con_Printf($"{s->filename}\n");
 			}
 		}
 	}
 
-	public unsafe void COM_WriteFile(string filename, void* data, int len)
+	public static void COM_WriteFile(string filename, void* data, int len)
 	{
 		int handle;
 		string name = null;
 
-		sprintf(name, "%s/%s", com_gamedir, filename);
+		Console.WriteLine(name, $"{com_gamedir}/{filename}");
 
-		handle = sys_win.Sys_FileOpenWrite(name);
+		handle = sys_win_c.Sys_FileOpenWrite(name);
 
 		if (handle == -1)
 		{
-			sys_win.Sys_Printf("COM_WriteFile: failed on %s\n", name);
+			sys_win_c.Sys_Printf($"COM_WriteFile: failed on {name}\n");
 			return;
 		}
 
-		sys_win.Sys_Printf("COM_WriteFile: %s\n", name);
-		sys_win.Sys_FileWrite(handle, data, len);
-		sys_win.Sys_FileClose(handle);
+		sys_win_c.Sys_Printf($"COM_WriteFile: {name}\n");
+		sys_win_c.Sys_FileWrite(handle, data, len);
+		sys_win_c.Sys_FileClose(handle);
 	}
 
 	public unsafe void COM_CreatePath(char* path)
@@ -1319,7 +1319,7 @@ public unsafe class common
 				string pathstr = Marshal.PtrToStringAnsi((IntPtr)path);
 
 				*ofs = '\0';
-				sys_win.Sys_mkdir(pathstr);
+				sys_win_c.Sys_mkdir(pathstr);
 				*ofs = '/';
 			}
 		}
@@ -1331,9 +1331,9 @@ public unsafe class common
 		int remaining, count;
 		string buf = null;
 
-		remaining = sys_win.Sys_OpenFileRead(netpath, &input);
+		remaining = sys_win_c.Sys_OpenFileRead(netpath, &input);
 		COM_CreatePath(cachepath);
-		output = sys_win.Sys_FileOpenWrite(cachepath);
+		output = sys_win_c.Sys_FileOpenWrite(cachepath);
 
 		while (remaining > 0)
 		{
@@ -1346,28 +1346,28 @@ public unsafe class common
 				count = buf.Length;
 			}
 
-			sys_win.Sys_FileRead(input, buf, count);
-			sys_win.Sys_FileWrite(output, buf, count);
+			sys_win_c.Sys_FileRead(input, buf, count);
+			sys_win_c.Sys_FileWrite(output, buf, count);
 			remaining -= count;
 		}
 
-		sys_win.Sys_FileClose(input);
-		sys_win.Sys_FileClose(output);
+		sys_win_c.Sys_FileClose(input);
+		sys_win_c.Sys_FileClose(output);
 	}
 
 	public static int COM_FindFile(string filename, int handle, FileStream file)
 	{
 		searchpath_t* search = com_searchpaths;
-		string netpath = new string(' ', quakedef.MAX_OSPATH);
-		string cachepath = new string(' ', quakedef.MAX_OSPATH);
+		string netpath = new string(' ', quakedef_c.MAX_OSPATH);
+		string cachepath = new string(' ', quakedef_c.MAX_OSPATH);
 		pack_t pak;
 		int i;
 		int findtime, cachetime;
 
 		if ((file != null) && (handle != 0))
-			sys_win.Sys_Error("COM_FindFile: both handle and file set");
+			sys_win_c.Sys_Error("COM_FindFile: both handle and file set");
 		if ((file == null) && (handle == 0))
-			sys_win.Sys_Error("COM_FindFile: neither handle or file set");
+			sys_win_c.Sys_Error("COM_FindFile: neither handle or file set");
 
 		// search through the path, one element at a time
 		if (proghack)
@@ -1389,11 +1389,11 @@ public unsafe class common
 					if (pak.files[i].name.Equals(filename))
 					{
 						// found it!
-						sys_win.Sys_Printf($"PackFile: {pak.filename} : {filename}\n");
+						sys_win_c.Sys_Printf($"PackFile: {pak.filename} : {filename}\n");
 						if (handle != 0)
 						{
 							handle = pak.handle;
-							sys_win.Sys_FileSeek(pak.handle, pak.files[i].filepos);
+							sys_win_c.Sys_FileSeek(pak.handle, pak.files[i].filepos);
 						}
 						else
 						{
@@ -1418,7 +1418,7 @@ public unsafe class common
 
 				netpath = Path.Combine(search->filename, filename);
 
-				findtime = sys_win.Sys_FileTime(netpath);
+				findtime = sys_win_c.Sys_FileTime(netpath);
 				if (findtime == -1)
 					continue;
 
@@ -1430,27 +1430,27 @@ public unsafe class common
 				else
 				{
 					cachepath = Path.Combine(com_cachedir, netpath.Substring(2));
-					cachetime = sys_win.Sys_FileTime(cachepath);
+					cachetime = sys_win_c.Sys_FileTime(cachepath);
 
 					if (cachetime < findtime)
 						COM_CopyFile(netpath, cachepath);
 					netpath = cachepath;
 				}
 
-				sys_win.Sys_Printf($"FindFile: {netpath}\n");
-				com_filesize = sys_win.Sys_FileOpenRead(netpath, out i);
+				sys_win_c.Sys_Printf($"FindFile: {netpath}\n");
+				com_filesize = sys_win_c.Sys_FileOpenRead(netpath, out i);
 				if (handle != 0)
 					handle = i;
 				else
 				{
-					sys_win.Sys_FileClose(i);
+					sys_win_c.Sys_FileClose(i);
 					file = new FileStream(netpath, FileMode.Open, FileAccess.Read);
 				}
 				return com_filesize;
 			}
 		}
 
-		sys_win.Sys_Printf($"FindFile: can't find {filename}\n");
+		sys_win_c.Sys_Printf($"FindFile: can't find {filename}\n");
 
 		if (handle != 0)
 			handle = -1;
@@ -1482,10 +1482,10 @@ public unsafe class common
 			}
 		}
 
-		sys_win.Sys_CloseFile(h);
+		sys_win_c.Sys_CloseFile(h);
 	}
 
-	public static zone.cache_user_t* loadcache;
+	public static zone_c.cache_user_t* loadcache;
 	public static byte* loadbuf;
 	public static int loadsize;
 
@@ -1517,7 +1517,7 @@ public unsafe class common
 		}
 		else if (usehunk == 0)
 		{
-			buf = (byte*)zone.Z_Malloc(len + 1);
+			buf = (byte*)zone_c.Z_Malloc(len + 1);
 		}
 		else if (usehunk == 3)
 		{
@@ -1536,18 +1536,18 @@ public unsafe class common
 		}
 		else
 		{
-			sys_win.Sys_Error("COM_LoadFile: bad usehunk");
+			sys_win_c.Sys_Error("COM_LoadFile: bad usehunk");
 		}
 
 		if (buf == null)
 		{
-			sys_win.Sys_Error("COM_LoadFile: not enough space for %s", path);
+			sys_win_c.Sys_Error("COM_LoadFile: not enough space for %s", path);
 		}
 
 		buf[len] = 0;
 
 		Draw_BeginDisc();
-		sys_win.Sys_FileRead(h, buf, len);
+		sys_win_c.Sys_FileRead(h, buf, len);
 		COM_CloseFile(h);
 		Draw_EndDisc();
 
@@ -1559,7 +1559,7 @@ public unsafe class common
 		return COM_LoadFile(path, 1);
 	}
 
-	public static void COM_LoadCacheFile(string path, zone.cache_user_t cu)
+	public static void COM_LoadCacheFile(string path, zone_c.cache_user_t cu)
 	{
 		loadcache = cu;
 		COM_LoadFile(path, 3);
@@ -1587,16 +1587,16 @@ public unsafe class common
 		dpackfile_t info;
 		ushort crc;
 
-		if (sys_win.Sys_FileOpenRead(packfile, &packhandle) == -1)
+		if (sys_win_c.Sys_FileOpenRead(packfile, &packhandle) == -1)
 		{
 			return null;
 		}
 
-		sys_win.Sys_FileRead(packhandle, (void*)&header, header.dirlen);
+		sys_win_c.Sys_FileRead(packhandle, (void*)&header, header.dirlen);
 		if (header.id[0] != 'P' || header.id[1] != 'A'
 			|| header.id[2] != 'C' || header.id[3] != 'K')
 		{
-			sys_win.Sys_Error("%s has %i files", packfile, numpackfiles);
+			sys_win_c.Sys_Error("%s has %i files", packfile, numpackfiles);
 		}
 
 		if (numpackfiles != PAK0_COUNT)
@@ -1604,10 +1604,10 @@ public unsafe class common
 			com_modified = true;
 		}
 
-		newfiles = zone.Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
+		newfiles = zone_c.Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
 
-		sys_win.Sys_FileSeek(packhandle, header.dirofs);
-		sys_win.Sys_FileRead(packhandle, (void*)info, header.dirlen);
+		sys_win_c.Sys_FileSeek(packhandle, header.dirofs);
+		sys_win_c.Sys_FileRead(packhandle, (void*)info, header.dirlen);
 
 		CRC_Init(&crc);
 
@@ -1628,13 +1628,13 @@ public unsafe class common
 			newfiles[i].filelen = LittleLong(info[i].filelen);
 		}
 
-		pack = zone.Hunk_Alloc(sizeof(pack_t));
+		pack = zone_c.Hunk_Alloc(sizeof(pack_t));
 		Q_strcpy(pack.filename, packfile);
 		pack.handle = packhandle;
 		pack.numfiles = numpackfiles;
 		pack.files = newfiles;
 
-		console.Con_Printf($"Added packfile {packfile} ({numpackfiles} files)\n");
+		console_c.Con_Printf($"Added packfile {packfile} ({numpackfiles} files)\n");
 		return pack;
 	}
 
@@ -1647,7 +1647,7 @@ public unsafe class common
 
 		Q_strcpy(com_gamedir, dir);
 
-		search = (searchpath_t*)zone.Hunk_Alloc(sizeof(searchpath_t));
+		search = (searchpath_t*)zone_c.Hunk_Alloc(sizeof(searchpath_t));
 		Q_strcpy(search->filename, dir);
 		search->next = com_searchpaths;
 		com_searchpaths = search;
@@ -1662,7 +1662,7 @@ public unsafe class common
 				break;
 			}
 
-			search = (searchpath_t*)zone.Hunk_Alloc(sizeof(searchpath_t));
+			search = (searchpath_t*)zone_c.Hunk_Alloc(sizeof(searchpath_t));
 			search->pack = pak;
 			search->next = com_searchpaths;
 			com_searchpaths = search;
@@ -1682,7 +1682,7 @@ public unsafe class common
 		}
 		else
 		{
-			Q_strcpy(basedir, quakedef.host_parms.basedir);
+			Q_strcpy(basedir, quakedef_c.host_parms.basedir);
 		}
 
 		j = Q_strlen(basedir);
@@ -1707,16 +1707,16 @@ public unsafe class common
 				Q_strcpy(com_cachedir.ToString(), com_argv[i + 1].ToString()); ;
 			}
 		}
-		else if (quakedef.host_parms.cachedir == null)
+		else if (quakedef_c.host_parms.cachedir == null)
 		{
-			Q_strcpy(com_cachedir, quakedef.host_parms.cachedir);
+			Q_strcpy(com_cachedir, quakedef_c.host_parms.cachedir);
 		}
 		else
 		{
 			com_cachedir = "";
 		}
 
-		COM_AddGameDirectory(va($"%s/{quakedef.GAMENAME}", basedir));
+		COM_AddGameDirectory(va($"%s/{quakedef_c.GAMENAME}", basedir));
 
 		if (COM_CheckParm("-rogue") != 0)
 		{
@@ -1746,14 +1746,14 @@ public unsafe class common
 					break;
 				}
 
-				search = (searchpath_t*)zone.Hunk_Alloc(sizeof(searchpath_t));
+				search = (searchpath_t*)zone_c.Hunk_Alloc(sizeof(searchpath_t));
 				if (!Q_strcmp(COM_FileExtension(com_argv[i].ToString()), "pak"))
 				{
 					search->pack = COM_LoadPackFile(com_argv[i].ToString());
 
 					if (!search->pack.Equals(default(searchpath_t)))
 					{
-						sys_win.Sys_Error("Couldn't load packfile: %s", com_argv[i]);
+						sys_win_c.Sys_Error("Couldn't load packfile: %s", com_argv[i]);
 					}
 				}
 				else

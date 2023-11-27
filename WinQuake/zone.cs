@@ -1,8 +1,6 @@
-﻿using static Quake.zone;
+﻿namespace Quake;
 
-namespace Quake;
-
-public unsafe class zone
+public unsafe class zone_c
 {
 	public const int DYNAMIC_SIZE = 0xc000;
 
@@ -45,25 +43,25 @@ public unsafe class zone
 		block->size = size - sizeof(memzone_t);
 	}
 
-	public unsafe void Z_Free(void* ptr)
+	public static void Z_Free(void* ptr)
 	{
 		memblock_t* block, other;
 
 		if (ptr == null)
 		{
-			sys_win.Sys_Error("Z_Free: null pointer");
+			sys_win_c.Sys_Error("Z_Free: null pointer");
 		}
 
 		block = (memblock_t*)((byte*)ptr - sizeof(memblock_t));
 
 		if (block->id != ZONEID)
 		{
-			sys_win.Sys_Error("Z_Free: freed a pointer without ZONEID");
+			sys_win_c.Sys_Error("Z_Free: freed a pointer without ZONEID");
 		}
 
 		if (block->tag == 0)
 		{
-			sys_win.Sys_Error("Z_Free: freed a freed pointer");
+			sys_win_c.Sys_Error("Z_Free: freed a freed pointer");
 		}
 
 		block->tag = 0;
@@ -108,10 +106,10 @@ public unsafe class zone
 
 		if (buf == null)
 		{
-			sys_win.Sys_Error($"Z_Malloc: failed on allocation of {size} bytes");
+			sys_win_c.Sys_Error($"Z_Malloc: failed on allocation of {size} bytes");
 		}
 
-		common.Q_memset((IntPtr)buf, 0, size);
+		common_c.Q_memset((IntPtr)buf, 0, size);
 
 		return buf;
 	}
@@ -123,7 +121,7 @@ public unsafe class zone
 
 		if (tag == 0)
 		{
-			sys_win.Sys_Error("Z_TagMalloc: tried to use a 0 tag");
+			sys_win_c.Sys_Error("Z_TagMalloc: tried to use a 0 tag");
 		}
 
 		size += sizeof(memblock_t);
@@ -180,7 +178,7 @@ public unsafe class zone
 	{
 		memblock_t* block = zone->blocklist;
 
-		console.Con_Printf($"zone size: {zone->size}  location: {zone->ToString()}");
+		console_c.Con_Printf($"zone size: {zone->size}  location: {zone->ToString()}");
 
 		while (true)
 		{
@@ -191,17 +189,17 @@ public unsafe class zone
 
 			if ((byte*)block + block->size != block->next)
 			{
-				console.Con_Printf("ERROR: block size does not touch the next block\n");
+				console_c.Con_Printf("ERROR: block size does not touch the next block\n");
 			}
 
 			if (block->next->prev != block)
 			{
-				console.Con_Printf("ERROR: next block doesn't have proper back link\n");
+				console_c.Con_Printf("ERROR: next block doesn't have proper back link\n");
 			}
 
 			if (block->tag == 0 && block->next->tag == 0)
 			{
-				console.Con_Printf("ERROR: two consecutive free blocks\n");
+				console_c.Con_Printf("ERROR: two consecutive free blocks\n");
 			}
 		}
 	}
@@ -219,17 +217,17 @@ public unsafe class zone
 
 			if ((byte*)block + block->size != (byte*)block->next)
 			{
-				sys_win.Sys_Error("Z_CheckHeap: block size does not touch the next block\n");
+				sys_win_c.Sys_Error("Z_CheckHeap: block size does not touch the next block\n");
 			}
 
 			if (block->next->prev != block)
 			{
-				sys_win.Sys_Error("Z_CheckHeap: next block doesn't have proper back link\n");
+				sys_win_c.Sys_Error("Z_CheckHeap: next block doesn't have proper back link\n");
 			}
 
 			if (block->tag == 0 && block->next->tag == 0)
 			{
-				sys_win.Sys_Error("Z_CheckHeap: two consecutive free blocks\n");
+				sys_win_c.Sys_Error("Z_CheckHeap: two consecutive free blocks\n");
 			}
 		}
 	}
@@ -260,12 +258,12 @@ public unsafe class zone
 		{
 			if (h->sentinal != HUNK_SENTINAL)
 			{
-				sys_win.Sys_Error("Hunk_Check: trashed sentinal");
+				sys_win_c.Sys_Error("Hunk_Check: trashed sentinal");
 			}
 
 			if (h->size < 16 || h->size + (byte*)h - hunk_base > hunk_size)
 			{
-				sys_win.Sys_Error("Hunk_Check: bad size");
+				sys_win_c.Sys_Error("Hunk_Check: bad size");
 			}
 
 			h = (hunk_t*)((byte*)h + h->size);
@@ -289,16 +287,16 @@ public unsafe class zone
 		starthigh = (hunk_t*)(hunk_base + hunk_size - hunk_high_used);
 		endhigh = (hunk_t*)(hunk_base + hunk_size);
 
-		console.Con_Printf($"	{hunk_size} total hunk size\n");
-		console.Con_Printf("-------------------------\n");
+		console_c.Con_Printf($"	{hunk_size} total hunk size\n");
+		console_c.Con_Printf("-------------------------\n");
 
 		while (true)
 		{
 			if (h == endlow)
 			{
-				console.Con_Printf("-------------------------\n");
-				console.Con_Printf($"	{hunk_size - hunk_low_used - hunk_high_used} REMAINING\n");
-				console.Con_Printf("-------------------------\n");
+				console_c.Con_Printf("-------------------------\n");
+				console_c.Con_Printf($"	{hunk_size - hunk_low_used - hunk_high_used} REMAINING\n");
+				console_c.Con_Printf("-------------------------\n");
 				h = starthigh;
 			}
 
@@ -309,12 +307,12 @@ public unsafe class zone
 
 			if (h->sentinal != HUNK_SENTINAL)
 			{
-				sys_win.Sys_Error("Hunk_Check: trashed sentinal");
+				sys_win_c.Sys_Error("Hunk_Check: trashed sentinal");
 			}
 
 			if (h->size < 16 || h->size + (byte*)h - hunk_base > hunk_size)
 			{
-				sys_win.Sys_Error("Hunk_Check: bad size");
+				sys_win_c.Sys_Error("Hunk_Check: bad size");
 			}
 
 			next = (hunk_t*)((byte*)h + h->size);
@@ -322,18 +320,18 @@ public unsafe class zone
 			totalblocks++;
 			sum += h->size;
 
-			common.Q_memcpy(name, h->name, 8);
+			common_c.Q_memcpy(name, h->name, 8);
 
 			if (all)
 			{
-				console.Con_Printf($"{(int)h} :{h->size} {name}");
+				console_c.Con_Printf($"{(int)h} :{h->size} {name}");
 			}
 
-			if (next == endlow || next == endhigh || common.Q_strcmp(h->name, next->name))
+			if (next == endlow || next == endhigh || common_c.Q_strcmp(h->name, next->name))
 			{
 				if (!all)
 				{
-					console.Con_Printf($"	:{(int)sum} {name} (TOTAL)\n");
+					console_c.Con_Printf($"	:{(int)sum} {name} (TOTAL)\n");
 				}
 
 				count = 0;
@@ -343,8 +341,8 @@ public unsafe class zone
 			h = next;
 		}
 
-		console.Con_Printf("-------------------------\n");
-		console.Con_Printf($"{totalblocks} total blocks\n");
+		console_c.Con_Printf("-------------------------\n");
+		console_c.Con_Printf($"{totalblocks} total blocks\n");
 	}
 
 	public static void* Hunk_AllocName(int size, string name)
@@ -356,25 +354,25 @@ public unsafe class zone
 #endif
 		if (size < 0)
 		{
-			sys_win.Sys_Error($"Hunk_Alloc: bad size {size}");
+			sys_win_c.Sys_Error($"Hunk_Alloc: bad size {size}");
 		}
 
 		size = sizeof(hunk_t) + ((size + 15) & ~15);
 
 		if (hunk_size - hunk_low_used - hunk_high_used < size)
 		{
-			sys_win.Sys_Error($"Hunk_Alloc: failed on {size} bytes");
+			sys_win_c.Sys_Error($"Hunk_Alloc: failed on {size} bytes");
 		}
 
 		hunk_low_used += size;
 
 		Cache_FreeLow(hunk_low_used);
 
-		common.Q_memset((int)h, 0, size);
+		common_c.Q_memset((int)h, 0, size);
 
 		h->size = size;
 		h->sentinal = HUNK_SENTINAL;
-		common.Q_strncpy(h->name.ToCharArray(), name.ToCharArray(), 8);
+		common_c.Q_strncpy(h->name.ToCharArray(), name.ToCharArray(), 8);
 
 		return h + 1;
 	}
@@ -393,14 +391,14 @@ public unsafe class zone
 	{
 		if (mark < 0 || mark > hunk_low_used)
 		{
-			sys_win.Sys_Error($"Hunk_FreeToLowMark: bad mark {mark}");
+			sys_win_c.Sys_Error($"Hunk_FreeToLowMark: bad mark {mark}");
 		}
 
-		common.Q_memset((IntPtr)(hunk_base + mark), 0, hunk_low_used - mark);
+		common_c.Q_memset((IntPtr)(hunk_base + mark), 0, hunk_low_used - mark);
 		hunk_low_used = mark;
 	}
 
-	public int Hunk_HighMark()
+	public static int Hunk_HighMark()
 	{
 		if (hunk_tempactive)
 		{
@@ -411,7 +409,7 @@ public unsafe class zone
 		return hunk_high_used;
 	}
 
-	public void Hunk_FreeToHighMark(int mark)
+	public static void Hunk_FreeToHighMark(int mark)
 	{
 		if (hunk_tempactive)
 		{
@@ -421,20 +419,20 @@ public unsafe class zone
 
 		if (mark < 0 || mark > hunk_high_used)
 		{
-			sys_win.Sys_Error($"Hunk_FreeToHighMark: bad mark {mark}");
+			sys_win_c.Sys_Error($"Hunk_FreeToHighMark: bad mark {mark}");
 		}
 
-		common.Q_memset((IntPtr)(hunk_base + hunk_size - hunk_high_used), 0, hunk_high_used - mark);
+		common_c.Q_memset((IntPtr)(hunk_base + hunk_size - hunk_high_used), 0, hunk_high_used - mark);
 		hunk_high_used = mark;
 	}
 
-	public void* Hunk_HighAllocName(int size, string name)
+	public static void* Hunk_HighAllocName(int size, string name)
 	{
 		hunk_t* h;
 
 		if (size < 0)
 		{
-			sys_win.Sys_Error($"Hunk_HighAllocName: bad size: {size}");
+			sys_win_c.Sys_Error($"Hunk_HighAllocName: bad size: {size}");
 		}
 
 		if (hunk_tempactive)
@@ -451,7 +449,7 @@ public unsafe class zone
 
 		if (hunk_size - hunk_low_used - hunk_high_used < size)
 		{
-			console.Con_Printf($"Hunk_HighAlloc: failed on {size} bytes\n");
+			console_c.Con_Printf($"Hunk_HighAlloc: failed on {size} bytes\n");
 			return null;
 		}
 
@@ -460,10 +458,10 @@ public unsafe class zone
 
 		h = (hunk_t*)(hunk_base + hunk_size - hunk_high_used);
 
-		common.Q_memset((int)h, 0, size);
+		common_c.Q_memset((int)h, 0, size);
 		h->size = size;
 		h->sentinal = HUNK_SENTINAL;
-		common.Q_strncpy(h->name.ToCharArray(), name.ToCharArray(), 8);
+		common_c.Q_strncpy(h->name.ToCharArray(), name.ToCharArray(), 8);
 
 		return h + 1;
 	}
@@ -473,7 +471,7 @@ public unsafe class zone
 	//	return Hunk_AllocName(size, "unknown");
 	//}
 
-	public void* Hunk_TempAlloc(int size)
+	public static void* Hunk_TempAlloc(int size)
 	{
 		void* buf;
 
@@ -518,9 +516,9 @@ public unsafe class zone
 
 		if (newc != null)
 		{
-			common.Q_memcpy((int)newc + 1, (int)c + 1, c->size - sizeof(cache_system_t));
+			common_c.Q_memcpy((int)newc + 1, (int)c + 1, c->size - sizeof(cache_system_t));
 			newc->user = c->user;
-			common.Q_memcpy(newc->name, c->name, 16);
+			common_c.Q_memcpy(newc->name, c->name, 16);
 			Cache_Free(c->user);
 			newc->user->data = (void*)(newc + 1);
 		}
@@ -551,7 +549,7 @@ public unsafe class zone
 		}
 	}
 
-	public void Cache_FreeHigh(int new_high_hunk)
+	public static void Cache_FreeHigh(int new_high_hunk)
 	{
 		cache_system_t* c, prev;
 
@@ -587,7 +585,7 @@ public unsafe class zone
 	{
 		if (cs->lru_next == null || cs->lru_prev == null)
 		{
-			sys_win.Sys_Error("Cache_UnlinkLRU: null link");
+			sys_win_c.Sys_Error("Cache_UnlinkLRU: null link");
 		}
 
 		cs->lru_next->lru_prev = cs;
@@ -600,7 +598,7 @@ public unsafe class zone
 	{
 		if (cs->lru_next != null || cs->lru_prev != null)
 		{
-			sys_win.Sys_Error("Cache_MakeLRU: active link");
+			sys_win_c.Sys_Error("Cache_MakeLRU: active link");
 		}
 
 		cache_head->lru_next->lru_prev = cs;
@@ -617,11 +615,11 @@ public unsafe class zone
 		{
 			if (hunk_size - hunk_high_used - hunk_low_used < size)
 			{
-				sys_win.Sys_Error($"Cache_TryAlloc: {size} is greater than free hunk");
+				sys_win_c.Sys_Error($"Cache_TryAlloc: {size} is greater than free hunk");
 			}
 
 			_new = (cache_system_t*)(hunk_base + hunk_low_used);
-			common.Q_memset((int)_new, 0, sizeof(cache_system_t*));
+			common_c.Q_memset((int)_new, 0, sizeof(cache_system_t*));
 			_new->size = size;
 
 			cache_head->prev = cache_head->next = _new;
@@ -640,7 +638,7 @@ public unsafe class zone
 			{
 				if ((byte*)cs - (byte*)_new >= size)
 				{
-					common.Q_memset((int)_new, 0, sizeof(cache_system_t*));
+					common_c.Q_memset((int)_new, 0, sizeof(cache_system_t*));
 					_new->size = size;
 
 					_new->next = cs;
@@ -660,7 +658,7 @@ public unsafe class zone
 
 		if (hunk_base + hunk_size - hunk_high_used - (byte*)_new >= size)
 		{
-			common.Q_memset((int)_new, 0, sizeof(cache_system_t*));
+			common_c.Q_memset((int)_new, 0, sizeof(cache_system_t*));
 			_new->size = size;
 
 			_new->next = cache_head;
@@ -690,13 +688,13 @@ public unsafe class zone
 
 		for (cd = cache_head->next; cd != cache_head; cd = cd->next)
 		{
-			console.Con_Printf($"{cd->size} : {cd->name}\n");
+			console_c.Con_Printf($"{cd->size} : {cd->name}\n");
 		}
 	}
 
 	public void Cache_Report()
 	{
-		console.Con_Printf($"{(hunk_size - hunk_high_used - hunk_low_used) / (float)(1024 * 1024)} megabyte data cache\n");
+		console_c.Con_Printf($"{(hunk_size - hunk_high_used - hunk_low_used) / (float)(1024 * 1024)} megabyte data cache\n");
 	}
 
 	public void Cache_Compact()
@@ -717,7 +715,7 @@ public unsafe class zone
 
 		if (c->data == null)
 		{
-			sys_win.Sys_Error("Cache_Free: not allocated");
+			sys_win_c.Sys_Error("Cache_Free: not allocated");
 		}
 
 		cs = ((cache_system_t*)c->data) - 1;
@@ -754,12 +752,12 @@ public unsafe class zone
 
 		if (c->data != null)
 		{
-			sys_win.Sys_Error("Cache_Alloc: already allocated");
+			sys_win_c.Sys_Error("Cache_Alloc: already allocated");
 		}
 
 		if (size <= 0)
 		{
-			sys_win.Sys_Error($"Cache_Alloc: size {size}");
+			sys_win_c.Sys_Error($"Cache_Alloc: size {size}");
 		}
 
 		size = (size + sizeof(cache_system_t) + 15) & ~15;
@@ -770,7 +768,7 @@ public unsafe class zone
 
 			if (cs != null)
 			{
-				common.Q_strncpy(cs->name.ToCharArray(), name.ToCharArray(), 15);
+				common_c.Q_strncpy(cs->name.ToCharArray(), name.ToCharArray(), 15);
 				c->data = (void*)(cs + 1);
 				cs->user = c;
 				break;
@@ -778,7 +776,7 @@ public unsafe class zone
 
 			if (cache_head->lru_prev == cache_head)
 			{
-				sys_win.Sys_Error("Cache_Alloc: out of memory");
+				sys_win_c.Sys_Error("Cache_Alloc: out of memory");
 			}
 
 			Cache_Free(cache_head->lru_prev->user);
@@ -798,16 +796,16 @@ public unsafe class zone
 		hunk_high_used = 0;
 
 		Cache_Init();
-		p = common.COM_CheckParm("-zone");
+		p = common_c.COM_CheckParm("-zone");
 		if (p != 0)
 		{
-			if (p < common.com_argc - 1)
+			if (p < common_c.com_argc - 1)
 			{
-				zonesize = common.Q_atoi(common.com_argv[p + 1].ToString()) * 1024;
+				zonesize = common_c.Q_atoi(common_c.com_argv[p + 1].ToString()) * 1024;
 			}
 			else
 			{
-				sys_win.Sys_Error("Memory_Init: you must specify a size in KB after -zone");
+				sys_win_c.Sys_Error("Memory_Init: you must specify a size in KB after -zone");
 			}
 		}
 

@@ -1,6 +1,6 @@
 ﻿namespace Quake;
 
-public unsafe class wad
+public unsafe class wad_c
 {
 	public const int CMP_NONE = 0;
 	public const int CMP_LZSS = 1;
@@ -78,11 +78,11 @@ public unsafe class wad
 		uint i;
 		int infotableofs;
 
-		wad_base = common.COM_LoadHunkFile(filename);
+		wad_base = common_c.COM_LoadHunkFile(filename);
 
 		if (wad_base == null)
 		{
-			sys_win.Sys_Error($"W_LoadWadFile: couldn't load {filename}");
+			sys_win_c.Sys_Error($"W_LoadWadFile: couldn't load {filename}");
 		}
 
 		header = (wadinfo_t*)wad_base;
@@ -92,17 +92,17 @@ public unsafe class wad
 		 || header->identification[2] != 'D'
 		 || header->identification[3] != 2)
 		{
-			sys_win.Sys_Error($"Wad file {filename} doesn't have WAD2 id\n");
+			sys_win_c.Sys_Error($"Wad file {filename} doesn't have WAD2 id\n");
 		}
 
-		wad_numlumps = common.LittleLong(header->numlumps);
-		infotableofs = common.LittleLong(header->infotableofs);
+		wad_numlumps = common_c.LittleLong(header->numlumps);
+		infotableofs = common_c.LittleLong(header->infotableofs);
 		wad_lumps = (lumpinfo_t*)(wad_base + infotableofs);
 
 		for (i = 0, lump_p = wad_lumps; i < wad_numlumps; i++, lump_p++)
 		{
-			lump_p->filepos = common.LittleLong(lump_p->filepos);
-			lump_p->size = common.LittleLong(lump_p->size);
+			lump_p->filepos = common_c.LittleLong(lump_p->filepos);
+			lump_p->size = common_c.LittleLong(lump_p->size);
 			W_CleanupName(lump_p->name, lump_p->name);
 
 			if (lump_p->type == TYP_QPIC.ToString())
@@ -122,13 +122,13 @@ public unsafe class wad
 
 		for (lump_p = wad_lumps, i = 0; i < wad_numlumps; i++, lump_p++)
 		{
-			if (!common.Q_strcmp(clean, lump_p->name))
+			if (!common_c.Q_strcmp(clean, lump_p->name))
 			{
 				return lump_p;
 			}
 		}
 
-		sys_win.Sys_Error($"W_GetLumpinfo: {name} not found");
+		sys_win_c.Sys_Error($"W_GetLumpinfo: {name} not found");
 		return null;
 	}
 
@@ -147,7 +147,7 @@ public unsafe class wad
 
 		if (num < 0 || num > wad_numlumps)
 		{
-			sys_win.Sys_Error($"W_GetLumpNum: bad number: {num}");
+			sys_win_c.Sys_Error($"W_GetLumpNum: bad number: {num}");
 		}
 
 		lump = wad_lumps + num;
@@ -157,7 +157,7 @@ public unsafe class wad
 
 	void SwapPic(qpic_t* pic)
 	{
-		pic->width = common.LittleLong(pic->width);
-		pic->height = common.LittleLong(pic->height);
+		pic->width = common_c.LittleLong(pic->width);
+		pic->height = common_c.LittleLong(pic->height);
 	}
 }

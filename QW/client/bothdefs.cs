@@ -1,6 +1,6 @@
 ﻿namespace Quake;
 
-public class bothdefs
+public class bothdefs_c
 {
     public const double GLQUAKE_VERSION = 1.00;
     public const double VERSION = 2.40;

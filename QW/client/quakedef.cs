@@ -4,6 +4,7 @@ global using System.Linq;
 global using System.Collections.Generic;
 global using System.Runtime.InteropServices;
 global using System.Text;
+global using System.Net.Sockets;
 global using System.Numerics;
 global using System.Collections.Immutable;
 global using System.Diagnostics;
@@ -11,7 +12,7 @@ global using System.Security.Permissions;
 
 namespace Quake;
 
-public class quakedef
+public class quakedef_c
 {
 	public const double VERSION = 1.00;
 	public const double GLQUAKE_VERSION = 1.00;
@@ -201,7 +202,7 @@ public class quakedef
 	public int host_basepal;
 	public int host_colormap;
 	public int host_framecount;
-	public double realtime;
+	public static double realtime;
 
 
 }

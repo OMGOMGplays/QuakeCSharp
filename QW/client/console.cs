@@ -1,6 +1,6 @@
 ﻿namespace Quake;
 
-public class console
+public class console_c
 {
 	public struct console_t
 	{
@@ -26,7 +26,7 @@ public class console
 	public float[] contimes = new float[NUM_CON_TIMES];
 
 	public int con_vislines;
-	public int con_notifylines;
+	public static int con_notifylines;
 
 	public static bool con_debuglog;
 
@@ -37,7 +37,7 @@ public class console
 
 	public static bool con_initialized;
 
-	private static quakedef quakedef;
+	private static quakedef_c quakedef;
 
 	public void Key_ClearTyping()
 	{
@@ -54,16 +54,16 @@ public class console
 	{
 		Key_ClearTyping();
 
-		if (key_dest == key_console)
+		if (keys_c.key_dest == keys_c.keydest_t.key_console)
 		{
 			if (cls.state == ca_active)
 			{
-				key_dest = key_game;
+				keys_c.key_dest = keys_c.keydest_t.key_game;
 			}
 		}
 		else
 		{
-			key_dest = key_console;
+			keys_c.key_dest = keys_c.keydest_t.key_console;
 		}
 
 		Con_ClearNotify();
@@ -73,16 +73,16 @@ public class console
 	{
 		Key_ClearTyping();
 
-		if (key_dest == key_console)
+		if (keys_c.key_dest == keys_c.keydest_t.key_console)
 		{
 			if (cls.state == ca_active)
 			{
-				key_dest = key_game;
+				keys_c.key_dest = keys_c.keydest_t.key_game;
 			}
 		}
 		else
 		{
-			key_dest = key_console;
+			keys_c.key_dest = keys_c.keydest_t.key_console;
 		}
 
 		Con_ClearNotify();
@@ -90,11 +90,11 @@ public class console
 
 	public void Con_Clear_f()
 	{
-		common.Q_memset(con_main.text, " ", CON_TEXTSIZE);
-		common.Q_memset(con_chat.text, " ", CON_TEXTSIZE);
+		common_c.Q_memset(con_main.text, " ", CON_TEXTSIZE);
+		common_c.Q_memset(con_chat.text, " ", CON_TEXTSIZE);
 	}
 
-	public void Con_ClearNotify()
+	public static void Con_ClearNotify()
 	{
 		int i;
 
@@ -107,21 +107,21 @@ public class console
 	public void Con_MessageMode_f()
 	{
 		chat_team = false;
-		key_dest = key_message;
+		keys_c.key_dest = keys_c.keydest_t.key_message;
 	}
 
 	public void Con_MessageMode2_f()
 	{
 		chat_team = true;
-		key_dest = key_message;
+		keys_c.key_dest = keys_c.keydest_t.key_message;
 	}
 
-	public void Con_Resize(console_t con)
+	public static void Con_Resize(console_t con)
 	{
 		int i, j, width, oldwidth, oldtotallines, numlines, numchars;
 		string[] tbuf = new string[CON_TEXTSIZE];
 
-		width = (vid.width >> 3) - 2;
+		width = (screen_c.vid.width >> 3) - 2;
 
 		if (width == con_linewidth)
 		{
@@ -133,7 +133,7 @@ public class console
 			width = 38;
 			con_linewidth = width;
 			con_totallines = CON_TEXTSIZE / con_linewidth;
-			common.Q_memset(con.text, " ", CON_TEXTSIZE);
+			common_c.Q_memset(con.text, " ", CON_TEXTSIZE);
 		}
 		else
 		{
@@ -155,8 +155,8 @@ public class console
 				numchars = con_totallines;
 			}
 
-			common.Q_memcpy(tbuf, con.text, CON_TEXTSIZE);
-			common.Q_memset(con.text, " ", CON_TEXTSIZE);
+			common_c.Q_memcpy(tbuf, con.text, CON_TEXTSIZE);
+			common_c.Q_memset(con.text, " ", CON_TEXTSIZE);
 
 			for (i = 0; i < numlines; i++)
 			{
@@ -173,7 +173,7 @@ public class console
 		con.display = con.current;
 	}
 
-	public void Con_CheckResize()
+	public static void Con_CheckResize()
 	{
 		Con_Resize(con_main);
 		Con_Resize(con_chat);
@@ -181,7 +181,7 @@ public class console
 
 	public void Con_Init()
 	{
-		con_debuglog = common.COM_CheckParm("-condebug") == 1 ? true : false;
+		con_debuglog = common_c.COM_CheckParm("-condebug") == 1 ? true : false;
 
 		con = con_main;
 		con_linewidth = -1;
@@ -209,7 +209,7 @@ public class console
 		}
 
 		con.current++;
-		common.Q_memset(con.text[(con.current % con_totallines) * con_linewidth], 0, con_linewidth);
+		common_c.Q_memset(con.text[(con.current % con_totallines) * con_linewidth], 0, con_linewidth);
 	}
 
 	public static void Con_Print(string txt)
@@ -228,7 +228,7 @@ public class console
 			mask = 0;
 		}
 
-		while (c == common.Q_strlen(txt))
+		while (c == common_c.Q_strlen(txt))
 		{
 			for (l = 0; l < con_linewidth; l++)
 			{
@@ -255,7 +255,7 @@ public class console
 
 				if (con.current >= 0)
 				{
-					con_times[con.current % NUM_CON_TIMES] = quakedef.realtime;
+					con_times[con.current % NUM_CON_TIMES] = quakedef_c.realtime;
 				}
 			}
 
@@ -272,7 +272,7 @@ public class console
 
 				default:
 					y = con.current % con_totallines;
-					con.text[y * con_linewidth + con.x] = c | mask | con_ormask;
+					con.text.ToArray()[y * con_linewidth + con.x] = (char)(c | mask | con_ormask);
 					con.x++;
 					if (con.x >= con_linewidth)
 					{
@@ -295,11 +295,11 @@ public class console
 		vsprintf(msg, fmt, argptr);
 		va_end(argptr);
 
-		Sys_Printf("%s", msg);
+		sys_win_c.Sys_Printf(msg);
 
 		if (con_debuglog)
 		{
-			sys_win.Sys_DebugLog(common.va("%s/qconsole.log", common.com_gamedir), "%s", msg);
+			sys_win_c.Sys_DebugLog(common_c.va("%s/qconsole.log", common_c.com_gamedir), "%s", msg);
 		}
 
 		if (!con_initialized)
@@ -314,7 +314,7 @@ public class console
 			if (!inupdate)
 			{
 				inupdate = true;
-				SCR_UpdateScreen();
+				screen_c.SCR_UpdateScreen();
 				inupdate = false;
 			}
 		}
@@ -343,14 +343,14 @@ public class console
 		int i;
 		char[] text;
 
-		if (key_dest != key_console && cls.state == ca_active)
+		if (keys_c.key_dest != keys_c.keydest_t.key_console && cls.state == ca_active)
 		{
 			return;
 		}
 
 		text = key_lines[edit_line, 0].ToCharArray();
 
-		text[key_linepos] = (char)(10 + ((int)(quakedef.realtime * con_cursorspeed) & 1));
+		text[key_linepos] = (char)(10 + ((int)(quakedef_c.realtime * con_cursorspeed) & 1));
 
 		for (i = key_linepos + 1; i < con_linewidth; i++)
 		{
@@ -372,7 +372,7 @@ public class console
 		key_lines[edit_line, key_linepos] = null;
 	}
 
-	public void Con_DrawNotify()
+	public static void Con_DrawNotify()
 	{
 		int x, v;
 		string text;
@@ -396,7 +396,7 @@ public class console
 				continue;
 			}
 
-			time = (float)quakedef.realtime - time;
+			time = (float)quakedef_c.realtime - time;
 
 			if (time > con_notifytime.value)
 			{
@@ -405,8 +405,8 @@ public class console
 
 			text = con.text + (i % con_totallines) * con_linewidth;
 
-			clearnotify = 0;
-			scr_copytop = 1;
+			screen_c.clearnotify = 0;
+			screen_c.scr_copytop = 1;
 
 			for (x = 0; x < con_linewidth; x++)
 			{
@@ -416,10 +416,10 @@ public class console
 			v += 8;
 		}
 
-		if (key_dest == key_message)
+		if (keys_c.key_dest == keys_c.keydest_t.key_message)
 		{
-			clearnotify = 0;
-			scr_copytop = 1;
+			screen_c.clearnotify = 0;
+			screen_c.scr_copytop = 1;
 
 			if (chat_team)
 			{
@@ -434,9 +434,9 @@ public class console
 
 			s = chat_buffer;
 
-			if (chat_bufferlen > (vid.width >> 3) - (skip + 1))
+			if (chat_bufferlen > (screen_c.vid.width >> 3) - (skip + 1))
 			{
-				s += chat_bufferlen - ((vid.width >> 3) - (skip + 1));
+				s += chat_bufferlen - ((screen_c.vid.width >> 3) - (skip + 1));
 			}
 
 			x = 0;
@@ -447,7 +447,7 @@ public class console
 				x++;
 			}
 
-			Draw_Character((x + skip) << 3, v, 10 + (int)(quakedef.realtime * con_cursorspeed) & 1);
+			Draw_Character((x + skip) << 3, v, 10 + (int)(quakedef_c.realtime * con_cursorspeed) & 1);
 			v += 8;
 		}
 
@@ -457,7 +457,7 @@ public class console
 		}
 	}
 
-	public void Con_DrawConsole(int lines)
+	public static void Con_DrawConsole(int lines)
 	{
 		int i, j, x, y, n;
 		int rows;
@@ -513,7 +513,7 @@ public class console
 
 		if (cls.download)
 		{
-			if ((text = common.Q_strrchr(cls.downloadname, '/')) != null)
+			if ((text = common_c.Q_strrchr(cls.downloadname, '/')) != null)
 			{
 				//text++; // In C#, how am I supposed to do this??
 			}
@@ -523,23 +523,23 @@ public class console
 			}
 
 			x = con_linewidth - ((con_linewidth * 7) / 40);
-			y = x - common.Q_strlen(text) - 8;
+			y = x - common_c.Q_strlen(text) - 8;
 			i = con_linewidth / 3;
 
-			if (common.Q_strlen(text) > i)
+			if (common_c.Q_strlen(text) > i)
 			{
 				y = x - i - 11;
-				common.Q_strncpy(dlbar.ToCharArray(), text.ToCharArray(), i);
+				common_c.Q_strncpy(dlbar.ToCharArray(), text.ToCharArray(), i);
 				dlbar.ToCharArray()[i] = '\0';
-				common.Q_strcat(dlbar, "...");
+				common_c.Q_strcat(dlbar, "...");
 			}
 			else
 			{
-				common.Q_strcpy(dlbar, text);
+				common_c.Q_strcpy(dlbar, text);
 			}
 
-			common.Q_strcat(dlbar, ": ");
-			i = common.Q_strlen(dlbar);
+			common_c.Q_strcat(dlbar, ": ");
+			i = common_c.Q_strlen(dlbar);
 			dlbar.ToCharArray()[i++] = '\x80';
 
 			if (cls.downloadpercent == 0)
@@ -565,11 +565,11 @@ public class console
 				dlbar.ToCharArray()[i++] = '\x82';
 				dlbar.ToCharArray()[i] = '\0';
 
-				sprintf(dlbar + common.Q_strlen(dlbar), $"{cls.downloadpercent}%");
+				Console.WriteLine(dlbar + common_c.Q_strlen(dlbar), $"{cls.downloadpercent}%");
 
 				y = con_vislines - 22 + 8;
 
-				for (i = 0; i < common.Q_strlen(dlbar); i++)
+				for (i = 0; i < common_c.Q_strlen(dlbar); i++)
 				{
 					Draw_Character((i + 1) << 3, y, dlbar.ToCharArray()[i]);
 				}
@@ -590,21 +590,21 @@ public class console
 		Con_Printf("Press a key.\n");
 		Con_Printf("\\35\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\36\\37\\n");
 
-		key_count = -2;
-		key_dest = key_console;
+		keys_c.key_count = -2;
+		keys_c.key_dest = keys_c.keydest_t.key_console;
 
 		do
 		{
-			t1 = sys_win.Sys_DoubleTime();
-			SCR_UpdateScreen();
-			sys_win.Sys_SendKeyEvents();
-			t2 = sys_win.Sys_DoubleTime();
-			quakedef.realtime += t2 - t1;
+			t1 = sys_win_c.Sys_DoubleTime();
+			screen_c.SCR_UpdateScreen();
+			sys_win_c.Sys_SendKeyEvents();
+			t2 = sys_win_c.Sys_DoubleTime();
+			quakedef_c.realtime += t2 - t1;
 		} while (key_count < 0);
 
 		Con_Printf("\n");
-		key_dest = key_game;
-		quakedef.realtime = 0;
+		keys_c.key_dest = keys_c.keydest_t.key_game;
+		quakedef_c.realtime = 0;
 	}
 
 	public void Con_SafePrintf(string fmt)
@@ -617,9 +617,9 @@ public class console
 		vsprintf(msg, fmt, argptr);
 		va_end(argptr);
 
-		temp = screen.scr_disabled_for_loading == true ? 1 : 0;
-		scr_disabled_for_loading = true;
+		temp = screen_c.scr_disabled_for_loading == true ? 1 : 0;
+		screen_c.scr_disabled_for_loading = true;
 		Con_Printf($"{msg}");
-		scr_disabled_for_loading = temp == 1 ? true : false;
+		screen_c.scr_disabled_for_loading = temp == 1 ? true : false;
 	}
 }
