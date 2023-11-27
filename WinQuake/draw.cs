@@ -73,7 +73,7 @@ public unsafe class draw_c
             sys_win_c.Sys_Error($"Draw_CachePic: failed to load {path}");
         }
 
-        SwapPic(dat);
+        wad_c.SwapPic(dat);
 
         return dat;
     }
@@ -134,7 +134,7 @@ public unsafe class draw_c
             drawline = 8;
         }
 
-        if (r_pixbytes == 1)
+        if (r_main_c.r_pixbytes == 1)
         {
             dest = vid.conbuffer + y * vid.conrowbytes + x;
 
@@ -300,7 +300,7 @@ public unsafe class draw_c
 
         source = pic->data;
 
-        if (r_pixbytes == 1)
+        if (r_main_c.r_pixbytes == 1)
         {
             dest = vid.buffer + y * vid.rowbytes + x;
 
@@ -341,7 +341,7 @@ public unsafe class draw_c
 
         source = pic->data;
 
-        if (r_pixbytes == 1)
+        if (r_main_c.r_pixbytes == 1)
         {
             dest = vid.buffer + y * vid.rowbytes + x;
 
@@ -492,7 +492,7 @@ public unsafe class draw_c
             Draw_CharToConBack(ver[x], dest + (x << 3));
         }
 
-        if (r_pixbytes == 1)
+        if (r_main_c.r_pixbytes == 1)
         {
             dest = vid.conbuffer;
 
@@ -697,7 +697,7 @@ public unsafe class draw_c
 
                 psrc = r_rectdesc.ptexbytes + (tileoffsety * r_rectdesc.rowbytes) + tileoffsetx;
 
-                if (r_pixbytes == 1)
+                if (r_main_c.r_pixbytes == 1)
                 {
                     R_DrawRect8(&vr, r_rectdesc.rowbytes, psrc, 0);
                 }
@@ -724,7 +724,7 @@ public unsafe class draw_c
         uint uc;
         int u, v;
 
-        if (r_pixbytes == 1)
+        if (r_main_c.r_pixbytes == 1)
         {
             dest = vid.buffer + y * vid.rowbytes + x;
 
