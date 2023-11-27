@@ -231,7 +231,7 @@ public unsafe class common_c
 		return false; // Unreachable, still kept, cause why not!!
 	}
 
-	public unsafe int Q_strncmp(string s1, string s2, int count)
+	public static int Q_strncmp(char* s1, char* s2, int count)
 	{
 		while (true)
 		{
@@ -250,8 +250,8 @@ public unsafe class common_c
 				return 0; // Strings are equal
 			}
 
-			//s1++;
-			//s2++;
+			s1++;
+			s2++;
 		}
 
 		return -1; // Also unreachable
@@ -376,7 +376,7 @@ public unsafe class common_c
 		return 0;
 	}
 
-	public unsafe float Q_atof(char* str)
+	public static float Q_atof(char* str)
 	{
 		double val;
 		int sign;
@@ -1066,11 +1066,11 @@ public unsafe class common_c
 
 	public static void COM_CheckRegistered()
 	{
-		int h;
+		int h = 0;
 		ushort[] check = new ushort[128];
 		int i;
 
-		COM_OpenFile("gfx/pop.lmp", &h);
+		COM_OpenFile("gfx/pop.lmp", h);
 		static_registered = 0;
 
 		if (h == 1)
@@ -1097,8 +1097,8 @@ public unsafe class common_c
 			}
 		}
 
-		Cvar_Set("cmdline", com_cmdline);
-		Cvar_Set("registered", "1");
+		cvar_c.Cvar_Set("cmdline", com_cmdline);
+		cvar_c.Cvar_Set("registered", "1");
 		static_registered = 1;
 		console_c.Con_Printf("Playing registered version.\n");
 	}
@@ -1197,8 +1197,8 @@ public unsafe class common_c
 			LittleFloat = FloatSwap;
 		}
 
-		Cvar_RegisterVariable(&registered);
-		Cvar_RegisterVariable(&cmdline);
+		cvar_c.Cvar_RegisterVariable(&registered);
+		cvar_c.Cvar_RegisterVariable(&cmdline);
 		Cmd_AddCommand("path", COM_Path_f);
 
 		COM_InitFileSystem();
@@ -1240,12 +1240,12 @@ public unsafe class common_c
 		public int filepos, filelen;
 	}
 
-	public unsafe struct pack_t
+	public struct pack_t
 	{
 		public string filename;
 		public int handle;
 		public int numfiles;
-		public packfile_t[] files;
+		public packfile_t* files;
 	}
 
 	public struct dpackheader_t
@@ -1260,7 +1260,7 @@ public unsafe class common_c
 	public static string com_cachedir = null;
 	public static string com_gamedir = null;
 
-	struct searchpath_t
+	public struct searchpath_t
 	{
 		public string filename;
 		public pack_t pack;
@@ -1308,7 +1308,7 @@ public unsafe class common_c
 		sys_win_c.Sys_FileClose(handle);
 	}
 
-	public unsafe void COM_CreatePath(char* path)
+	public static void COM_CreatePath(char* path)
 	{
 		char* ofs;
 
@@ -1325,7 +1325,7 @@ public unsafe class common_c
 		}
 	}
 
-	public static void COM_CopyFile(string netpath, string cachepath)
+	public static void COM_CopyFile(string netpath, char* cachepath)
 	{
 		int input, output;
 		int remaining, count;
@@ -1355,11 +1355,11 @@ public unsafe class common_c
 		sys_win_c.Sys_FileClose(output);
 	}
 
-	public static int COM_FindFile(string filename, int handle, FileStream file)
+	public static int COM_FindFile(char* filename, int handle, FileStream file)
 	{
 		searchpath_t* search = com_searchpaths;
-		string netpath = new string(' ', quakedef_c.MAX_OSPATH);
-		string cachepath = new string(' ', quakedef_c.MAX_OSPATH);
+		char* netpath;
+		char* cachepath;
 		pack_t pak;
 		int i;
 		int findtime, cachetime;
@@ -1386,10 +1386,10 @@ public unsafe class common_c
 				pak = search->pack;
 				for (i = 0; i < pak.numfiles; i++)
 				{
-					if (pak.files[i].name.Equals(filename))
+					if (pak.files[i].name.Equals(*filename))
 					{
 						// found it!
-						sys_win_c.Sys_Printf($"PackFile: {pak.filename} : {filename}\n");
+						sys_win_c.Sys_Printf($"PackFile: {pak.filename} : {filename->ToString()}\n");
 						if (handle != 0)
 						{
 							handle = pak.handle;
@@ -1416,7 +1416,7 @@ public unsafe class common_c
 						continue;
 				}
 
-				netpath = Path.Combine(search->filename, filename);
+				netpath = Path.Combine(search->filename.ToString(), filename->ToString());
 
 				findtime = sys_win_c.Sys_FileTime(netpath);
 				if (findtime == -1)
@@ -1433,7 +1433,10 @@ public unsafe class common_c
 					cachetime = sys_win_c.Sys_FileTime(cachepath);
 
 					if (cachetime < findtime)
+					{
 						COM_CopyFile(netpath, cachepath);
+					}
+
 					netpath = cachepath;
 				}
 
@@ -1580,16 +1583,16 @@ public unsafe class common_c
 	{
 		dpackheader_t header;
 		int i;
-		packfile_t[] newfiles;
+		packfile_t* newfiles;
 		int numpackfiles = 0;
-		pack_t pack;
+		pack_t* pack;
 		int packhandle;
-		dpackfile_t info;
+		packfile_t info;
 		ushort crc;
 
 		if (sys_win_c.Sys_FileOpenRead(packfile, &packhandle) == -1)
 		{
-			return null;
+			return default;
 		}
 
 		sys_win_c.Sys_FileRead(packhandle, (void*)&header, header.dirlen);
@@ -1604,7 +1607,7 @@ public unsafe class common_c
 			com_modified = true;
 		}
 
-		newfiles = zone_c.Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
+		newfiles = (packfile_t*)zone_c.Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
 
 		sys_win_c.Sys_FileSeek(packhandle, header.dirofs);
 		sys_win_c.Sys_FileRead(packhandle, (void*)info, header.dirlen);
@@ -1628,17 +1631,17 @@ public unsafe class common_c
 			newfiles[i].filelen = LittleLong(info[i].filelen);
 		}
 
-		pack = zone_c.Hunk_Alloc(sizeof(pack_t));
-		Q_strcpy(pack.filename, packfile);
-		pack.handle = packhandle;
-		pack.numfiles = numpackfiles;
-		pack.files = newfiles;
+		pack = (pack_t*)zone_c.Hunk_Alloc(sizeof(pack_t));
+		Q_strcpy(pack->filename, packfile);
+		pack->handle = packhandle;
+		pack->numfiles = numpackfiles;
+		pack->files = newfiles;
 
 		console_c.Con_Printf($"Added packfile {packfile} ({numpackfiles} files)\n");
-		return pack;
+		return *pack;
 	}
 
-	public unsafe void COM_AddGameDirectory(string dir)
+	public static void COM_AddGameDirectory(string dir)
 	{
 		int i;
 		searchpath_t* search;
@@ -1669,7 +1672,7 @@ public unsafe class common_c
 		}
 	}
 
-	public unsafe void COM_InitFileSystem()
+	public static void COM_InitFileSystem()
 	{
 		int i, j;
 		string basedir = null;

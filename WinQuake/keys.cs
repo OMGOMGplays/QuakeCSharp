@@ -371,7 +371,7 @@ public unsafe class keys_c
 
 		if (key == K_ESCAPE)
 		{
-			key_dest = key_dest_t.key_game;
+			key_dest = keydest_t.key_game;
 			chat_bufferlen = 0;
 			chat_buffer[0] = '\0';
 			return;
@@ -521,6 +521,9 @@ public unsafe class keys_c
 		if (c != 2 && c != 3)
 		{
 			console_c.Con_Printf("bind <key> [command] : attach a command to a key\n");
+			return;
 		}
+
+		b = 
 	}
 }

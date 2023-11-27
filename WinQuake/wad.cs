@@ -18,7 +18,7 @@ public unsafe class wad_c
 	public struct qpic_t
 	{
 		public int width, height;
-		public byte[] data;
+		public byte* data;
 	}
 
 	public struct wadinfo_t
@@ -39,11 +39,11 @@ public unsafe class wad_c
 		public string name;
 	}
 
-	public int wad_numlumps;
-	public lumpinfo_t* wad_lumps;
-	public byte* wad_base;
+	public static int wad_numlumps;
+	public static lumpinfo_t* wad_lumps;
+	public static byte* wad_base;
 
-	public void W_CleanupName(string input, string output)
+	public static void W_CleanupName(string input, string output)
 	{
 		int i;
 		int c;
@@ -112,7 +112,7 @@ public unsafe class wad_c
 		}
 	}
 
-	public lumpinfo_t* W_GetLumpinfo(string name)
+	public static lumpinfo_t* W_GetLumpinfo(string name)
 	{
 		int i;
 		lumpinfo_t* lump_p;
@@ -132,7 +132,7 @@ public unsafe class wad_c
 		return null;
 	}
 
-	public void* W_GetLumpName(string name)
+	public static void* W_GetLumpName(string name)
 	{
 		lumpinfo_t* lump;
 
@@ -141,7 +141,7 @@ public unsafe class wad_c
 		return wad_base + lump->filepos;
 	}
 
-	public void* W_GetLumpNum(int num)
+	public static void* W_GetLumpNum(int num)
 	{
 		lumpinfo_t* lump;
 
@@ -155,7 +155,7 @@ public unsafe class wad_c
 		return wad_base + lump->filepos;
 	}
 
-	void SwapPic(qpic_t* pic)
+	public static void SwapPic(qpic_t* pic)
 	{
 		pic->width = common_c.LittleLong(pic->width);
 		pic->height = common_c.LittleLong(pic->height);

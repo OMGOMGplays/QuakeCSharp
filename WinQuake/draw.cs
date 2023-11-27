@@ -4,7 +4,7 @@ public unsafe class draw_c
 {
     public struct rectdesc_t
     {
-        public vid_c.vrect_t rect;
+        public vid_win_c.vrect_t rect;
         public int width;
         public int height;
         public byte* ptexbytes;
@@ -13,7 +13,7 @@ public unsafe class draw_c
 
     public static rectdesc_t r_rectdesc;
 
-    public byte* draw_chars;
+    public static byte* draw_chars;
     public wad_c.qpic_t* draw_disc;
     public wad_c.qpic_t* draw_backtile;
 
@@ -24,15 +24,15 @@ public unsafe class draw_c
     }
 
     public const int MAX_CACHED_PICS = 128;
-    public cachepic_t* menu_cachepics;
-    public int menu_numcachepics;
+    public static cachepic_t* menu_cachepics;
+    public static int menu_numcachepics;
 
     public wad_c.qpic_t* Draw_PicFromWad(string name)
     {
-        return wad_c.W_GetLumpName(name);
+        return (wad_c.qpic_t*)wad_c.W_GetLumpName(name);
     }
 
-    public wad_c.qpic_t* Draw_CachePic(string path)
+    public static wad_c.qpic_t* Draw_CachePic(string path)
     {
         cachepic_t* pic;
         int i;
@@ -40,7 +40,7 @@ public unsafe class draw_c
 
         for (pic = menu_cachepics, i = 0; i < menu_numcachepics; pic++, i++)
         {
-            if (!common_c.Q_strcmp(path, pic->name))
+            if (!common_c.Q_strcmp(path, pic->name.ToString()))
             {
                 break;
             }
@@ -54,17 +54,17 @@ public unsafe class draw_c
             }
 
             menu_numcachepics++;
-            common_c.Q_strcpy(pic->name, path);
+            common_c.Q_strcpy(pic->name.ToString(), path);
         }
 
-        dat = zone_c.Cache_Check(&pic->cache);
+        dat = (wad_c.qpic_t*)zone_c.Cache_Check(&pic->cache);
 
         if (dat != null)
         {
             return dat;
         }
 
-        common_c.COM_LoadCacheFile(path, &pic->cache);
+        common_c.COM_LoadCacheFile(path, pic->cache);
 
         dat = (wad_c.qpic_t*)pic->cache.data;
 
@@ -83,8 +83,8 @@ public unsafe class draw_c
         int i;
 
         draw_chars = (byte*)wad_c.W_GetLumpName("conchars");
-        draw_disc = wad_c.W_GetLumpName("disc");
-        draw_backtile = wad_c.W_GetLumpName("backtile");
+        draw_disc = (wad_c.qpic_t*)wad_c.W_GetLumpName("disc");
+        draw_backtile = (wad_c.qpic_t*)wad_c.W_GetLumpName("backtile");
 
         r_rectdesc.width = draw_backtile->width;
         r_rectdesc.height = draw_backtile->height;
@@ -136,7 +136,7 @@ public unsafe class draw_c
 
         if (r_main_c.r_pixbytes == 1)
         {
-            dest = vid.conbuffer + y * vid.conrowbytes + x;
+            dest = (byte*)vid_win_c.vid.conbuffer + y * vid_win_c.vid.conrowbytes + x;
 
             while (drawline-- != 0)
             {
@@ -181,62 +181,62 @@ public unsafe class draw_c
                 }
 
                 source += 128;
-                dest += vid.conrowbytes;
+                dest += vid_win_c.vid.conrowbytes;
             }
         }
         else
         {
-            pusdest = (ushort*)((byte*)vid.conbuffer + y * vid.conrowbytes + (x << 1));
+            pusdest = (ushort*)((byte*)vid_win_c.vid.conbuffer + y * vid_win_c.vid.conrowbytes + (x << 1));
 
             while (drawline-- != 0)
             {
                 if (source[0] != 0)
                 {
-                    pusdest[0] = d_8to16table[source[0]];
+                    pusdest[0] = vid_win_c.d_8to16table[source[0]];
                 }
 
                 if (source[1] != 0)
                 {
-                    pusdest[1] = d_8to16table[source[1]];
+                    pusdest[1] = vid_win_c.d_8to16table[source[1]];
                 }
 
                 if (source[2] != 0)
                 {
-                    pusdest[2] = d_8to16table[source[2]];
+                    pusdest[2] = vid_win_c.d_8to16table[source[2]];
                 }
 
                 if (source[3] != 0)
                 {
-                    pusdest[3] = d_8to16table[source[3]];
+                    pusdest[3] = vid_win_c.d_8to16table[source[3]];
                 }
 
                 if (source[4] != 0)
                 {
-                    pusdest[4] = d_8to16table[source[4]];
+                    pusdest[4] = vid_win_c.d_8to16table[source[4]];
                 }
 
                 if (source[4] != 0)
                 {
-                    pusdest[4] = d_8to16table[source[4]];
+                    pusdest[4] = vid_win_c.d_8to16table[source[4]];
                 }
 
                 if (source[5] != 0)
                 {
-                    pusdest[5] = d_8to16table[source[5]];
+                    pusdest[5] = vid_win_c.d_8to16table[source[5]];
                 }
 
                 if (source[6] != 0)
                 {
-                    pusdest[6] = d_8to16table[source[6]];
+                    pusdest[6] = vid_win_c.d_8to16table[source[6]];
                 }
 
                 if (source[7] != 0)
                 {
-                    pusdest[7] = d_8to16table[source[7]];
+                    pusdest[7] = vid_win_c.d_8to16table[source[7]];
                 }
 
                 source += 128;
-                pusdest += vid.conrowbytes >> 1;
+                pusdest += vid_win_c.vid.conrowbytes >> 1;
             }
         }
     }
@@ -259,7 +259,7 @@ public unsafe class draw_c
         byte* draw_chars = null;
         int row, col;
 
-        if (!vid.direct)
+        if (vid_win_c.vid.direct == null)
         {
             return;
         }
@@ -270,7 +270,7 @@ public unsafe class draw_c
         col = num & 15;
         source = draw_chars + (row << 10) + (col << 3);
 
-        dest = vid.direct + 312;
+        dest = (byte*)vid_win_c.vid.direct + 312;
 
         while (drawline-- != 0)
         {
@@ -287,13 +287,13 @@ public unsafe class draw_c
         }
     }
 
-    public void Draw_Pic(int x, int y, wad_c.qpic_t* pic)
+    public static void Draw_Pic(int x, int y, wad_c.qpic_t* pic)
     {
         byte* dest, source;
         ushort* pusdest;
         int v, u;
 
-        if ((x < 0) || (x + pic->width > vid.width) || (y < 0) || (y + pic->height > vid.height))
+        if ((x < 0) || (x + pic->width > vid_win_c.vid.width) || (y < 0) || (y + pic->height > vid_win_c.vid.height))
         {
             sys_win_c.Sys_Error("Draw_Pic: bad coordinates");
         }
@@ -302,27 +302,27 @@ public unsafe class draw_c
 
         if (r_main_c.r_pixbytes == 1)
         {
-            dest = vid.buffer + y * vid.rowbytes + x;
+            dest = (byte*)vid_win_c.vid.buffer + y * vid_win_c.vid.rowbytes + x;
 
             for (v = 0; v < pic->height; v++)
             {
-                common_c.Q_memcpy(dest, source, pic->width);
-                dest += vid.rowbytes;
+                common_c.Q_memcpy(*dest, *source, pic->width);
+                dest += vid_win_c.vid.rowbytes;
                 source += pic->width;
             }
         }
         else
         {
-            pusdet = (ushort*)vid.buffer + y * (vid.rowbytes >> 1) + x;
+            pusdest = (ushort*)vid_win_c.vid.buffer + y * (vid_win_c.vid.rowbytes >> 1) + x;
 
             for (v = 0; v < pic->height; v++)
             {
                 for (u = 0; u < pic->width; u++)
                 {
-                    pusdest[u] = d_8to16table[source[u]];
+                    pusdest[u] = vid_win_c.d_8to16table[source[u]];
                 }
 
-                pusdest += vid.rowbytes >> 1;
+                pusdest += vid_win_c.vid.rowbytes >> 1;
                 source += pic->width;
             }
         }
@@ -334,7 +334,7 @@ public unsafe class draw_c
         ushort* pusdest;
         int v, u;
 
-        if (x < 0 || x + pic->width > vid.width || y < 0 || y + pic->height > vid.height)
+        if (x < 0 || x + pic->width > vid_win_c.vid.width || y < 0 || y + pic->height > vid_win_c.vid.height)
         {
             sys_win_c.Sys_Error("Draw_TransPic: bad coordinates");
         }
@@ -343,9 +343,9 @@ public unsafe class draw_c
 
         if (r_main_c.r_pixbytes == 1)
         {
-            dest = vid.buffer + y * vid.rowbytes + x;
+            dest = (byte*)vid_win_c.vid.buffer + y * vid_win_c.vid.rowbytes + x;
 
-            if (pic->width & 7)
+            if ((pic->width & 7) != 0)
             {
                 for (v = 0; v < pic->height; v++)
                 {
@@ -353,11 +353,11 @@ public unsafe class draw_c
                     {
                         if ((tbyte = (byte*)source[u]) != TRANSPARENT_COLOR)
                         {
-                            dest[u] = translation[tbyte];
+                            dest[u] = *tbyte;
                         }
                     }
 
-                    dest += vid.rowbytes;
+                    dest += vid_win_c.vid.rowbytes;
                     source += pic->width;
                 }
             }
@@ -369,53 +369,53 @@ public unsafe class draw_c
                     {
                         if ((tbyte = (byte*)source[u]) != TRANSPARENT_COLOR)
                         {
-                            dest[u] = translation[tbyte];
+                            dest[u] = *tbyte;
                         }
 
                         if ((tbyte = (byte*)source[u + 1]) != TRANSPARENT_COLOR)
                         {
-                            dest[u + 1] = translation[tbyte];
+                            dest[u + 1] = *tbyte;
                         }
 
                         if ((tbyte = (byte*)source[u + 2]) != TRANSPARENT_COLOR)
                         {
-                            dest[u + 2] = translation[tbyte];
+                            dest[u + 2] = *tbyte;
                         }
 
                         if ((tbyte = (byte*)source[u + 3]) != TRANSPARENT_COLOR)
                         {
-                            dest[u + 3] = translation[tbyte];
+                            dest[u + 3] = *tbyte;
                         }
 
                         if ((tbyte = (byte*)source[u + 4]) != TRANSPARENT_COLOR)
                         {
-                            dest[u + 4] = translation[tbyte];
+                            dest[u + 4] = *tbyte;
                         }
 
                         if ((tbyte = (byte*)source[u + 5]) != TRANSPARENT_COLOR)
                         {
-                            dest[u + 5] = translation[tbyte];
+                            dest[u + 5] = *tbyte;
                         }
 
                         if ((tbyte = (byte*)source[u + 6]) != TRANSPARENT_COLOR)
                         {
-                            dest[u + 6] = translation[tbyte];
+                            dest[u + 6] = *tbyte;
                         }
 
                         if ((tbyte = (byte*)source[u + 7]) != TRANSPARENT_COLOR)
                         {
-                            dest[u + 7] = translation[tbyte];
+                            dest[u + 7] = *tbyte;
                         }
                     }
 
-                    dest += vid.rowbytes;
+                    dest += vid_win_c.vid.rowbytes;
                     source += pic->width;
                 }
             }
         }
         else
         {
-            pusdest = (ushort*)vid.buffer + y * (vid.rowbytes >> 1) + x;
+            pusdest = (ushort*)vid_win_c.vid.buffer + y * (vid_win_c.vid.rowbytes >> 1) + x;
 
             for (v = 0; v < pic->height; v++)
             {
@@ -425,11 +425,11 @@ public unsafe class draw_c
 
                     if (tbyte != TRANSPARENT_COLOR)
                     {
-                        pusdest[u] = d_8to16table[tbyte];
+                        pusdest[u] = vid_win_c.d_8to16table[(int)tbyte];
                     }
                 }
 
-                pusdest += vid.rowbytes >> 1;
+                pusdest += vid_win_c.vid.rowbytes >> 1;
                 source += pic->width;
             }
         }
@@ -476,41 +476,41 @@ public unsafe class draw_c
 
 #if _WIN32
         Console.WriteLine($"(WinQuake) {quakedef_c.VERSION}");
-        dest = conback->data + 320 * 186 + 320 - 11 - 8 * common_c.Q_strlen(ver);
+        dest = conback->data + 320 * 186 + 320 - 11 - 8 * common_c.Q_strlen(ver.ToString());
 #elif X11
         Console.WriteLine($"(X11 Quake {quakedef_c.X11_VERSION}) {quakedef_c.VERSION}");
-        dest = conback->data + 320 * 186 + 320 - 11 - 8 * common_c.Q_strlen(ver);
+        dest = conback->data + 320 * 186 + 320 - 11 - 8 * common_c.Q_strlen(ver.ToString());
 #elif __linux__
         Console.WriteLine($"(Linux Quake {quakedef_c.LINUX_VERSION}) {quakedef_c.VERSION}");
-        dest = conback->data + 320 * 186 + 320 - 11 - 8 * common_c.Q_strlen(ver);
+        dest = conback->data + 320 * 186 + 320 - 11 - 8 * common_c.Q_strlen(ver.ToString());
 #else
         dest = conback->data + 320 - 43 + 320 * 186;
         Console.WriteLine($"{quakedef_c.VERSION}");
 #endif
-        for (x = 0; x < common_c.Q_strlen(ver); x++)
+        for (x = 0; x < common_c.Q_strlen(ver.ToString()); x++)
         {
             Draw_CharToConBack(ver[x], dest + (x << 3));
         }
 
         if (r_main_c.r_pixbytes == 1)
         {
-            dest = vid.conbuffer;
+            dest = (byte*)vid_win_c.vid.conbuffer;
 
-            for (y = 0; y < lines; y++, dest += vid.conrowbytes)
+            for (y = 0; y < lines; y++, dest += vid_win_c.vid.conrowbytes)
             {
-                v = (vid.conheight - lines + y) * 200 / vid.conheight;
+                v = (vid_win_c.vid.conheight - lines + y) * 200 / vid_win_c.vid.conheight;
                 src = conback->data + v * 320;
 
-                if (vid.conwidth == 320)
+                if (vid_win_c.vid.conwidth == 320)
                 {
-                    common_c.Q_memcpy(dest, src, vid.conwidth);
+                    common_c.Q_memcpy(*dest, *src, vid_win_c.vid.conwidth);
                 }
                 else
                 {
                     f = 0;
-                    fstep = 320 * 0x10000 / vid.conwidth;
+                    fstep = 320 * 0x10000 / vid_win_c.vid.conwidth;
 
-                    for (x = 0; x < vid.conwidth; x += 4)
+                    for (x = 0; x < vid_win_c.vid.conwidth; x += 4)
                     {
                         dest[x] = src[f >> 16];
                         f += fstep;
@@ -526,40 +526,40 @@ public unsafe class draw_c
         }
         else
         {
-            pusdest = (ushort*)vid.conbuffer;
+            pusdest = (ushort*)vid_win_c.vid.conbuffer;
 
-            for (y = 0; y < lines; y++, pusdest += (vid.conrowbytes >> 1))
+            for (y = 0; y < lines; y++, pusdest += (vid_win_c.vid.conrowbytes >> 1))
             {
-                v = (vid.conheight - lines + y) * 200 / vid.conheight;
+                v = (vid_win_c.vid.conheight - lines + y) * 200 / vid_win_c.vid.conheight;
                 src = conback->data + v * 320;
                 f = 0;
-                fstep = 320 * 0x10000 / vid.conwidth;
+                fstep = 320 * 0x10000 / vid_win_c.vid.conwidth;
 
-                for (x = 0; x < vid.conwidth; x += 4)
+                for (x = 0; x < vid_win_c.vid.conwidth; x += 4)
                 {
-                    pusdest[x] = d_8to16table[src[f >> 16]];
+                    pusdest[x] = vid_win_c.d_8to16table[src[f >> 16]];
                     f += fstep;
-                    pusdest[x + 1] = d_8to16table[src[f >> 16]];
+                    pusdest[x + 1] = vid_win_c.d_8to16table[src[f >> 16]];
                     f += fstep;
-                    pusdest[x + 2] = d_8to16table[src[f >> 16]];
+                    pusdest[x + 2] = vid_win_c.d_8to16table[src[f >> 16]];
                     f += fstep;
-                    pusdest[x + 3] = d_8to16table[src[f >> 16]];
+                    pusdest[x + 3] = vid_win_c.d_8to16table[src[f >> 16]];
                     f += fstep;
                 }
             }
         }
     }
 
-    public void R_DrawRect8(vrect_t* prect, int rowbytes, byte* psrc, int transparent)
+    public void R_DrawRect8(vid_win_c.vrect_t* prect, int rowbytes, byte* psrc, int transparent)
     {
         byte t;
         int i, j, srcdelta, destdelta;
         byte* pdest;
 
-        pdest = vid.buffer + (prect->y * vid.rowbytes) + prect->x;
+        pdest = (byte*)vid_win_c.vid.buffer + (prect->y * vid_win_c.vid.rowbytes) + prect->x;
 
         srcdelta = rowbytes - prect->width;
-        destdelta = vid.rowbytes - prect->width;
+        destdelta = vid_win_c.vid.rowbytes - prect->width;
 
         if (transparent == 1)
         {
@@ -586,23 +586,23 @@ public unsafe class draw_c
         {
             for (i = 0; i < prect->height; i++)
             {
-                common_c.Q_memcpy(pdest, psrc, prect->width);
+                common_c.Q_memcpy(*pdest, *psrc, prect->width);
                 psrc += rowbytes;
-                pdest += vid.rowbytes;
+                pdest += vid_win_c.vid.rowbytes;
             }
         }
     }
 
-    public void R_DrawRect16(vrect_t* prect, int rowbytes, byte* psrc, int transparent)
+    public void R_DrawRect16(vid_win_c.vrect_t* prect, int rowbytes, byte* psrc, int transparent)
     {
         byte t;
         int i, j, srcdelta, destdelta;
         ushort* pdest;
 
-        pdest = (ushort*)vid.buffer + (prect->y * (vid.rowbytes >> 1)) + prect->x;
+        pdest = (ushort*)vid_win_c.vid.buffer + (prect->y * (vid_win_c.vid.rowbytes >> 1)) + prect->x;
 
         srcdelta = rowbytes - prect->width;
-        destdelta = (vid.rowbytes >> 1) - prect->width;
+        destdelta = (vid_win_c.vid.rowbytes >> 1) - prect->width;
 
         if (transparent == 1)
         {
@@ -614,7 +614,7 @@ public unsafe class draw_c
 
                     if (t != TRANSPARENT_COLOR)
                     {
-                        *pdest = d_8to16table[t];
+                        *pdest = vid_win_c.d_8to16table[t];
                     }
 
                     psrc++;
@@ -631,7 +631,7 @@ public unsafe class draw_c
             {
                 for (j = 0; j < prect->width; j++)
                 {
-                    *pdest = d_8to16table[*psrc];
+                    *pdest = vid_win_c.d_8to16table[*psrc];
                     psrc++;
                     pdest++;
                 }
@@ -646,7 +646,7 @@ public unsafe class draw_c
     {
         int width, height, tileoffsetx, tileoffsety;
         byte* psrc;
-        vrect_t vr;
+        vid_win_c.vrect_t vr;
 
         r_rectdesc.rect.x = x;
         r_rectdesc.rect.y = y;
@@ -726,9 +726,9 @@ public unsafe class draw_c
 
         if (r_main_c.r_pixbytes == 1)
         {
-            dest = vid.buffer + y * vid.rowbytes + x;
+            dest = (byte*)vid_win_c.vid.buffer + y * vid_win_c.vid.rowbytes + x;
 
-            for (v = 0; v < h; v++, dest += vid.rowbytes)
+            for (v = 0; v < h; v++, dest += vid_win_c.vid.rowbytes)
             {
                 for (u = 0; u < w; u++)
                 {
@@ -738,11 +738,11 @@ public unsafe class draw_c
         }
         else
         {
-            uc = d_8to16table[c];
+            uc = vid_win_c.d_8to16table[c];
 
-            pusdest = (ushort*)vid.buffer + y * (vid.rowbytes >> 1) + x;
+            pusdest = (ushort*)vid_win_c.vid.buffer + y * (vid_win_c.vid.rowbytes >> 1) + x;
             
-            for (v = 0; v < h; v++, pusdest += (vid.rowbytes >> 1))
+            for (v = 0; v < h; v++, pusdest += (vid_win_c.vid.rowbytes >> 1))
             {
                 for (u = 0; u < w; u++)
                 {
@@ -761,14 +761,14 @@ public unsafe class draw_c
         S_ExtraUpdate();
         VID_LockBuffer();
 
-        for (y = 0; y < vid.height; y++)
+        for (y = 0; y < vid_win_c.vid.height; y++)
         {
             int t;
 
-            pbuf = (byte*)(vid.buffer + vid.rowbytes * y);
+            pbuf = (byte*)(vid_win_c.vid.buffer + vid_win_c.vid.rowbytes * y);
             t = (y & 1) << 1;
 
-            for (x = 0; x < vid.width; x++)
+            for (x = 0; x < vid_win_c.vid.width; x++)
             {
                 if ((x & 3) != t)
                 {
@@ -784,11 +784,11 @@ public unsafe class draw_c
 
     public void Draw_BeginDisc()
     {
-        D_BeginDirectRect(vid.width - 24, 0, draw_disc->data, 24, 24);
+        D_BeginDirectRect(vid_win_c.vid.width - 24, 0, draw_disc->data, 24, 24);
     }
 
     public void Draw_EndDisc()
     {
-        D_EndDirectRect(vid.width - 24, 0, 24, 24);
+        D_EndDirectRect(vid_win_c.vid.width - 24, 0, 24, 24);
     }
 }

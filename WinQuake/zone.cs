@@ -729,7 +729,7 @@ public unsafe class zone_c
 		Cache_UnlinkLRU(cs);
 	}
 
-	public void* Cache_Check(cache_user_t* c)
+	public static void* Cache_Check(cache_user_t* c)
 	{
 		cache_system_t* cs;
 
@@ -746,7 +746,7 @@ public unsafe class zone_c
 		return c->data;
 	}
 
-	public void* Cache_Alloc(cache_user_t* c, int size, string name)
+	public static void* Cache_Alloc(cache_user_t* c, int size, string name)
 	{
 		cache_system_t* cs;
 

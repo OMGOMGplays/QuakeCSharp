@@ -357,7 +357,7 @@ public unsafe class screen_c
 			return;
 		}
 
-		Draw_Pic(scr_vrect.x + 64, scr_vrect.y, scr_net);
+		draw_c.Draw_Pic(scr_vrect.x + 64, scr_vrect.y, scr_net);
 	}
 
 	public void SCR_DrawPause()
@@ -374,8 +374,8 @@ public unsafe class screen_c
 			return;
 		}
 
-		pic = DrawPic("gfx/pause.lmp");
-		Draw_Pic((vid.width - pic->width) / 2, (vid.height - 48 - pic->height) / 2, pic);
+		pic = draw_c.Draw_CachePic("gfx/pause.lmp");
+		draw_c.Draw_Pic((vid.width - pic->width) / 2, (vid.height - 48 - pic->height) / 2, pic);
 	}
 
 	public void SCR_DrawLoading()

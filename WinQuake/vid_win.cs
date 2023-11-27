@@ -49,6 +49,6 @@ public unsafe class vid_win_c
 	}
 
 	public static viddef_t vid;
-	public ushort[] d_8to16table = new ushort[256];
-	public ushort[] d_8to24table = new ushort[256];
+	public static ushort[] d_8to16table = new ushort[256];
+	public static ushort[] d_8to24table = new ushort[256];
 }
