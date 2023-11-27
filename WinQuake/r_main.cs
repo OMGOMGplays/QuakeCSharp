@@ -474,8 +474,93 @@ public unsafe class r_main_c
             switch (currententity->model->type)
             {
                 case mod_sprite:
-                    Vector
+                    Vector<r_entorigin>.CopyTo(currententity->origin);
+                    Vector3.Subtract(r_origin, r_entorigin);
+                    R_DrawSprite();
+                    break;
+
+                case mod_alias:
+                    Vector<r_entorigin>.CopyTo(currententity->origin);
+                    Vector3.Subtract(r_origin, r_entorigin);
+
+                    if (R_AliasCheckBBox())
+                    {
+                        j = R_LightPoint(currententity->origin);
+
+                        lighting.ambientlight = j;
+                        lighting.shadelight = j;
+
+                        lighting.plightvec = lightvec;
+
+                        for (lnum = 0; lnum < MAX_DLIGHTS; lnum++)
+                        {
+                            if (cl_dlights[lnum].die >= cl.time)
+                            {
+                                Vector3.Subtract(currententity->origin, cl_dlights[lnum].origin);
+                                add = cl_dlights[lnum].radius - mathlib_c.Length(dist);
+
+                                if (add > 0)
+                                {
+                                    lighting.ambientlight += add;
+                                }
+                            }
+                        }
+
+                        if (lighting.ambientlight > 128)
+                        {
+                            lighting.ambientlight = 128;
+                        }
+
+                        if (lighting.ambientlight + lighting.shadelight > 192)
+                        {
+                            lighting.shadelight = 192 - lighting.ambientlight;
+                        }
+
+                        R_AliasDrawModel(&lighting);
+                    }
+
+                    break;
+
+                default:
+                    break;
             }
         }
+    }
+
+    public void R_DrawViewModel()
+    {
+        float[] lightvec = { -1, 0, 0 };
+        int j;
+        int lnum;
+        Vector3 dist;
+        float add;
+        dlight_t* dl;
+
+        if (!r_drawviewmodel.value || r_fov_greater_than_90)
+        {
+            return;
+        }
+
+        if ((cl.items & quakedef_c.IT_INVISIBILITY) == 0) 
+        {
+            return;
+        }
+
+        if (cl.stats[STAT_HEALTH] <= 0)
+        {
+            return;
+        }
+
+        currententity = &cl.viewent;
+
+        if (!currententity->model)
+        {
+            return;
+        }
+
+        Array.Copy(currententity->origin, r_entorigin);
+        Vector3.Subtract(r_origin, r_entorigin);
+
+        Array.Copy(vup, viewlightvec, (int)vup.Length());
     }
 }
