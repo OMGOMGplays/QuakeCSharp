@@ -83,7 +83,7 @@ public unsafe class d_iface_c
 		public int color;
 	}
 
-	public cvar_t r_drawflat;
+	public cvar_c.cvar_t r_drawflat;
 	public int d_spanpixcount;
 	public int r_framecount;
 }

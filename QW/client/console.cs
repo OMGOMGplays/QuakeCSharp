@@ -20,7 +20,7 @@ public class console_c
 
 	public float con_cursorspeed = 4;
 
-	public cvar_t con_notifytime = new cvar_t { "con_notifytime", "3" };
+	public cvar_c.cvar_t con_notifytime = new cvar_c.cvar_t { name = "con_notifytime", value = 3 };
 
 	public const int NUM_CON_TIMES = 4;
 	public float[] contimes = new float[NUM_CON_TIMES];
@@ -189,13 +189,13 @@ public class console_c
 
 		Con_Printf("Console initialized.\n");
 
-		Cvar_RegisterVariable(con_notifytime);
+		cvar_c.Cvar_RegisterVariable(con_notifytime);
 
-		Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f);
-		Cmd_AddCommand("togglechat", Con_ToggleChat_f);
-		Cmd_AddCommand("messagemode", Con_MessageMode_f);
-		Cmd_AddCommand("messagemode2", Con_MessageMode2_f);
-		Cmd_AddCommand("clear", Con_Clear_f);
+        cmd_c.Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f);
+        cmd_c.Cmd_AddCommand("togglechat", Con_ToggleChat_f);
+        cmd_c.Cmd_AddCommand("messagemode", Con_MessageMode_f);
+        cmd_c.Cmd_AddCommand("messagemode2", Con_MessageMode2_f);
+		cmd_c.Cmd_AddCommand("clear", Con_Clear_f);
 		con_initialized = true;
 	}
 

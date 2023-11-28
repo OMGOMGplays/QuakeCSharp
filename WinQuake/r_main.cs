@@ -12,11 +12,11 @@ public unsafe class r_main_c
     public bool r_worldpolysbacktofront;
     public bool r_recursiveaffinetriangles = true;
     public static int r_pixbytes = 1;
-    public float r_aliasuvscale = 1.0f;
+    public static float r_aliasuvscale = 1.0f;
     public int r_outofsurfaces;
     public int r_outofedges;
 
-    public bool r_dowarp, r_dowarpold, r_viewchanged;
+    public static bool r_dowarp, r_dowarpold, r_viewchanged;
 
     public int numbtofpolys;
     public btofpoly_t* pbtofpolys;
@@ -38,72 +38,72 @@ public unsafe class r_main_c
     public Vector3 vright, base_vright;
     public Vector3 r_origin;
 
-    public refdef_t r_refdef;
-    public float xcenter, ycenter;
-    public float xscale, yscale;
-    public float xscaleinv, yscaleinv;
-    public float xscaleshrink, yscaleshrink;
-    public float aliasxscale, aliasyscale, aliasxcenter, aliasycenter;
+    public static render_c.refdef_t r_refdef;
+    public static float xcenter, ycenter;
+    public static float xscale, yscale;
+    public static float xscaleinv, yscaleinv;
+    public static float xscaleshrink, yscaleshrink;
+    public static float aliasxscale, aliasyscale, aliasxcenter, aliasycenter;
 
-    public int screenwidth;
+    public static int screenwidth;
 
-    public float pixelAspect;
-    public float screenAspect;
-    public float verticalFieldOfView;
-    public float xOrigin, yOrigin;
+    public static float pixelAspect;
+    public static float screenAspect;
+    public static float verticalFieldOfView;
+    public static float xOrigin, yOrigin;
 
-    public mplane_t[] screenedge = new mplane_t[4];
+    public static mplane_t[] screenedge = new mplane_t[4];
 
-    public int r_framecount = 1;
-    public int r_visframecount;
-    public int d_spanpixcount;
-    public int r_polycount;
-    public int r_drawnpolycount;
-    public int r_wholepolycount;
+    public static int r_framecount = 1;
+    public static int r_visframecount;
+    public static int d_spanpixcount;
+    public static int r_polycount;
+    public static int r_drawnpolycount;
+    public static int r_wholepolycount;
 
     public const int VIDEOMODNAME_LENGTH = 256;
     public char[] viewmodname = new char[VIDEOMODNAME_LENGTH];
-    public int modcount;
+    public static int modcount;
 
-    public int* pfrustrum_indexes;
-    public int[] r_frustrum_indexes = new int[4 * 6];
+    public static int* pfrustrum_indexes;
+    public static int[] r_frustrum_indexes = new int[4 * 6];
 
-    public int reinit_surfcache = 1;
+    public static int reinit_surfcache = 1;
 
-    public mleaf_t* r_viewleaf, r_oldviewleaf;
+    public static mleaf_t* r_viewleaf, r_oldviewleaf;
 
-    public texture_t* r_notexture_mip;
+    public static texture_t* r_notexture_mip;
 
-    public float r_aliastransition, r_resfudge;
+    public static float r_aliastransition, r_resfudge;
 
-    public int[] d_lightstylevalue = new int[256];
+    public static int[] d_lightstylevalue = new int[256];
 
-    public float dp_time1, dp_time2, db_time1, db_time2, rw_time1, rw_time2;
-    public float se_time1, se_time2, de_time1, de_time2, dv_time1, dv_time2;
+    public static float dp_time1, dp_time2, db_time1, db_time2, rw_time1, rw_time2;
+    public static float se_time1, se_time2, de_time1, de_time2, dv_time1, dv_time2;
 
-    public cvar_t r_draworder = new cvar_t { "r_draworder", "0" };
-    public cvar_t r_speeds = new cvar_t { "r_speeds", "0" };
-    public cvar_t r_timegraph = new cvar_t { "r_timegraph", "0" };
-    public cvar_t r_graphheight = new cvar_t { "r_graphheight", "10" };
-    public cvar_t r_clearcolor = new cvar_t { "r_clearcolor", "2" };
-    public cvar_t r_waterwarp = new cvar_t { "r_waterwarp", "1" };
-    public cvar_t r_fullbright = new cvar_t { "r_fullbright", "0" };
-    public cvar_t r_drawentities = new cvar_t { "r_drawentities", "1" };
-    public cvar_t r_drawviewmodel = new cvar_t { "r_drawviewmodel", "1" };
-    public cvar_t r_aliasstats = new cvar_t { "r_polymodelstats", "0" };
-    public cvar_t r_dspeeds = new cvar_t { "r_dspeeds", "0" };
-    public cvar_t r_drawflat = new cvar_t { "r_drawflat", "0" };
-    public cvar_t r_ambient = new cvar_t { "r_ambient", "0" };
-    public cvar_t r_reportsurfout = new cvar_t { "r_reportsurfout", "0" };
-    public cvar_t r_maxsurfs = new cvar_t { "r_maxsurfs", "0" };
-    public cvar_t r_numsurfs = new cvar_t { "r_numsurfs", "0" };
-    public cvar_t r_reportedgeout = new cvar_t { "r_reportedgeout", "0" };
-    public cvar_t r_maxedges = new cvar_t { "r_maxedges", "0" };
-    public cvar_t r_numedges = new cvar_t { "r_numedges", "0" };
-    public cvar_t r_aliastransbase = new cvar_t { "r_aliastransbase", "200" };
-    public cvar_t r_aliastransadj = new cvar_t { "r_aliastransadj", "100" };
+    public cvar_c.cvar_t r_draworder = new cvar_c.cvar_t { name = "r_draworder", value = 0 };
+    public cvar_c.cvar_t r_speeds = new cvar_c.cvar_t { name = "r_speeds", value = 0 };
+    public cvar_c.cvar_t r_timegraph = new cvar_c.cvar_t { name = "r_timegraph", value = 0 };
+    public cvar_c.cvar_t r_graphheight = new cvar_c.cvar_t { name = "r_graphheight", value = 10 };
+    public cvar_c.cvar_t r_clearcolor = new cvar_c.cvar_t { name = "r_clearcolor", value = 2 };
+    public cvar_c.cvar_t r_waterwarp = new cvar_c.cvar_t { name = "r_waterwarp", value = 1 };
+    public cvar_c.cvar_t r_fullbright = new cvar_c.cvar_t { name = "r_fullbright", value = 0 };
+    public cvar_c.cvar_t r_drawentities = new cvar_c.cvar_t { name = "r_drawentities", value = 1 };
+    public cvar_c.cvar_t r_drawviewmodel = new cvar_c.cvar_t { name = "r_drawviewmodel", value = 1 };
+    public cvar_c.cvar_t r_aliasstats = new cvar_c.cvar_t { name = "r_polymodelstats", value = 0 };
+    public cvar_c.cvar_t r_dspeeds = new cvar_c.cvar_t { name = "r_dspeeds", value = 0};
+    public cvar_c.cvar_t r_drawflat = new cvar_c.cvar_t { name = "r_drawflat", value = 0 };
+    public cvar_c.cvar_t r_ambient = new cvar_c.cvar_t { name = "r_ambient", value = 0 };
+    public cvar_c.cvar_t r_reportsurfout = new cvar_c.cvar_t { name = "r_reportsurfout", value = 0 };
+    public cvar_c.cvar_t r_maxsurfs = new cvar_c.cvar_t { name = "r_maxsurfs", value = 0 };
+    public cvar_c.cvar_t r_numsurfs = new cvar_c.cvar_t { name = "r_numsurfs", value = 0 };
+    public cvar_c.cvar_t r_reportedgeout = new cvar_c.cvar_t { name = "r_reportedgeout", value = 0 };
+    public cvar_c.cvar_t r_maxedges = new cvar_c.cvar_t { name = "r_maxedges", value = 0 };
+    public cvar_c.cvar_t r_numedges = new cvar_c.cvar_t { name = "r_numedges", value = 0 };
+    public cvar_c.cvar_t r_aliastransbase = new cvar_c.cvar_t { name = "r_aliastransbase", value = 200 };
+    public cvar_c.cvar_t r_aliastransadj = new cvar_c.cvar_t { name = "r_aliastransadj", value = 100 };
 
-    public extern cvar_t scr_fov;
+    public cvar_c.cvar_t scr_fov;
 
     public void CreatePassages() { }
     public void SetVisibilityByPassages() { }
@@ -150,30 +150,30 @@ public unsafe class r_main_c
 
         R_InitTurb();
 
-        Cmd_AddCommand("timerefresh", R_TimeRefresh_f);
-        Cmd_AddCommand("pointfile", R_ReadPointFile_f);
+        cmd_c.Cmd_AddCommand("timerefresh", R_TimeRefresh_f);
+        cmd_c.Cmd_AddCommand("pointfile", R_ReadPointFile_f);
 
-        Cvar_RegisterVariable(&r_draworder);
-        Cvar_RegisterVariable(&r_speeds);
-        Cvar_RegisterVariable(&r_timegraph);
-        Cvar_RegisterVariable(&r_graphheight);
-        Cvar_RegisterVariable(&r_drawflat);
-        Cvar_RegisterVariable(&r_ambient);
-        Cvar_RegisterVariable(&r_clearcolor);
-        Cvar_RegisterVariable(&r_waterwarp);
-        Cvar_RegisterVariable(&r_fullbright);
-        Cvar_RegisterVariable(&r_drawentities);
-        Cvar_RegisterVariable(&r_drawviewmodel);
-        Cvar_RegisterVariable(&r_aliasstats);
-        Cvar_RegisterVariable(&r_dspeeds);
-        Cvar_RegisterVariable(&r_reportsurfout);
-        Cvar_RegisterVariable(&r_maxsurfs);
-        Cvar_RegisterVariable(&r_numsurfs);
-        Cvar_RegisterVariable(&r_reportedgeout);
-        Cvar_RegisterVariable(&r_maxedges);
-        Cvar_RegisterVariable(&r_numedges);
-        Cvar_RegisterVariable(&r_aliastransbase);
-        Cvar_RegisterVariable(&r_aliastransadj);
+        cvar_c.Cvar_RegisterVariable(&r_draworder);
+        cvar_c.Cvar_RegisterVariable(&r_speeds);
+        cvar_c.Cvar_RegisterVariable(&r_timegraph);
+        cvar_c.Cvar_RegisterVariable(&r_graphheight);
+        cvar_c.Cvar_RegisterVariable(&r_drawflat);
+        cvar_c.Cvar_RegisterVariable(&r_ambient);
+        cvar_c.Cvar_RegisterVariable(&r_clearcolor);
+        cvar_c.Cvar_RegisterVariable(&r_waterwarp);
+        cvar_c.Cvar_RegisterVariable(&r_fullbright);
+        cvar_c.Cvar_RegisterVariable(&r_drawentities);
+        cvar_c.Cvar_RegisterVariable(&r_drawviewmodel);
+        cvar_c.Cvar_RegisterVariable(&r_aliasstats);
+        cvar_c.Cvar_RegisterVariable(&r_dspeeds);
+        cvar_c.Cvar_RegisterVariable(&r_reportsurfout);
+        cvar_c.Cvar_RegisterVariable(&r_maxsurfs);
+        cvar_c.Cvar_RegisterVariable(&r_numsurfs);
+        cvar_c.Cvar_RegisterVariable(&r_reportedgeout);
+        cvar_c.Cvar_RegisterVariable(&r_maxedges);
+        cvar_c.Cvar_RegisterVariable(&r_numedges);
+        cvar_c.Cvar_RegisterVariable(&r_aliastransbase);
+        cvar_c.Cvar_RegisterVariable(&r_aliastransadj);
 
         Cvar_SetValue("r_maxedges", (float)NUMSTACKEDGES);
         Cvar_SetValue("r_maxsurfs", (float)NUMSTACKSURFACES);
@@ -255,12 +255,12 @@ public unsafe class r_main_c
 #endif
     }
 
-    public void R_SetVrect(vrect_t* pvrectin, vrect_t* pvrect, int lineadj)
+    public static void R_SetVrect(vid_win_c.vrect_t* pvrectin, vid_win_c.vrect_t* pvrect, int lineadj)
     {
         int h;
         float size;
 
-        size = scr_viewsize.value > 100 ? 100 : scr_viewsize.value;
+        size = screen_c.scr_viewsize.value > 100 ? 100 : screen_c.scr_viewsize.value;
 
         if (cl.intermission)
         {
@@ -271,7 +271,7 @@ public unsafe class r_main_c
         size /= 100;
 
         h = pvrectin->height - lineadj;
-        pvrect->width = pvrectin->width * size;
+        pvrect->width = (int)(pvrectin->width * size);
 
         if (pvrect->width < 96)
         {
@@ -280,7 +280,7 @@ public unsafe class r_main_c
         }
 
         pvrect->width &= ~7;
-        pvrect->height = pvrectin->height * size;
+        pvrect->height = (int)(pvrectin->height * size);
 
         if (pvrect->height > pvrectin->height - lineadj)
         {
@@ -301,16 +301,16 @@ public unsafe class r_main_c
         }
     }
 
-    public void R_ViewChanged(vrect_t* pvrect, int lineadj, float aspect)
+    public static void R_ViewChanged(vid_win_c.vrect_t* pvrect, int lineadj, float aspect)
     {
         int i;
         float res_scale;
 
         r_viewchanged = true;
 
-        R_SetVrect(pvrect, &r_refdef.vrect, lineadj);
+        R_SetVrect(pvrect, render_c.r_refdef.vrect, lineadj);
 
-        r_refdef.horizontalFieldOfView = 2.0 * MathF.Tan(r_refdef.fov_x / 360 * MathF.PI);
+        r_refdef.horizontalFieldOfView = 2.0f * MathF.Tan(r_refdef.fov_x / 360 * MathF.PI);
         r_refdef.fvrectx = (float)r_refdef.vrect.x;
         r_refdef.fvrectx_adj = (float)r_refdef.vrect.x;
         r_refdef.fvrectx_adj_shift20 = (r_refdef.vrect.x << 20) + (1 << 19) - 1;
@@ -409,7 +409,7 @@ public unsafe class r_main_c
         }
 #endif
 
-        D_ViewChanged();
+        render_c.D_ViewChanged();
     }
 
     public void R_MarkLeaves()
@@ -462,11 +462,11 @@ public unsafe class r_main_c
             return;
         }
 
-        for (i = 0; i < cl_numvisedicts; i++)
+        for (i = 0; i < client_c.cl_numvisedicts; i++)
         {
-            currententity = cl_visedicts[i];
+            currententity = client_c.cl_visedicts[i];
 
-            if (currententity == &cl_entities[cl.viewentity])
+            if (currententity == &client_c.cl_entities[cl.viewentity])
             {
                 continue;
             }
@@ -476,7 +476,7 @@ public unsafe class r_main_c
                 case mod_sprite:
                     Vector<r_entorigin>.CopyTo(currententity->origin);
                     Vector3.Subtract(r_origin, r_entorigin);
-                    R_DrawSprite();
+                    draw_c.R_DrawSprite();
                     break;
 
                 case mod_alias:
@@ -534,7 +534,7 @@ public unsafe class r_main_c
         int lnum;
         Vector3 dist;
         float add;
-        dlight_t* dl;
+        client_c.dlight_t* dl;
 
         if (!r_drawviewmodel.value || r_fov_greater_than_90)
         {

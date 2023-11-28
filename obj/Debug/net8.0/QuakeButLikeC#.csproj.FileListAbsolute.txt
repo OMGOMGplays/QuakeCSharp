@@ -1,2 +1,5 @@
 C:\Users\Loke\Documents\Programmering\QuakeC-\obj\Debug\net8.0\QuakeButLikeC#.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Loke\Documents\Programmering\QuakeC-\obj\Debug\net8.0\QuakeButLikeC#.csproj.CoreCompileInputs.cache
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\obj\Debug\net8.0\QuakeButLikeC#.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\obj\Debug\net8.0\QuakeButLikeC#.csproj.CoreCompileInputs.cache
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\obj\Debug\net8.0\QuakeButLikeC#.sourcelink.json

@@ -14,14 +14,14 @@ public unsafe class screen_c
 	public static bool scr_skipupdate;
 
 	public static float oldscreensize, oldfov;
-	public static cvar_t scr_viewsize = new cvar_t { "viewsize", "100", true };
-	public static cvar_t scr_fov = new cvar_t { "fov", "90" };
-	public static cvar_t scr_conspeed = new cvar_t { "scr_conspeed", "300" };
-	public static cvar_t scr_centertime = new cvar_t { "scr_centertime", "2" };
-	public static cvar_t scr_showram = new cvar_t { "showram", "1" };
-	public static cvar_t scr_showturtle = new cvar_t { "showturtle", "0" };
-	public static cvar_t scr_showpause = new cvar_t { "showpause", "1" };
-	public static cvar_t scr_printspeed = new cvar_t { "scr_printspeed", "0" };
+	public static cvar_c.cvar_t scr_viewsize = new cvar_t { "viewsize", "100", true };
+	public static cvar_c.cvar_t scr_fov = new cvar_t { "fov", "90" };
+	public static cvar_c.cvar_t scr_conspeed = new cvar_t { "scr_conspeed", "300" };
+	public static cvar_c.cvar_t scr_centertime = new cvar_t { "scr_centertime", "2" };
+	public static cvar_c.cvar_t scr_showram = new cvar_t { "showram", "1" };
+	public static cvar_c.cvar_t scr_showturtle = new cvar_t { "showturtle", "0" };
+	public static cvar_c.cvar_t scr_showpause = new cvar_t { "showpause", "1" };
+	public static cvar_c.cvar_t scr_printspeed = new cvar_t { "scr_printspeed", "0" };
 
 	public static bool scr_initialized;
 
@@ -35,7 +35,7 @@ public unsafe class screen_c
 	public static vid_win_c.viddef_t vid;
 
 	public static vid_win_c.vrect_t* pconupdate;
-	public static vid_win_c.vrect_t scr_vrect;
+	public static vid_win_c.vrect_t* scr_vrect;
 
 	public static int scr_copytop;
 	public static int scr_copyeverything;
@@ -80,7 +80,7 @@ public unsafe class screen_c
 
 		if (scr_center_lines <= 4)
 		{
-			y = vid.height * 0.35;
+			y = (int)(vid_win_c.vid.height * 0.35f);
 		}
 		else
 		{
@@ -88,7 +88,7 @@ public unsafe class screen_c
 		}
 
 		scr_copytop = 1;
-		Draw_TileClear(0, y, vid.width, 8 * scr_erase_lines);
+		draw_c.Draw_TileClear(0, y, vid.width, 8 * scr_erase_lines);
 	}
 
 	public void SCR_DrawCenterString()
@@ -113,7 +113,7 @@ public unsafe class screen_c
 
 		if (scr_center_lines <= 4)
 		{
-			y = vid.height * 0.35;
+			y = (int)(vid_win_c.vid.height * 0.35);
 		}
 		else
 		{
@@ -124,7 +124,7 @@ public unsafe class screen_c
 		{
 			for (l = 0; l < 40; l++)
 			{
-				if (start[l] == '\n' || start[l] == null)
+				if (start[l] == '\n' || start[l] == 0)
 				{
 					break;
 				}
@@ -134,7 +134,7 @@ public unsafe class screen_c
 
 			for (j = 0; j < l; x += 8)
 			{
-				Draw_Character(x, y, start[j]);
+				draw_c.Draw_Character(x, y, start[j]);
 
 				if (remaining-- == 0)
 				{
@@ -144,12 +144,12 @@ public unsafe class screen_c
 
 			y += 8;
 
-			while (*start != null && *start != '\n')
+			while (*start != 0 && *start != '\n')
 			{
 				start++;
 			}
 
-			if (*start == null)
+			if (*start == 0)
 			{
 				break;
 			}
@@ -182,7 +182,7 @@ public unsafe class screen_c
 		SCR_DrawCenterString();
 	}
 
-	public float CalcFov(float fov_x, float width, float height)
+	public static float CalcFov(float fov_x, float width, float height)
 	{
 		float a;
 		float x;
@@ -203,7 +203,7 @@ public unsafe class screen_c
 
 	public static void SCR_CalcRefDef()
 	{
-		vid_win_c.vrect_t vrect;
+		vid_win_c.vrect_t* vrect = null;
 		float size;
 
 		scr_fullupdate = 0;
@@ -213,26 +213,26 @@ public unsafe class screen_c
 
 		if (scr_viewsize.value < 30)
 		{
-			Cvar_Set("viewsize", "30");
+			cvar_c.Cvar_Set("viewsize", "30");
 		}
 
 		if (scr_viewsize.value > 120)
 		{
-			Cvar_Set("viewsize", "120");
+			cvar_c.Cvar_Set("viewsize", "120");
 		}
 
 		if (scr_fov.value < 10)
 		{
-			Cvar_Set("fov", "10");
+            cvar_c.Cvar_Set("fov", "10");
 		}
 
 		if (scr_fov.value > 170)
 		{
-			Cvar_Set("fov", "170");
+            cvar_c.Cvar_Set("fov", "170");
 		}
 
-		r_refdef.fov_x = scr_fov.value;
-		r_refdef.fov_y = CalcFov(r_refdef.fov_x, r_refdef.vrect.width, r_refdef.vrect.height);
+        r_main_c.r_refdef.fov_x = scr_fov.value;
+		r_main_c.r_refdef.fov_y = CalcFov(r_main_c.r_refdef.fov_x, r_main_c.r_refdef.vrect.width, r_main_c.r_refdef.vrect.height);
 
 		if (cl.intermission)
 		{
@@ -256,19 +256,19 @@ public unsafe class screen_c
 			sb_lines = 24 + 16 + 8;
 		}
 
-		vrect.x = 0;
-		vrect.y = 0;
-		vrect.width = vid.width;
-		vrect.height = vid.height;
+		vrect->x = 0;
+		vrect->y = 0;
+		vrect->width = vid.width;
+		vrect->height = vid.height;
 
-		R_SetVrect(vrect, scr_vrect, sb_lines);
+		r_main_c.R_SetVrect(vrect, scr_vrect, sb_lines);
 
 		if (scr_con_current > vid.height)
 		{
 			scr_con_current = vid.height;
 		}
 
-		R_ViewChanged(vrect, sb_lines, vid.aspect);
+		r_main_c.R_ViewChanged(vrect, sb_lines, vid.aspect);
 	}
 
 	public void SCR_SizeUp_f()

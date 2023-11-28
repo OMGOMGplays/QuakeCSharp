@@ -9,8 +9,8 @@ public unsafe class common_c
 
 	public static string[] safeargvs = { "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly" };
 
-	public static cvar_t registered = new cvar_t { "registered", 0 };
-	public static cvar_t cmdline = new cvar_t { "cmdline", "0", false, true };
+	public static cvar_c.cvar_t registered = new cvar_c.cvar_t { name = "registered", value = 0 };
+	public static cvar_c.cvar_t cmdline = new cvar_c.cvar_t { "cmdline", "0", false, true };
 
 	public static bool com_modified; // Set true if using non-id files
 

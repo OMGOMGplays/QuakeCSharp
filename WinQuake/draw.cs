@@ -642,7 +642,7 @@ public unsafe class draw_c
         }
     }
 
-    public void Draw_TileClear(int x, int y, int w, int h)
+    public static void Draw_TileClear(int x, int y, int w, int h)
     {
         int width, height, tileoffsetx, tileoffsety;
         byte* psrc;

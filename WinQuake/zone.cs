@@ -382,12 +382,12 @@ public unsafe class zone_c
 		return Hunk_AllocName(size, "unknown");
 	}
 
-	public int Hunk_LowMark()
+	public static int Hunk_LowMark()
 	{
 		return hunk_low_used;
 	}
 
-	public void Hunk_FreeToLowMark(int mark)
+	public static void Hunk_FreeToLowMark(int mark)
 	{
 		if (mark < 0 || mark > hunk_low_used)
 		{
@@ -706,7 +706,7 @@ public unsafe class zone_c
 		cache_head->next = cache_head->prev = cache_head;
 		cache_head->lru_next = cache_head->lru_prev = cache_head;
 
-		Cmd_AddCommand("flush", Cache_Flush);
+		cmd_c.Cmd_AddCommand("flush", Cache_Flush);
 	}
 
 	public static void Cache_Free(cache_user_t* c)
