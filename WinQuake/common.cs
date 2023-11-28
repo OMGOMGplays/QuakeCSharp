@@ -10,7 +10,7 @@ public unsafe class common_c
 	public static string[] safeargvs = { "-stdvid", "-nolan", "-nosound", "-nocdaudio", "-nojoy", "-nomouse", "-dibonly" };
 
 	public static cvar_c.cvar_t registered = new cvar_c.cvar_t { name = "registered", value = 0 };
-	public static cvar_c.cvar_t cmdline = new cvar_c.cvar_t { "cmdline", "0", false, true };
+	public static cvar_c.cvar_t cmdline = new cvar_c.cvar_t { name = "cmdline", value = 0, server = false, archive = true };
 
 	public static bool com_modified; // Set true if using non-id files
 
@@ -64,34 +64,34 @@ public unsafe class common_c
 
 	public struct link_t
 	{
-		public link_t prev, next;
+		public link_t* prev, next;
 	}
 
-	public void ClearLink(link_t l)
+	public void ClearLink(link_t* l)
 	{
-		l.prev = l.next = l;
+		l->prev = l->next = l;
 	}
 
 	public void RemoveLink(link_t l)
 	{
-		l.next.prev = l.prev;
-		l.prev.next = l.next;
+		l.next->prev = l.prev;
+		l.prev->next = l.next;
 	}
 
-	public void InsertLinkBefore(link_t l, link_t before)
+	public void InsertLinkBefore(link_t* l, link_t* before)
 	{
-		l.next = before;
-		l.prev = before;
-		l.prev.next = l;
-		l.next.prev = l;
+		l->next = before;
+		l->prev = before;
+		l->prev->next = l;
+		l->next->prev = l;
 	}
 
-	public void InsertLinkAfter(link_t l, link_t after)
+	public void InsertLinkAfter(link_t* l, link_t* after)
 	{
-		l.next = after.next;
-		l.prev = after;
-		l.prev.next = l;
-		l.next.prev = l;
+		l->next = after->next;
+		l->prev = after;
+		l->prev->next = l;
+		l->next->prev = l;
 	}
 
 	public static void Q_memset(object dest, int fill, int count)
@@ -257,7 +257,7 @@ public unsafe class common_c
 		return -1; // Also unreachable
 	}
 
-	public unsafe int Q_strncasecmp(string s1, string s2, int n)
+	public static int Q_strncasecmp(string s1, string s2, int n)
 	{
 		int c1, c2;
 

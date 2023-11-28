@@ -130,7 +130,7 @@ public unsafe class sys_win_c
 
 	public static void Sys_Init() 
 	{
-		Cvar_RegisterVariable(&sys_nostdout);
+		cvar_c.Cvar_RegisterVariable(&sys_nostdout);
 	}
 
 	string* newargv;
