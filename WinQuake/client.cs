@@ -118,7 +118,7 @@ public unsafe class client_c
 
         public int[] stats;
         public int items;
-        public float[] item_gettime = new float[32];
+        public float[] item_gettime;
         public float faceanimtime;
 
         public cshift_t[] cshifts;

@@ -372,7 +372,7 @@ public unsafe class cmd_c
         return cmd_args;
     }
 
-    public void Cmd_TokenizeString(char* text)
+    public static void Cmd_TokenizeString(char* text)
     {
         int i;
 
@@ -427,7 +427,7 @@ public unsafe class cmd_c
     {
         cmd_function_t* cmd;
 
-        if (host_initialized)
+        if (sv_main_c.host_initialized)
         {
             sys_win_c.Sys_Error("Cmd_AddCommand after host_initialized");
         }

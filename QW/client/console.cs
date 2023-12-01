@@ -320,9 +320,8 @@ public class console_c
 		}
 	}
 
-	public void Con_DPrintf(string fmt)
+	public static void Con_DPrintf(string fmt)
 	{
-		va_list argptr;
 		string msg = null;
 
 		if (developer.value != 0)
@@ -330,9 +329,7 @@ public class console_c
 			return;
 		}
 
-		va_start(argptr, fmt);
-		vsprintf(msg, fmt, argptr);
-		va_end(argptr);
+		Console.WriteLine(fmt);
 
 		Con_Printf($"{msg}");
 	}

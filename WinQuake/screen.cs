@@ -582,11 +582,11 @@ public unsafe class screen_c
 		console_c.Con_Printf($"Wrote {pcxname}\n");
 	}
 
-	public void SCR_BeginLoadingPlaque()
+	public static void SCR_BeginLoadingPlaque()
 	{
 		S_StopAllSounds(true);
 
-		if (cls.state != ca_connected)
+		if (cl_main_c.cls.state != ca_connected)
 		{
 			return;
 		}
@@ -611,7 +611,7 @@ public unsafe class screen_c
 		scr_fullupdate = 0;
 	}
 
-	public void SCR_EndLoadingPlaque()
+	public static void SCR_EndLoadingPlaque()
 	{
 		scr_disabled_for_loading = false;
 		scr_fullupdate = 0;
