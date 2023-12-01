@@ -418,12 +418,12 @@ public unsafe class cl_main_c
                 continue;
             }
 
-            // VectorCopy(ent->origin, oldorg);
+            mathlib_c.VectorCopy(ent->origin, oldorg);
 
             if (ent->forcelink)
             {
-                // VectorCopy(ent->msg_origins[0], ent->origin);
-                // VectorCopy(ent->msg_angles[0], ent->angles);
+                mathlib_c.VectorCopy(ent->msg_origins[0], ent->origin);
+                mathlib_c.VectorCopy(ent->msg_angles[0], ent->angles);
             }
             else
             {
@@ -480,7 +480,7 @@ public unsafe class cl_main_c
                 Vector3 fv, rv, uv;
 
                 dl = CL_AllocDlight(i);
-                //VectorCopy(ent->origin, dl->origin);
+                mathlib_c.VectorCopy(ent->origin, dl->origin);
                 dl->origin[2] += 16;
                 mathlib_c.AngleVectors(ent->angles, fv, rv, uv);
 
@@ -493,7 +493,7 @@ public unsafe class cl_main_c
             if (ent->effects & EF_BRIGHTLIGHT)
             {
                 dl = CL_AllocDlight(i);
-                //VectorCopy(ent->origin, dl->origin);
+                mathlib_c.VectorCopy(ent->origin, dl->origin);
                 dl->radius = 200 + (rand() & 31);
                 dl->die = cl.time + 0.001f;
             }
@@ -502,7 +502,7 @@ public unsafe class cl_main_c
             if (ent->effects & EF_DARKLIGHT) 
             {
                 dl = CL_AllocDlight(i);
-                //VectorCopy(ent->origin, dl->origin);
+                mathlib_c.VectorCopy(ent->origin, dl->origin);
                 dl->radius = 200;
                 dl->die = cl.time + 0.001f;
                 dl->dark = true;
@@ -511,7 +511,7 @@ public unsafe class cl_main_c
             if (ent->effects & EF_LIGHT) 
             {
                 dl = CL_AllocDlight(i);
-                //VectorCopy(ent->origin, dl->origin);
+                mathlib_c.VectorCopy(ent->origin, dl->origin);
                 dl->radius = 200;
                 dl->die = cl.time + 0.001f;
             }
@@ -537,7 +537,7 @@ public unsafe class cl_main_c
             {
                 R_RocketTrail(oldorg, ent->origin, 0);
                 dl = CL_AllocDlight(i);
-                //VectorCopy(ent->origin, dl->origin);
+                mathlib_c.VectorCopy(ent->origin, dl->origin);
                 dl->radius = 200;
                 dl->die = cl.time + 0.01f;
             }
@@ -603,7 +603,7 @@ public unsafe class cl_main_c
         }
 
         CL_RelinkEntities();
-        CL_UpdateTEnts();
+        cl_tent_c.CL_UpdateTEnts();
 
         return 0;
     }

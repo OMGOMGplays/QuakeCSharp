@@ -291,7 +291,7 @@ public unsafe class cl_input_c
 
         common_c.Q_memset(cmd, 0, sizeof(client_c.usercmd_t));
 
-        //VectorCopy(cl_main_c.cl.viewangles, cmd->angles);
+        mathlib_c.VectorCopy(cl_main_c.cl.viewangles, cmd->angles);
 
         if ((in_strafe.state & 1) != 0)
         {
@@ -369,7 +369,7 @@ public unsafe class cl_input_c
 
         cmd.msecs = ms;
 
-        // VectorCopy(cl_main_c.cl.viewangles, cmd.angles);
+        mathlib_c.VectorCopy(cl_main_c.cl.viewangles, cmd.angles);
 
         cmd.impulse = in_impulse;
         in_impulse = 0;

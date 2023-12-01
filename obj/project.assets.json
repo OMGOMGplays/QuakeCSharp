@@ -8,25 +8,25 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Loke.Vigstrand\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Loke\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QuakeButLikeC#.csproj",
+      "projectUniqueName": "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\QuakeButLikeC#.csproj",
       "projectName": "QuakeButLikeC#",
-      "projectPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QuakeButLikeC#.csproj",
-      "packagesPath": "C:\\Users\\Loke.Vigstrand\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\obj\\",
+      "projectPath": "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\QuakeButLikeC#.csproj",
+      "packagesPath": "C:\\Users\\Loke\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\Loke.Vigstrand\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Loke\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -45,9 +45,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "default"
       }
     },
     "frameworks": {
