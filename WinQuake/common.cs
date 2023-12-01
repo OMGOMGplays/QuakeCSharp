@@ -691,7 +691,7 @@ public unsafe class common_c
         return c;
     }
 
-    public int MSG_ReadByte()
+    public static int MSG_ReadByte()
     {
         int c;
 
@@ -707,7 +707,7 @@ public unsafe class common_c
         return c;
     }
 
-    public int MSG_ReadShort()
+    public static int MSG_ReadShort()
     {
         int c;
 
@@ -783,7 +783,7 @@ public unsafe class common_c
         return stringBuilder.ToString();
     }
 
-    public float MSG_ReadCoord()
+    public static float MSG_ReadCoord()
     {
         return MSG_ReadShort() * (1.0f / 8);
     }

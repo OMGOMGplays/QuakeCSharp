@@ -24,10 +24,10 @@ public unsafe class cl_main_c
     public render_c.entity_t cl_entities;
     public render_c.entity_t[] cl_static_entites = new render_c.entity_t[client_c.MAX_STATIC_ENTITIES];
     public client_c.lightstyle_t[] cl_lightstyle = new client_c.lightstyle_t[bothdefs_c.MAX_LIGHTSTYLES];
-    public client_c.dlight_t cl_dlights;
+    public static client_c.dlight_t* cl_dlights;
 
-    public int cl_numvisedicts;
-    public render_c.entity_t* cl_visedicts;
+    public static int cl_numvisedicts;
+    public static render_c.entity_t* cl_visedicts;
 
     public void CL_ClearState()
     {
@@ -248,7 +248,7 @@ public unsafe class cl_main_c
 #endif
     }
 
-    public client_c.dlight_t* CL_AllocDlight(int key)
+    public static client_c.dlight_t* CL_AllocDlight(int key)
     {
         int i;
         client_c.dlight_t* dl;
