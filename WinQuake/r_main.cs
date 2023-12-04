@@ -7,25 +7,25 @@ public unsafe class r_main_c
     public alight_t r_viewlighting = new alight_t { 128, 192, viewlightvec };
     public float r_time1;
     public int r_numallocatededges;
-    public bool r_drawpolys;
+    public static bool r_drawpolys;
     public bool r_drawculledpolys;
-    public bool r_worldpolysbacktofront;
+    public static bool r_worldpolysbacktofront;
     public bool r_recursiveaffinetriangles = true;
     public static int r_pixbytes = 1;
     public static float r_aliasuvscale = 1.0f;
-    public int r_outofsurfaces;
-    public int r_outofedges;
+    public static int r_outofsurfaces;
+    public static int r_outofedges;
 
     public static bool r_dowarp, r_dowarpold, r_viewchanged;
 
-    public int numbtofpolys;
-    public btofpoly_t* pbtofpolys;
-    public mvertex_t* r_pccurrentvertbase;
+    public static int numbtofpolys;
+    public static btofpoly_t* pbtofpolys;
+    public static mvertex_t* r_pcurrentvertbase;
 
     public int c_surf;
     public int r_maxsurfsseen, r_maxedgesseen, r_cnumsurfs;
     public bool r_surfsonstack;
-    public int r_clipflags;
+    public static int r_clipflags;
 
     public byte* r_warpbuffer;
 
@@ -36,7 +36,7 @@ public unsafe class r_main_c
     public Vector3 vup, base_vup;
     public Vector3 vpn, base_vpn;
     public Vector3 vright, base_vright;
-    public Vector3 r_origin;
+    public static Vector3 r_origin;
 
     public static render_c.refdef_t r_refdef;
     public static float xcenter, ycenter;
@@ -65,7 +65,7 @@ public unsafe class r_main_c
     public char[] viewmodname = new char[VIDEOMODNAME_LENGTH];
     public static int modcount;
 
-    public static int* pfrustrum_indexes;
+    public static int* pfrustum_indexes;
     public static int[] r_frustrum_indexes = new int[4 * 6];
 
     public static int reinit_surfcache = 1;
@@ -216,7 +216,7 @@ public unsafe class r_main_c
 
         if (r_cnumsurfs > NUMSTACKSURFACES)
         {
-            surfaces = zone_c.Hunk_AllocName(r_cnumsurfs * sizeof(surf_t), "surfaces");
+            surfaces = zone_c.Hunk_AllocName(r_cnumsurfs * sizeof(r_shared_c.surf_t), "surfaces");
             surface_p = surfaces;
             surf_max = &surfaces[r_cnumsurfs];
             r_surfsonstack = false;

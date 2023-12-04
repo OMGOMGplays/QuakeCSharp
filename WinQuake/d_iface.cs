@@ -85,5 +85,5 @@ public unsafe class d_iface_c
 
 	public cvar_c.cvar_t r_drawflat;
 	public int d_spanpixcount;
-	public int r_framecount;
+	public static int r_framecount;
 }

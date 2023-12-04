@@ -1671,7 +1671,7 @@ public unsafe class common_c
         Q_strcpy(com_gamedir, dir);
 
         search = (searchpath_t*)zone_c.Hunk_Alloc(sizeof(searchpath_t));
-        Q_strcpy(search->filename, dir);
+        Q_strcpy(search->filename->ToString(), dir);
         search->next = com_searchpaths;
         com_searchpaths = search;
 
@@ -1781,7 +1781,7 @@ public unsafe class common_c
                 }
                 else
                 {
-                    Q_strcpy(search->filename, com_argv[i].ToString());
+                    Q_strcpy(search->filename->ToString(), com_argv[i].ToString());
                 }
 
                 search->next = com_searchpaths;

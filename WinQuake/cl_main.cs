@@ -21,7 +21,7 @@ public unsafe class cl_main_c
     public static sv_main_c.client_state_t cl;
 
     public render_c.efrag_t[] cl_efrags = new render_c.efrag_t[client_c.MAX_EFRAGS];
-    public render_c.entity_t cl_entities;
+    public static render_c.entity_t* cl_entities;
     public render_c.entity_t[] cl_static_entites = new render_c.entity_t[client_c.MAX_STATIC_ENTITIES];
     public client_c.lightstyle_t[] cl_lightstyle = new client_c.lightstyle_t[bothdefs_c.MAX_LIGHTSTYLES];
     public static client_c.dlight_t* cl_dlights;
@@ -43,11 +43,11 @@ public unsafe class cl_main_c
         common_c.SZ_Clear(cls.message);
 
         common_c.Q_memset(cl_efrags, 0, client_c.MAX_EFRAGS);
-        common_c.Q_memset(cl_entities, 0, quakedef_c.MAX_EDICTS);
-        common_c.Q_memset(cl_dlights, 0, client_c.MAX_DLIGHTS);
+        common_c.Q_memset(*cl_entities, 0, quakedef_c.MAX_EDICTS);
+        common_c.Q_memset(*cl_dlights, 0, client_c.MAX_DLIGHTS);
         common_c.Q_memset(cl_lightstyle, 0, bothdefs_c.MAX_LIGHTSTYLES);
-        common_c.Q_memset(cl_tent_c.cl_temp_entities, 0, client_c.MAX_TEMP_ENTITIES);
-        common_c.Q_memset(cl_tent_c.cl_beams, 0, client_c.MAX_BEAMS);
+        common_c.Q_memset(*cl_tent_c.cl_temp_entities, 0, client_c.MAX_TEMP_ENTITIES);
+        common_c.Q_memset(*cl_tent_c.cl_beams, 0, client_c.MAX_BEAMS);
 
         cl.free_efrags = cl_efrags;
 

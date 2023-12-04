@@ -55,7 +55,7 @@ public unsafe class render_c
 
         public float fvrectx, fvrecty;
         public float fvrectx_adj, fvrecty_adj;
-        public int fvrectx_adj_shift20;
+        public int vrect_x_adj_shift20;
         public int vrectright_adj_shift20;
         public float fvrectright_adj, fvrectbottom_adj;
 

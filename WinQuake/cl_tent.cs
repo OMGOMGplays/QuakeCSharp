@@ -3,8 +3,8 @@
 public unsafe class cl_tent_c
 {
 	public int num_temp_entities;
-	public render_c.entity_t* cl_temp_entities;
-	public client_c.beam_t* cl_beams;
+	public static render_c.entity_t* cl_temp_entities;
+	public static client_c.beam_t* cl_beams;
 
 	sound_c.sfx_t* cl_sfx_wizhit;
 	sound_c.sfx_t* cl_sfx_knighthit;
