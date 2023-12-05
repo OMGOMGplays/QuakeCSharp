@@ -42,7 +42,7 @@ public unsafe class r_shared_c
     public struct espan_t
     {
         public int u, v, count;
-        public espan_t* next;
+        public espan_t* pnext;
     }
 
     public struct surf_t

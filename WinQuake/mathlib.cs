@@ -111,17 +111,16 @@ public unsafe class mathlib_c
 
     public static float anglemod(float a)
     {
-#if 0
-		if (a >= 0) 
-		{
-			a -= 360*(int)(a/360);
-		}
-		else 
-		{
-			a += 360(1 + (int)(-a/360));
-		}
-#endif
-        a = (360.0 / 65536) * ((int)(a * (65536 / 360.0f)) & 65535);
+		//if (a >= 0) 
+		//{
+		//	a -= 360*(int)(a/360);
+		//}
+		//else 
+		//{
+		//	a += 360(1 + (int)(-a/360));
+		//}
+        
+        a = (360.0f / 65536) * ((int)(a * (65536 / 360.0f)) & 65535);
         return a;
     }
 
@@ -136,22 +135,20 @@ public unsafe class mathlib_c
         float dist1, dist2;
         int sides;
 
-#if 0
-		if (p->type < 3) 
-		{
-			if (p->dist <= emins[p->type]) 
-			{
-				return 1;
-			}
+        //if (p->type < 3) 
+        //{
+        //	if (p->dist <= emins[p->type]) 
+        //	{
+        //		return 1;
+        //	}
 
-			if (p->dist >= emaxs[p->type])
-			{
-				return 2;
-			}
+        //	if (p->dist >= emaxs[p->type])
+        //	{
+        //		return 2;
+        //	}
 
-			return 3;
-		}
-#endif
+        //	return 3;
+        //}
 
         switch (p->signbits)
         {
@@ -201,38 +198,36 @@ public unsafe class mathlib_c
                 break;
         }
 
-#if 0
-		int i;
-		Vector3[] corners = new Vector3[2];
+        //int i;
+        //Vector3[] corners = new Vector3[2];
 
-		for (i = 0; i< 3; i++)
-		{
-			if (plane->normal[i] < 0)
-			{
-				corners[0][i] = emins[i];
-				corners[1][i] = emaxs[i];
-			}
-			else
-			{
-				corners[1][i] = emins[i];
-				corners[0][i] = emaxs[i];
-			}
-		}
+        //for (i = 0; i< 3; i++)
+        //{
+        //	if (plane->normal[i] < 0)
+        //	{
+        //		corners[0][i] = emins[i];
+        //		corners[1][i] = emaxs[i];
+        //	}
+        //	else
+        //	{
+        //		corners[1][i] = emins[i];
+        //		corners[0][i] = emaxs[i];
+        //	}
+        //}
 
-		dist = DotProduct(plane->normal, corners[0]) - plane->dist;
-		dist2 = DotProduct(plane->normal, corners[1]) - plane->dist;
-		sides = 0;
+        //dist = DotProduct(plane->normal, corners[0]) - plane->dist;
+        //dist2 = DotProduct(plane->normal, corners[1]) - plane->dist;
+        //sides = 0;
 
-		if (dist1 >= 0)
-		{
-			sides = 1;
-		}
+        //if (dist1 >= 0)
+        //{
+        //	sides = 1;
+        //}
 
-		if (dist2 < 0)
-		{
-			sides |= 2;
-		}
-#endif
+        //if (dist2 < 0)
+        //{
+        //	sides |= 2;
+        //}
 
         sides = 0;
 
@@ -370,6 +365,23 @@ public unsafe class mathlib_c
         for (i = 0; i < 3; i++)
         {
             length += v[i] * v[i];
+        }
+
+        length = (float)sqrt(length);
+
+        return length;
+    }
+
+    public static float Length_F(float[] f)
+    {
+        int i;
+        float length;
+
+        length = 0;
+
+        for (i = 0; i < 3; i++)
+        {
+            length += f[i] * f[i];
         }
 
         length = (float)sqrt(length);

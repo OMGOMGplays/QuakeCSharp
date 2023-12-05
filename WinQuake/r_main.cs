@@ -6,9 +6,9 @@ public unsafe class r_main_c
     public static Vector3 viewlightvec;
     public alight_t r_viewlighting = new alight_t { 128, 192, viewlightvec };
     public float r_time1;
-    public int r_numallocatededges;
+    public static int r_numallocatededges;
     public static bool r_drawpolys;
-    public bool r_drawculledpolys;
+    public static bool r_drawculledpolys;
     public static bool r_worldpolysbacktofront;
     public bool r_recursiveaffinetriangles = true;
     public static int r_pixbytes = 1;
@@ -72,7 +72,7 @@ public unsafe class r_main_c
 
     public static mleaf_t* r_viewleaf, r_oldviewleaf;
 
-    public static texture_t* r_notexture_mip;
+    public static model_c.texture_t* r_notexture_mip;
 
     public static float r_aliastransition, r_resfudge;
 
@@ -81,7 +81,7 @@ public unsafe class r_main_c
     public static float dp_time1, dp_time2, db_time1, db_time2, rw_time1, rw_time2;
     public static float se_time1, se_time2, de_time1, de_time2, dv_time1, dv_time2;
 
-    public cvar_c.cvar_t r_draworder = new cvar_c.cvar_t { name = "r_draworder", value = 0 };
+    public static cvar_c.cvar_t r_draworder = new cvar_c.cvar_t { name = "r_draworder", value = 0 };
     public cvar_c.cvar_t r_speeds = new cvar_c.cvar_t { name = "r_speeds", value = 0 };
     public cvar_c.cvar_t r_timegraph = new cvar_c.cvar_t { name = "r_timegraph", value = 0 };
     public cvar_c.cvar_t r_graphheight = new cvar_c.cvar_t { name = "r_graphheight", value = 10 };

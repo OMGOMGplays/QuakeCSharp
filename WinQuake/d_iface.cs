@@ -38,7 +38,7 @@ public unsafe class d_iface_c
 	{
 		public int numverts;
 		public float nearzi;
-		public msurface_t* pcurrentface;
+		public model_c.msurface_t* pcurrentface;
 		public polyvert_t* pverts;
 	}
 
@@ -52,10 +52,10 @@ public unsafe class d_iface_c
 	public struct affinetridesc_t
 	{
 		public void* pskin;
-		public maliasskindesc_t* pskindesc;
+		public model_c.maliasskindesc_t* pskindesc;
 		public int skinwidth;
 		public int skinheight;
-		public mtriangle_t* ptriangles;
+		public model_c.mtriangle_t* ptriangles;
 		public finalvert_t* pfinalverts;
 		public int numtriangles;
 		public int drawtype;
@@ -71,7 +71,7 @@ public unsafe class d_iface_c
 	{
 		public int nump;
 		public emitpoint_t* pverts;
-		public mspriteframe_t* pspriteframe;
+		public model_c.mspriteframe_t* pspriteframe;
 		public Vector3 vup, vright, vpn;
 		public float nearzi;
 	}
@@ -86,4 +86,66 @@ public unsafe class d_iface_c
 	public cvar_c.cvar_t r_drawflat;
 	public int d_spanpixcount;
 	public static int r_framecount;
+
+	public static bool r_drawpolys;
+	public static bool r_drawculledpolys;
+	public static bool r_worldpolysbacktofront;
+	public static bool r_recursiveaffinetriangles;
+
+	public static float r_aliasuvscale;
+
+	public static int r_pixbytes;
+	public static bool r_dowarp;
+
+	public static affinetridesc_t r_affinetridesc;
+	public static spritedesc_t r_spritedesc;
+	public static zpointdesc_t r_zpointdesc;
+	public static polydesc_t r_polydesc;
+
+	public static int d_con_indirect;
+
+	public static Vector3 r_pright, r_pup, r_ppn;
+
+	public static int r_skydirect;
+	public static byte* r_skysource;
+
+	public static int DR_SOLID = 0;
+	public static int DR_TRANSPARENT = 1;
+
+	public static int TRANSPARENT_COLOR = 0xFF;
+
+	public static void* acolormap;
+
+	public struct drawsurf_t
+	{
+		public vid_c.pixel_t* surfdat;
+		public int rowbytes;
+		public model_c.msurface_t* surf;
+		public int lightadj;
+
+		public model_c.texture_t* texture;
+		public int surfmip;
+		public int surfwidth;
+		public int surfheight;
+	}
+
+	public static drawsurf_t r_drawsurf;
+
+	public static int TURB_TEX_SIZE = 64;
+
+	public static int CYCLE = 128;
+
+	public static int TILE_SIZE = 128;
+
+	public static int SKYSHIFT = 7;
+	public static int SKYSIZE = 1 << SKYSHIFT;
+	public static int SKYMASK = SKYSIZE - 1;
+
+	public static float skyspeed, skyspeed2;
+	public static float skytime;
+
+	public static int c_surf;
+	public static vid_win_c.vrect_t scr_vrect;
+
+	public static byte* r_warpbuffer;
 }

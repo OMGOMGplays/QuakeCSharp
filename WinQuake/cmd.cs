@@ -23,14 +23,14 @@ public unsafe class cmd_c
         cmd_wait = true;
     }
 
-    common_c.sizebuf_t cmd_text;
+    public static common_c.sizebuf_t cmd_text;
 
     public void Cbuf_Init()
     {
         common_c.SZ_Alloc(cmd_text, 8192);
     }
 
-    public void Cbuf_AddText(char* text)
+    public static void Cbuf_AddText(char* text)
     {
         int l;
 
@@ -55,7 +55,7 @@ public unsafe class cmd_c
         if (templen != 0)
         {
             temp = (char*)zone_c.Z_Malloc(templen);
-            common_c.Q_memcpy(*temp, cmd_text.data, templen);
+            common_c.Q_memcpy(*temp, *cmd_text.data, templen);
             common_c.SZ_Clear(cmd_text);
         }
         else
@@ -477,7 +477,7 @@ public unsafe class cmd_c
         return false;
     }
 
-    public char* Cmd_CompleteCommand(char* partial)
+    public static char* Cmd_CompleteCommand(char* partial)
     {
         cmd_function_t* cmd;
         int len;
@@ -541,7 +541,7 @@ public unsafe class cmd_c
             return;
         }
 
-        common_c.MSG_WriteByte(client_c.cls.message, client_c.clc_stringcmd);
+        common_c.MSG_WriteByte(client_c.cls.message, cl_main_c.clc_stringcmd);
 
         if (common_c.Q_strcasecmp(Cmd_Argv(0)->ToString(), "cmd") != 0)
         {

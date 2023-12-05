@@ -357,7 +357,7 @@ public unsafe class sv_main_c
         common_c.MSG_WriteString(&net_message, message);
         common_c.MSG_WriteByte(&net_message, svc_disconnect);
 
-        for (i = 0; i < svs.clients; i < MAX_CLIENTS; i++, cl++) {
+        for (i = 0; i < svs.clients; i++, cl++) {
             if (cl->state >= cs_spawned)
             {
                 Netchan_Transit(&cl->netchan, net_message.cursize, net_message.data);
@@ -412,7 +412,7 @@ public unsafe class sv_main_c
         drop->old_frags = 0;
         drop->edict->v.frags = 0;
         drop->name[0] = '\0';
-        common_c.Q_memset(drop->userinfo, 0, sizeof(drop->userinfo));
+        common_c.Q_memset(drop->userinfo, 0, drop->userinfo);
 
         SV_FullClientUpdate(drop, &sv.reliable_datagram);
     }

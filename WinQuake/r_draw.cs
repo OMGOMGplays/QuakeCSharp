@@ -13,7 +13,7 @@ public unsafe class r_draw_c
 
     public d_iface_c.zpointdesc_t r_zpointdesc;
 
-    public d_iface_c.polydesc_t r_polydesc;
+    public static d_iface_c.polydesc_t r_polydesc;
 
     public r_local_c.clipplane_t* entity_clipplanes;
     public static r_local_c.clipplane_t[] view_clipplanes = new r_local_c.clipplane_t[4];
@@ -632,7 +632,7 @@ public unsafe class r_draw_c
         int i, lindex, lnumverts, s_axis, t_axis;
         float dist, lastdist, lzi, scale, u, v, frac;
         uint mask;
-        Vector3 local, transformed;
+        Vector3 local = new Vector3(0f), transformed = new Vector3(0f);
         r_local_c.clipplane_t* pclip;
         model_c.medge_t* pedges;
         model_c.mplane_t* pplane;
@@ -676,7 +676,150 @@ public unsafe class r_draw_c
 
         while (pclip != null)
         {
+            lastvert = lnumverts - 1;
+            lastdist = mathlib_c.DotProduct_V(verts[vertpage][lastvert].position, pclip->normal) - pclip.dist;
 
+            visible = false;
+            newverts = 0;
+            newpage = vertpage ^ 1;
+
+            for (i = 0; i < lnumverts; i++)
+            {
+                dist = mathlib_c.DotProduct_V(verts[vertpage][i].position, pclip->normal) - pclip->dist;
+
+                if ((lastdist > 0) != (dist > 0))
+                {
+                    frac = dist / (dist - lastdist);
+                    verts[newpage][newverts].position[0] = verts[vertpage][i].position[0] + ((verts[vertpage][lastvert].position[0] - verts[vertpage][i].position[0]) * frac);
+                    verts[newpage][newverts].position[1] = verts[vertpage][i].position[1] + ((verts[vertpage][lastvert].position[1] - verts[vertpage][i].position[1]) * frac);
+                    verts[newpage][newverts].position[2] = verts[vertpage][i].position[2] + ((verts[vertpage][lastvert].position[2] - verts[vertpage][i].position[2]) * frac);
+                    newverts++;
+                }
+
+                if (dist >= 0)
+                {
+                    verts[newpage][newverts] = verts[vertpage][i];
+                    newverts++;
+                    visible = true;
+                }
+
+                lastvert = i;
+                lastdist = dist;
+            }
+
+            if (!visible || (newverts < 3))
+            {
+                return;
+            }
+
+            lnumverts = newverts;
+            vertpage ^= 1;
+            pclip = pclip->next;
+        }
+
+        pplane = fa->plane;
+
+        switch (pplane->type)
+        {
+            case PLANE_X:
+            case PLANE_ANYX:
+                s_axis = 1;
+                t_axis = 2;
+                break;
+
+            case PLANE_Y:
+            case PLANE_ANYY:
+                s_axis = 0;
+                t_axis = 2;
+                break;
+
+            case PLANE_Z:
+            case PLANE_ANYZ:
+                s_axis = 0;
+                t_axis = 1;
+                break;
+        }
+
+        r_nearzi = 0;
+
+        for (i = 0; i < lnumverts; i++)
+        {
+            mathlib_c.VectorSubtract(verts[vertpage][i].position, r_shared_c.modelorg, local);
+            r_misc_c.TransformVector(local, transformed);
+
+            if (transformed[2] < r_local_c.NEAR_CLIP)
+            {
+                transformed[2] = r_local_c.NEAR_CLIP;
+            }
+
+            lzi = 1.0f / transformed[2];
+
+            if (lzi > r_nearzi)
+            {
+                r_nearzi = lzi;
+            }
+
+            scale = r_main_c.xscale * lzi;
+            u = r_main_c.xcenter + scale * transformed[0];
+
+            if (u < r_main_c.r_refdef.fvrectx_adj)
+            {
+                u = r_main_c.r_refdef.fvrectx_adj;
+            }
+
+            if (u > r_main_c.r_refdef.fvrectright_adj)
+            {
+                u = r_main_c.r_refdef.fvrectright_adj;
+            }
+
+            scale = r_main_c.yscale * lzi;
+            v = r_main_c.ycenter - scale * transformed[1];
+            
+            if (v < r_main_c.r_refdef.fvrecty_adj)
+            {
+                v = r_main_c.r_refdef.fvrecty_adj;
+            }
+
+            if (v > r_main_c.r_refdef.fvrectbottom_adj)
+            {
+                v = r_main_c.r_refdef.fvrectbottom_adj;
+            }
+
+            pverts[i].u = u;
+            pverts[i].v = v;
+            pverts[i].zi = lzi;
+            pverts[i].s = verts[vertpage][i].position[s_axis];
+            pverts[i].t = verts[vertpage][i].position[t_axis];
+        }
+
+        r_polydesc.numverts = lnumverts;
+        r_polydesc.nearzi = r_nearzi;
+        r_polydesc.pcurrentface = fa;
+        r_polydesc.pverts = pverts;
+
+        d_edge_c.D_DrawPoly();
+    }
+
+    public static void R_ZDrawSubmodelPolys(model_c.model_t* pmodel)
+    {
+        int i, numsurfaces;
+        model_c.msurface_t* psurf;
+        float dot;
+        model_c.mplane_t* pplane;
+
+        psurf = pmodel->surfaces[pmodel->firstmodelsurface];
+        numsurfaces = pmodel->nummodelsurfaces;
+
+        for (i = 0; i < numsurfaces; i++, psurf++)
+        {
+            pplane = psurf->plane;
+
+            dot = mathlib_c.DotProduct_V(r_bsp_c.modelorg, pplane->normal) - pplane->dist;
+
+            if (((psurf->flags & model_c.SURF_PLANEBACK) != 0 && (dot < -r_local_c.BACKFACE_EPSILON)) || ((psurf->flags & r_model_c.SURF_PLANEBACK) == 0 && (dot > r_local_c.BACKFACE_EPSILON)))
+            {
+                R_RenderPoly(psurf, 15);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 
 public unsafe class cl_main_c
 {
-    public cvar_c.cvar_t cl_name = new cvar_c.cvar_t { name = "_cl_name", value = "player".ToCharArray()[0], archive = true }
+    public cvar_c.cvar_t cl_name = new cvar_c.cvar_t { name = "_cl_name", value = "player".ToCharArray()[0], archive = true };
     public cvar_c.cvar_t cl_color = new cvar_c.cvar_t { name = "cl_color", value = (char)0, archive = true };
 
     public cvar_c.cvar_t cl_shownet = new cvar_c.cvar_t { name = "cl_shownet", value = (char)0 };
@@ -217,7 +217,6 @@ public unsafe class cl_main_c
 
     public void SetPal(int i)
     {
-#if 0
         int old;
         byte[] pal = new byte[768];
         int c;
@@ -244,8 +243,6 @@ public unsafe class cl_main_c
 
             VID_SetPalette(pal);
         }
-
-#endif
     }
 
     public static client_c.dlight_t* CL_AllocDlight(int key)

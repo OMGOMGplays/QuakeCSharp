@@ -219,7 +219,7 @@ public unsafe class client_c
     public static entity_t[] cl_entities = new entity_t[quakedef_c.MAX_EDICTS];
     public entity_t[] cl_static_entities = new entity_t[MAX_STATIC_ENTITIES];
     public lightstyle_t[] cl_lightstyle = new lightstyle_t[quakedef_c.MAX_LIGHTSTYLES];
-    public dlight_t[] cl_dlights[quakedef_c.MAX_DLIGHTS];
+    public dlight_t[] cl_dlights = new dlight_t[quakedef_c.MAX_DLIGHTS];
     public entity_t[] cl_temp_entities = new entity_t[MAX_TEMP_ENTITIES];
     public beam_t[] cl_beams = new beam_t[MAX_BEAMS];
     public dlight_t* CL_AllocDlight(int key)

@@ -66,7 +66,7 @@ public unsafe class cvar_c
         return var->str;
     }
 
-    public char* Cvar_CompleteVariable(string partial)
+    public static char* Cvar_CompleteVariable(string partial)
     {
         cvar_t* cvar = null;
         int len;
