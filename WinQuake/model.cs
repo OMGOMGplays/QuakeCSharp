@@ -40,10 +40,8 @@ public unsafe class model_c
 
     public struct medge_t
     {
-        public float[][] vecs;
-        public float mipadjust;
-        public texture_t* texture;
-        public int flags;
+        public ushort[] v;
+        public uint cachededgeoffset;
     }
 
     public struct mtexinfo_t
@@ -966,6 +964,80 @@ public unsafe class model_c
                     output->flags = 0;
                 }
             }
+        }
+    }
+
+    public void CalcSurfaceExtents(msurface_t* s)
+    {
+        float[] mins = new float[2], maxs = new float[2];
+        float val;
+        int i, j, e;
+        mvertex_t* v;
+        mtexinfo_t* tex;
+        int[] bmins = new int[2], bmaxs = new int[2];
+
+        mins[0] = mins[1] = 999999;
+        maxs[0] = maxs[1] = -99999;
+
+        tex = s->texinfo;
+
+        for (i = 0; i < s->numedges; i++)
+        {
+            e = loadmodel->surfedges[s->firstedge + i];
+
+            if (e >= 0)
+            {
+                v = &loadmodel->vertexes[loadmodel->edges[e].v[0]];
+            }
+            else
+            {
+                v = &loadmodel->vertexes[loadmodel->edges[-e].v[1]];
+            }
+
+            for (j = 0; j < 2; j++)
+            {
+                val = v->position[0] * tex->vecs[j][0] + v->position[1] * tex->vecs[j][1] + v->position[2] + tex->vecs[j][3];
+
+                if (val < mins[j])
+                {
+                    mins[j] = val;
+                }
+
+                if (val > maxs[j])
+                {
+                    maxs[j] = val;
+                }
+            }
+        }
+
+        for (i = 0; i < 2; i++)
+        {
+            bmins[i] = (int)MathF.Floor(mins[i] / 16);
+            bmaxs[i] = (int)MathF.Ceiling(maxs[i] / 16);
+
+            s->texturemins[i] = (short)(bmins[i] * 16);
+            s->extents[i] = (short)((bmaxs[i] - bmins[i]) * 16);
+
+            if ((tex->flags & bspfile_c.TEX_SPECIAL) == 0 && s->extents[i] > 256)
+            {
+                sys_win_c.Sys_Error("Bad surface extents");
+            }
+        }
+    }
+
+    public void Mod_LoadFaces(bspfile_c.lump_t* l)
+    {
+        bspfile_c.dface_t* input;
+        msurface_t* output;
+
+        int i, count, surfnum;
+        int planenum, side;
+
+        input = (void*)(mod_base + l->fileofs);
+
+        if ((l->filelen % sizeof(bspfile_c.dface_t)) != 0)
+        {
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
         }
     }
 }
