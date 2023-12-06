@@ -22,7 +22,7 @@ public unsafe class model_c
 
     public struct texture_t
     {
-        public char[] name;
+        public char* name;
         public uint width, height;
         public int anim_total;
         public int anim_min, anim_max;
@@ -171,8 +171,8 @@ public unsafe class model_c
 
     public struct maliasgroupframedesc_t
     {
-        public modelgen_c.trivertx_t bbmoxmin;
-        public modelgen_c.trivertx_t bbmoxmax;
+        public modelgen_c.trivertx_t bboxmin;
+        public modelgen_c.trivertx_t bboxmax;
         public int frame;
     }
 
@@ -1039,5 +1039,654 @@ public unsafe class model_c
         {
             sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
         }
+
+        count = l->filelen / sizeof(bspfile_c.dface_t);
+        output = (msurface_t*)zone_c.Hunk_AllocName(count * sizeof(msurface_t), loadname.ToString());
+
+        loadmodel->surfaces = output;
+        loadmodel->numsurfaces = count;
+
+        for (surfnum = 0; surfnum < count; surfnum++, input++, output++)
+        {
+            output->firstedge = common_c.LittleLong(input->firstedge);
+            output->numedges = common_c.LittleShort(input->numedges);
+            output->flags = 0;
+
+            planenum = common_c.LittleShort(input->planenum);
+            side = common_c.LittleShort(input->side);
+
+            if (side != 0)
+            {
+                output->flags |= SURF_PLANEBACK;
+            }
+
+            output->plane = loadmodel->planes + planenum;
+
+            output->texinfo = loadmodel->texinfo + common_c.LittleShort(input->texinfo);
+
+            CalcSurfaceExtents(output);
+
+            for (i = 0; i < bspfile_c.MAXLIGHTMAPS; i++)
+            {
+                output->styles[i] = input->styles[i];
+            }
+
+            i = common_c.LittleLong(input->lightofs);
+
+            if (i == -1)
+            {
+                output->samples = null;
+            }
+            else
+            {
+                output->samples = loadmodel->lightdata + i;
+            }
+
+            if (common_c.Q_strncmp(output->texinfo->texture->name, common_c.StringToChar("sky"), 3) == 0)
+            {
+                output->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
+                continue;
+            }
+
+            if (common_c.Q_strncmp(output->texinfo->texture->name, common_c.StringToChar("*"), 1) == 0)
+            {
+                output->flags |= (SURF_DRAWTURB | SURF_DRAWTILED);
+
+                for (i = 0; i < 2; i++)
+                {
+                    output->extents[i] = 16384;
+                    output->texturemins[i] = -8192;
+                }
+
+                continue;
+            }
+        }
+    }
+
+    public void Mod_SetParent(mnode_t* node, mnode_t* parent)
+    {
+        node->parent = parent;
+
+        if (node->contents < 0)
+        {
+            return;
+        }
+
+        Mod_SetParent(&node->children[0], node);
+        Mod_SetParent(&node->children[1], node);
+    }
+
+    public void Mod_LoadNodes(bspfile_c.lump_t* l)
+    {
+        int i, j, count, p;
+        bspfile_c.dnode_t* input;
+        mnode_t* output;
+
+        input = (void*)(mod_base + l->fileofs);
+
+        if ((l->filelen % sizeof(bspfile_c.dnode_t)) != 0)
+        {
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+        }
+
+        count = l->filelen / sizeof(bspfile_c.dnode_t);
+        output = (mnode_t*)zone_c.Hunk_AllocName(count * sizeof(mnode_t), loadname.ToString());
+
+        loadmodel->nodes = output;
+        loadmodel->numnodes = count;
+
+        for (i = 0; i < count; i++, input++, output++)
+        {
+            for (j = 0; j < 3; j++)
+            {
+                output->minmaxs[j] = common_c.LittleShort(input->mins[j]);
+                output->minmaxs[3 + j] = common_c.LittleShort(input->maxs[j]);
+            }
+
+            p = common_c.LittleLong(input->planenum);
+            output->plane = loadmodel->planes + p;
+
+            output->firstsurface = common_c.LittleShort(input->firstface);
+            output->numsurfaces = common_c.LittleShort(input->numfaces);
+
+            for (j = 0; j < 2; j++)
+            {
+                p = common_c.LittleShort(input->children[j]);
+
+                if (p >= 0)
+                {
+                    output->children[j] = *(loadmodel->nodes + p);
+                }
+                else
+                {
+                    output->children[j] = (mnode_t*)(loadmodel->leafs + (-1 - p));
+                }
+            }
+        }
+
+        Mod_SetParent(loadmodel->nodes, null);
+    }
+
+    public void Mod_LoadLeafs(bspfile_c.lump_t* l)
+    {
+        bspfile_c.dleaf_t* input;
+        mleaf_t* output;
+        int i, j, count, p;
+
+        input = (void*)(mod_base + l->fileofs);
+
+        if ((l->filelen % sizeof(bspfile_c.dleaf_t)) != 0)
+        {
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+        }
+
+        count = l->filelen / sizeof(bspfile_c.dleaf_t);
+        output = (mleaf_t*)zone_c.Hunk_AllocName(count * sizeof(mleaf_t), loadname.ToString());
+
+        loadmodel->leafs = output;
+        loadmodel->numleafs = count;
+
+        for (i = 0; i < count; i++, input++, output++)
+        {
+            for (j = 0; j < 3; j++)
+            {
+                output->minmaxs[j] = common_c.LittleShort(input->mins[j]);
+                output->minmaxs[3 + j] = common_c.LittleShort(input->maxs[j]);
+            }
+
+            p = common_c.LittleLong(input->contents);
+            output->contents = p;
+
+            output->firstmarksurface = loadmodel->marksurfaces + common_c.LittleShort(input->firstmarksurface);
+            output->nummarksurfaces = common_c.LittleShort(input->nummarksurfaces);
+
+            p = common_c.LittleLong(input->visofs);
+
+            if (p == -1)
+            {
+                output->compressed_vis = null;
+            }
+            else
+            {
+                output->compressed_vis = loadmodel->visdata + p;
+            }
+
+            output->efrags = null;
+
+            for (j = 0; j < 4; j++)
+            {
+                output->ambient_sound_level[j] = input->ambient_level[j];
+            }
+        }
+    }
+
+    public void Mod_LoadClipNodes(bspfile_c.lump_t* l)
+    {
+        bspfile_c.dclipnode_t* input, output;
+        int i, count;
+        hull_t* hull;
+
+        input = (void*)(mod_base + l->fileofs);
+
+        if ((l->filelen % sizeof(bspfile_c.dclipnode_t)) != 0)
+        {
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+        }
+
+        count = l->filelen / sizeof(bspfile_c.dclipnode_t);
+        output = (bspfile_c.dclipnode_t*)zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dclipnode_t), loadname);
+
+        loadmodel->clipnodes = output;
+        loadmodel->numclipnodes = count;
+
+        hull = &loadmodel->hulls[1];
+        hull->clipnodes = output;
+        hull->firstclipnode = 0;
+        hull->lastclipnode = count - 1;
+        hull->planes = loadmodel->planes;
+        hull->clip_mins[0] = -16;
+        hull->clip_mins[1] = -16;
+        hull->clip_mins[2] = -24;
+        hull->clip_maxs[0] = 16;
+        hull->clip_maxs[1] = 16;
+        hull->clip_maxs[2] = 32;
+
+        hull = &loadmodel->hulls[2];
+        hull->clipnodes = output;
+        hull->firstclipnode = 0;
+        hull->lastclipnode = count - 1;
+        hull->planes = loadmodel->planes;
+        hull->clip_mins[0] = -32;
+        hull->clip_mins[1] = -32;
+        hull->clip_mins[2] = -24;
+        hull->clip_maxs[0] = 32;
+        hull->clip_maxs[1] = 32;
+        hull->clip_maxs[2] = 64;
+
+        for (i = 0; i < count; i++, input++, output++)
+        {
+            output->planenum = common_c.LittleLong(input->planenum);
+            output->children[0] = common_c.LittleShort(input->children[0]);
+            output->children[1] = common_c.LittleShort(input->children[1]);
+        }
+    }
+
+    public void Mod_MakeHull0()
+    {
+        mnode_t* input, child;
+        bspfile_c.dclipnode_t* output;
+        int i, j, count;
+        hull_t* hull;
+
+        hull = &loadmodel->hulls[0];
+
+        input = loadmodel->nodes;
+        count = loadmodel->numnodes;
+        output = zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dclipnode_t), loadname.ToString());
+
+        hull->clipnodes = output;
+        hull->firstclipnode = 0;
+        hull->lastclipnode = count - 1;
+        hull->planes = loadmodel->planes;
+
+        for (i = 0; i < count; i++, output++, input++)
+        {
+            output->planenum = input->plane - loadmodel->planes;
+
+            for (j = 0; j < 2; j++)
+            {
+                child = &input->children[j];
+
+                if (child->contents < 0)
+                {
+                    output->children[j] = child->contents;
+                }
+                else
+                {
+                    output->children[j] = child - loadmodel->nodes;
+                }
+            }
+        }
+    }
+
+    public void Mod_LoadMarksurfaces(bspfile_c.lump_t* l)
+    {
+        int i, j, count;
+        short* input;
+        msurface_t** output;
+
+        input = (void*)(mod_base + l->fileofs);
+
+        if ((l->filelen % sizeof(short*)) != 0)
+        {
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+        }
+
+        count = l->filelen / sizeof(short*);
+        output = (msurface_t**)zone_c.Hunk_AllocName(count * sizeof(msurface_t), loadname.ToString());
+
+        loadmodel->marksurfaces = output;
+        loadmodel->nummarksurfaces = count;
+
+        for (i = 0; i < count; i++)
+        {
+            j = common_c.LittleShort(input[i]);
+
+            if (j >= loadmodel->numsurfaces)
+            {
+                sys_win_c.Sys_Error("Mod_ParseMarksurfaces: bad surface number");
+            }
+
+            output[i] = loadmodel->surfaces;
+        }
+    }
+
+    public void Mod_LoadSurfedges(bspfile_c.lump_t* l)
+    {
+        int i, count;
+        int* input, output;
+
+        input = (void*)(mod_base + l->fileofs);
+
+        if ((l->filelen % sizeof(int*)) != 0)
+        {
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+        }
+
+        count = l->filelen / sizeof(int*);
+        output = (int*)zone_c.Hunk_AllocName(count * sizeof(int*), loadname.ToString());
+
+        loadmodel->surfedges = output;
+        loadmodel->numsurfegdes = count;
+
+        for (i = 0; i < count; i++)
+        {
+            output[i] = common_c.LittleLong(input[i]);
+        }
+    }
+
+    public void Mod_LoadPlanes(bspfile_c.lump_t* l)
+    {
+        int i, j;
+        mplane_t* output;
+        bspfile_c.dplane_t* input;
+        int count;
+        int bits;
+
+        input = (void*)(mod_base + l->fileofs);
+
+        if ((l->filelen % sizeof(bspfile_c.dplane_t)) != 0)
+        {
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+        }
+
+        count = l->filelen / sizeof(bspfile_c.dplane_t);
+        output = (mplane_t*)zone_c.Hunk_AllocName(count * 2 * sizeof(mplane_t), loadname.ToString());
+
+        loadmodel->planes = output;
+        loadmodel->numplanes = count;
+
+        for (i = 0; i < count; i++, input++, output++)
+        {
+            bits = 0;
+
+            for (j = 0; j < 3; j++)
+            {
+                output->normal[j] = common_c.LittleFloat(input->normal[j]);
+
+                if (output->normal[j] < 0)
+                {
+                    bits |= 1 << j;
+                }
+            }
+
+            output->dist = common_c.LittleFloat(input->dist);
+            output->type = common_c.LittleLong(input->type);
+            output->signbits = (byte)bits;
+        }
+    }
+
+    public float RadiusFromBounds(Vector3 mins, Vector3 maxs)
+    {
+        int i;
+        Vector3 corner = new Vector3(0f);
+
+        for (i = 0; i < 3; i++)
+        {
+            corner[i] = MathF.Abs(mins[i]) > MathF.Abs(maxs[i]) ? MathF.Abs(mins[i]) : MathF.Abs(maxs[i]);
+        }
+
+        return mathlib_c.Length(corner);
+    }
+
+    public void Mod_LoadBrushModel(model_t* mod, void* buffer)
+    {
+        int i, j;
+        bspfile_c.dheader_t* header;
+        bspfile_c.dmodel_t* bm;
+
+        loadmodel->type = modtype_t.mod_brush;
+
+        header = (bspfile_c.dheader_t*)buffer;
+
+        i = common_c.LittleLong(header->version);
+
+        if (i != bspfile_c.BSPVERSION)
+        {
+            sys_win_c.Sys_Error($"Mod_LoadBrushModel: {mod->name} has wrong version number ({i} should be {bspfile_c.BSPVERSION})");
+        }
+
+        mod_base = (byte*)header;
+
+        for (i = 0; i < sizeof(bspfile_c.dheader_t) / 4; i++)
+        {
+            ((int*)header)[i] = common_c.LittleLong(((int*)header)[i]);
+        }
+
+        Mod_LoadVertexes(&header->lumps[bspfile_c.LUMP_VERTEXES]);
+        Mod_LoadEdges(&header->lumps[bspfile_c.LUMP_EDGES]);
+        Mod_LoadSurfedges(&header->lumps[bspfile_c.LUMP_SURFEDGES]);
+        Mod_LoadTextures(&header->lumps[bspfile_c.LUMP_TEXTURES]);
+        Mod_LoadLighting(&header->lumps[bspfile_c.LUMP_LIGHTING]);
+        Mod_LoadPlanes(&header->lumps[bspfile_c.LUMP_PLANES]);
+        Mod_LoadTexInfo(&header->lumps[bspfile_c.LUMP_TEXINFO]);
+        Mod_LoadFaces(&header->lumps[bspfile_c.LUMP_FACES]);
+        Mod_LoadMarksurfaces(&header->lumps[bspfile_c.LUMP_MARKSURFACES]);
+        Mod_LoadVisibility(&header->lumps[bspfile_c.LUMP_VISIBILITY]);
+        Mod_LoadLeafs(&header->lumps[bspfile_c.LUMP_LEAFS]);
+        Mod_LoadNodes(&header->lumps[bspfile_c.LUMP_NODES]);
+        Mod_LoadClipNodes(&header->lumps[bspfile_c.LUMP_CLIPNODES]);
+        Mod_LoadEntities(&header->lumps[bspfile_c.LUMP_ENTITIES]);
+        Mod_LoadSubModels(&header->lumps[bspfile_c.LUMP_MODELS]);
+
+        Mod_MakeHull0();
+
+        mod->numframes = 2;
+        mod->flags = 0;
+
+        for (i = 0; i < mod->numsubmodels; i++)
+        {
+            bm = &mod->submodels[i];
+
+            mod->hulls[0].firstclipnode = bm->headnode[0];
+
+            for (j = 1; j < bspfile_c.MAX_MAP_HULLS; j++)
+            {
+                mod->hulls[j].firstclipnode = bm->headnode[j];
+                mod->hulls[j].lastclipnode = mod->numclipnodes - 1;
+            }
+
+            mod->firstmodelsurface = bm->firstsurface;
+            mod->nummodelsurfaces = bm->numsurfaces;
+
+            mathlib_c.VectorCopy(bm->maxs, mod->maxs);
+            mathlib_c.VectorCopy(bm->mins, mod->mins);
+            mod->radius = RadiusFromBounds(mod->mins, mod->maxs);
+
+            mod->numleafs = bm->visleafs;
+
+            if (i < mod->numsubmodels - 1)
+            {
+                char* name = null;
+
+                Console.WriteLine(name->ToString(), $"{i + 1}");
+                loadmodel = Mod_FindName(name);
+                *loadmodel = *mod;
+                common_c.Q_strcpy(loadmodel->name.ToString(), name->ToString());
+                mod = loadmodel;
+            }
+        }
+    }
+
+    public void* Mod_LoadAliasFrame(void* pin, int* pframeindex, int numv, modelgen_c.trivertx_t* pbboxmin, modelgen_c.trivertx_t* pbboxmax, aliashdr_t* pheader, char* name)
+    {
+        modelgen_c.trivertx_t* pframe, pinframe;
+        int i, j;
+        modelgen_c.daliasframe_t* pdaliasframe;
+
+        pdaliasframe = (modelgen_c.daliasframe_t*)pin;
+
+        common_c.Q_strcpy(name, pdaliasframe->name);
+
+        for (i = 0; i < 3; i++)
+        {
+            pbboxmin->v[i] = pdaliasframe->bboxmin.v[i];
+            pbboxmax->v[i] = pdaliasframe->bboxmax.v[i];
+        }
+
+        pinframe = (modelgen_c.trivertx_t*)(pdaliasframe + 1);
+        pframe = zone_c.Hunk_AllocName(numv * sizeof(modelgen_c.trivertx_t), loadname.ToString());
+
+        *pframeindex = (int)((byte*)pframe - (byte*)pheader);
+
+        for (j = 0; j < numv; j++)
+        {
+            int k;
+
+            pframe[j].lightnormalindex = pinframe[j].lightnormalindex;
+
+            for (k = 0; k < 3; k++)
+            {
+                pframe[j].v[k] = pinframe[j].v[k];
+            }
+        }
+
+        pinframe += numv;
+
+        return (void*)pinframe;
+    }
+
+    public void* Mod_LoadAliasGroup(void* pin, int* pframeindex, int numv, modelgen_c.trivertx_t* pbboxmin, modelgen_c.trivertx_t* pbboxmax, aliashdr_t* pheader, char* name)
+    {
+        modelgen_c.daliasgroup_t* pingroup;
+        maliasgroup_t* paliasgroup;
+        int i, numframes;
+        modelgen_c.daliasinterval_t* pin_intervals;
+        float* poutintervals;
+        void* ptemp;
+
+        pingroup = (modelgen_c.daliasgroup_t*)pin;
+
+        numframes = common_c.LittleLong(pingroup->numframes);
+
+        paliasgroup = (maliasgroup_t*)zone_c.Hunk_AllocName(sizeof(maliasgroup_t) + (numframes - 1) * sizeof(maliasgroup_t), loadname.ToString());
+
+        paliasgroup->numframes = numframes;
+
+        for (i = 0; i < 3; i++)
+        {
+            pbboxmin->v[i] = pingroup->bboxmin.v[i];
+            pbboxmax->v[i] = pingroup->bboxmax.v[i];
+        }
+
+        *pframeindex = (int)((byte*)paliasgroup - (byte*)pheader);
+
+        pin_intervals = (modelgen_c.daliasinterval_t*)(pingroup + 1);
+
+        poutintervals = (float*)zone_c.Hunk_AllocName(numframes * sizeof(float), loadname.ToString());
+
+        paliasgroup->intervals = (int)((byte*)poutintervals - (byte*)pheader);
+
+        for (i = 0; i < numframes; i++)
+        {
+            *poutintervals = common_c.LittleFloat(pin_intervals->interval);
+
+            if (*poutintervals <= 0.0f)
+            {
+                sys_win_c.Sys_Error("Mod_LoadAliasGroup: interval <= 0");
+            }
+
+            poutintervals++;
+            pin_intervals++;
+        }
+
+        ptemp = pin_intervals;
+
+        for (i = 0; i < numframes; i++)
+        {
+            ptemp = Mod_LoadAliasFrame(ptemp, &paliasgroup->frames[i].frame, numv, &paliasgroup->frames[i].bboxmin, &paliasgroup->frames[i].bboxmax, pheader, name);
+        }
+
+        return ptemp;
+    }
+
+    public void* Mod_LoadAliasSkin(void* pin, int* pskinindex, int skinsize, aliashdr_t* pheader)
+    {
+        int i;
+        byte* pskin, pinskin;
+        ushort* pusskin;
+
+        pskin = zone_c.Hunk_AllocName(skinsize * r_main_c.r_pixbytes, loadname);
+        pinskin = (byte*)pin;
+        *pskinindex = (int)(pskin - (byte*)pheader);
+
+        if (r_main_c.r_pixbytes == 1)
+        {
+            common_c.Q_memcpy(*pskin, *pinskin, skinsize);
+        }
+        else if (r_main_c.r_pixbytes == 2)
+        {
+            pusskin = (ushort*)pskin;
+
+            for (i = 0; i < skinsize; i++)
+            {
+                pusskin[i] = vid_win_c.d_8to16table[pinskin[i]];
+            }
+        }
+        else
+        {
+            sys_win_c.Sys_Error($"Mod_LoadAliasSkin: driver set invalid r_pixbytes: {r_main_c.r_pixbytes}\n");
+        }
+
+        pinskin += skinsize;
+
+        return pinskin;
+    }
+
+    public void* Mod_LoadAliasSkinGroup(void* pin, int* pskinindex, int skinsize, aliashdr_t* pheader)
+    {
+        modelgen_c.daliasskingroup_t* pinskingroup;
+        maliasskingroup_t* paliasskingroup;
+        int i, numskins;
+        modelgen_c.daliasskininterval_t* pinskinintervals;
+        float* poutskinintervals;
+        void* ptemp;
+
+        pinskingroup = (modelgen_c.daliasskingroup_t*)pin;
+
+        numskins = common_c.LittleLong(pinskingroup->numskins);
+
+        paliasskingroup = (maliasskingroup_t*)zone_c.Hunk_AllocName(sizeof(maliasskingroup_t) + (numskins - 1) * sizeof(maliasskindesc_t), loadname.ToString());
+
+        paliasskingroup->numskins = numskins;
+
+        *pskinindex = (int)((byte*)paliasskingroup - (byte*)pheader);
+
+        pinskinintervals = (modelgen_c.daliasskininterval_t*)(pinskingroup + 1);
+
+        poutskinintervals = (float*)zone_c.Hunk_AllocName(numskins * sizeof(float), loadname.ToString());
+
+        paliasskingroup->intervals = (int)((byte*)poutskinintervals - (byte*)pheader);
+
+        for (i = 0; i < numskins; i++)
+        {
+            *poutskinintervals = common_c.LittleFloat(pinskinintervals->interval);
+
+            if (*poutskinintervals <= 0)
+            {
+                sys_win_c.Sys_Error("Mod_LoadAliasSkinGroup: interval <= 0");
+            }
+
+            poutskinintervals++;
+            pinskinintervals++;
+        }
+
+        ptemp = pinskinintervals;
+
+        for (i = 0; i < numskins; i++)
+        {
+            ptemp = Mod_LoadAliasSkin(ptemp, &paliasskingroup->skindescs[i].skin, skinsize, pheader);
+        }
+
+        return ptemp;
+    }
+
+    public void Mod_LoadAliasModel(model_t* mod, void* buffer)
+    {
+        int i;
+        modelgen_c.mdl_t* pmodel, pinmodel;
+        modelgen_c.stvert_t* pstverts, pinstverts;
+        aliashdr_t* pheader;
+        mtriangle_t* ptri;
+        modelgen_c.dtriangle_t* pintriangles;
+        int version, numframes, numskins;
+        int size;
+        modelgen_c.daliasframetype_t* pframetype;
+        modelgen_c.daliasskintype_t* pskintype;
+        maliasskindesc_t* pskindesc;
+        int skinsize;
+        int start, end, total;
+
+        start = zone_c.Hunk_LowMark();
     }
 }

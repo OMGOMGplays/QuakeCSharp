@@ -800,7 +800,7 @@ public unsafe class common_c
             startsize = 256;
         }
 
-        buf.data = (int)zone_c.Hunk_AllocName(startsize, "sizebuf");
+        buf.data = (int*)zone_c.Hunk_AllocName(startsize, "sizebuf");
         buf.maxsize = startsize;
         buf.cursize = 0;
     }
@@ -836,7 +836,7 @@ public unsafe class common_c
             SZ_Clear(buf);
         }
 
-        data = buf.data + buf.cursize;
+        data = *buf.data + buf.cursize;
         buf.cursize += length;
 
         return data;
@@ -852,7 +852,7 @@ public unsafe class common_c
         int len;
         len = Q_strlen(data) + 1;
 
-        if (buf.data == buf.cursize - 1)
+        if (*buf.data == buf.cursize - 1)
         {
             Q_memcpy((byte)SZ_GetSpace(buf, len), data.ToCharArray(), len);
         }
