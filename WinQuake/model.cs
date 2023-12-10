@@ -1596,7 +1596,7 @@ public unsafe class model_c
         byte* pskin, pinskin;
         ushort* pusskin;
 
-        pskin = zone_c.Hunk_AllocName(skinsize * r_main_c.r_pixbytes, loadname);
+        pskin = zone_c.Hunk_AllocName(skinsize * r_main_c.r_pixbytes, loadname.ToString());
         pinskin = (byte*)pin;
         *pskinindex = (int)(pskin - (byte*)pheader);
 
