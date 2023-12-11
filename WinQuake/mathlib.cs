@@ -5,6 +5,7 @@ public unsafe class mathlib_c
     public static Vector3 vec3_origin = new Vector3(0, 0, 0);
     public int nanmask = 255 << 23;
 
+
     public static float DEG2RAD(float a)
     {
         return (a * MathF.PI) / 180.0f;

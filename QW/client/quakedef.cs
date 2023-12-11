@@ -10,6 +10,8 @@ global using System.Collections.Immutable;
 global using System.Diagnostics;
 global using System.Security.Permissions;
 
+global using Quake.Server;
+
 namespace Quake;
 
 public class quakedef_c

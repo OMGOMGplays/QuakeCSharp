@@ -80,7 +80,7 @@ public unsafe class bspfile_c
 
 	public struct miptex_t
 	{
-		public char[] name;
+		public char* name;
 		public uint width, height;
 		public uint[] offsets;
 	}

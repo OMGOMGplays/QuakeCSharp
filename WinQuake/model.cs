@@ -65,7 +65,7 @@ public unsafe class model_c
         public int firstedge;
         public int numedges;
 
-        public surfcache_t* cachespots;
+        public d_local_c.surfcache_t* cachespots;
 
         public short[] texturemins;
         public short[] extents;
@@ -260,7 +260,7 @@ public unsafe class model_c
         public int* surfedges;
 
         public int numclipnodes;
-        public bspfile_c.clipnodes* clipnodes;
+        public bspfile_c.dclipnode_t* clipnodes;
 
         public int nummarksurfaces;
         public msurface_t** marksurfaces;
@@ -292,7 +292,7 @@ public unsafe class model_c
 
     public void Mod_Init()
     {
-        common_c.Q_memset(mod_novis, 0xff, bspfile_c.MAX_MAP_LEAVES / 8);
+        common_c.Q_memset(*mod_novis, 0xff, bspfile_c.MAX_MAP_LEAFS / 8);
     }
 
     public void* Mod_ExtraData(model_t* mod)
@@ -583,7 +583,7 @@ public unsafe class model_c
         m->nummiptex = common_c.LittleLong(m->nummiptex);
 
         loadmodel->numtextures = m->nummiptex;
-        loadmodel->textures = zone_c.Hunk_AllocName(m->nummiptex, loadname);
+        loadmodel->textures = (texture_t**)zone_c.Hunk_AllocName(m->nummiptex, loadname.ToString());
 
         for (i = 0; i < m->nummiptex; i++)
         {
@@ -595,30 +595,30 @@ public unsafe class model_c
             }
 
             mt = (bspfile_c.miptex_t*)((byte*)m + m->dataofs[i]);
-            mt->width = common_c.LittleLong(mt->width);
-            mt->height = common_c.LittleLong(mt->height);
+            mt->width = (uint)common_c.LittleLong((int)mt->width);
+            mt->height = (uint)common_c.LittleLong((int)mt->height);
 
             for (j = 0; j < bspfile_c.MIPLEVELS; j++)
             {
-                mt->offsets[j] = common_c.LittleLong(mt->offsets[j]);
+                mt->offsets[j] = (uint)common_c.LittleLong((int)mt->offsets[j]);
             }
 
             if ((mt->width & 15) != 0 || (mt->height & 15) != 0)
             {
-                sys_win_c.Sys_Error($"Texture {mt->name} is not 16 aligned");
+                sys_win_c.Sys_Error($"Texture {mt->name->ToString()} is not 16 aligned");
             }
 
-            pixels = mt->width * mt->height / 64 * 85;
+            pixels = (int)(mt->width * mt->height / 64 * 85);
             tx = (texture_t*)zone_c.Hunk_AllocName(sizeof(texture_t) + pixels, loadname.ToString());
             loadmodel->textures[i] = tx;
 
-            common_c.Q_memcpy(tx->name, mt->name, 16);
+            common_c.Q_memcpy(*tx->name, *mt->name, 16);
             tx->width = mt->width;
             tx->height = mt->height;
 
             for (j = 0; j < bspfile_c.MIPLEVELS; j++)
             {
-                tx->offsets[j] = mt->offsets[j] + sizeof(texture_t) - sizeof(bspfile_c.miptex_t);
+                tx->offsets[j] = (uint)(mt->offsets[j] + sizeof(texture_t) - sizeof(bspfile_c.miptex_t));
             }
 
             common_c.Q_memcpy(*(tx + 1), *(mt + 1), pixels);
@@ -670,7 +670,7 @@ public unsafe class model_c
             }
             else
             {
-                sys_win_c.Sys_Error($"Bad animating texture {tx->name}");
+                sys_win_c.Sys_Error($"Bad animating texture {tx->name->ToString()}");
             }
 
             for (j = i + 1; j < m->nummiptex; j++)
@@ -682,7 +682,7 @@ public unsafe class model_c
                     continue;
                 }
 
-                if (common_c.Q_strcmp(tx2->name.ToString() + 2, tx->name.ToString() + 2))
+                if (common_c.Q_strcmp(tx2->name->ToString() + 2, tx->name->ToString() + 2))
                 {
                     continue;
                 }
@@ -716,7 +716,7 @@ public unsafe class model_c
                 }
                 else
                 {
-                    sys_win_c.Sys_Error($"Bad animating texture {tx->name}");
+                    sys_win_c.Sys_Error($"Bad animating texture {tx->name->ToString()}");
                 }
             }
 
@@ -726,7 +726,7 @@ public unsafe class model_c
 
                 if (tx2 == null)
                 {
-                    sys_win_c.Sys_Error($"Missing frame {j} of {tx->name}");
+                    sys_win_c.Sys_Error($"Missing frame {j} of {tx->name->ToString()}");
                 }
 
                 tx2->anim_total = max * ANIM_CYCLE;
@@ -746,7 +746,7 @@ public unsafe class model_c
 
                 if (tx2 == null)
                 {
-                    sys_win_c.Sys_Error($"Missing frame {j} of {tx->name}");
+                    sys_win_c.Sys_Error($"Missing frame {j} of {tx->name->ToString()}");
                 }
 
                 tx2->anim_total = altmax * ANIM_CYCLE;
@@ -772,8 +772,8 @@ public unsafe class model_c
             return;
         }
 
-        loadmodel->lightdata = zone_c.Hunk_AllocName(l->filelen, loadname);
-        common_c.Q_memcpy(loadmodel->lightdata, mod_base + l->fileofs, l->filelen);
+        loadmodel->lightdata = (byte*)zone_c.Hunk_AllocName(l->filelen, loadname.ToString());
+        common_c.Q_memcpy(*loadmodel->lightdata, *mod_base + l->fileofs, l->filelen);
     }
 
     public void Mod_LoadVisibility(bspfile_c.lump_t* l)
@@ -784,8 +784,8 @@ public unsafe class model_c
             return;
         }
 
-        loadmodel->visdata = zone_c.Hunk_AllocName(l->filelen, loadname);
-        common_c.Q_memcpy(loadmodel->visdata, mod_base + l->fileofs, l->filelen);
+        loadmodel->visdata = (byte*)zone_c.Hunk_AllocName(l->filelen, loadname.ToString());
+        common_c.Q_memcpy(*loadmodel->visdata, *mod_base + l->fileofs, l->filelen);
     }
 
     public void Mod_LoadEntities(bspfile_c.lump_t* l)
@@ -796,8 +796,8 @@ public unsafe class model_c
             return;
         }
 
-        loadmodel->entities = zone_c.Hunk_AllocName(l->filelen, loadname);
-        common_c.Q_memcpy(loadmodel->entities, mod_base + l->fileofs, l->filelen);
+        loadmodel->entities = (char*)zone_c.Hunk_AllocName(l->filelen, loadname.ToString());
+        common_c.Q_memcpy(*loadmodel->entities, *mod_base + l->fileofs, l->filelen);
     }
 
     public void Mod_LoadVertexes(bspfile_c.lump_t* l)
@@ -806,15 +806,15 @@ public unsafe class model_c
         mvertex_t* output;
         int i, count;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dvertex_t*)(mod_base + l->fileofs);
 
-        if ((int)(l->filelen % sizeof(bspfile_c.dvertex_t)) != 0)
+        if ((l->filelen % sizeof(bspfile_c.dvertex_t)) != 0)
         {
             sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dvertex_t);
-        output = zone_c.Hunk_AllocName(count * sizeof(mvertex_t), loadname);
+        output = (mvertex_t*)zone_c.Hunk_AllocName(count * sizeof(mvertex_t), loadname.ToString());
 
         loadmodel->vertexes = output;
         loadmodel->numvertexes = count;
@@ -833,7 +833,7 @@ public unsafe class model_c
         bspfile_c.dmodel_t* output;
         int i, j, count;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dmodel_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.dmodel_t)) != 0)
         {
@@ -841,7 +841,7 @@ public unsafe class model_c
         }
 
         count = l->filelen / sizeof(bspfile_c.dmodel_t);
-        output = zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dmodel_t), loadname);
+        output = (bspfile_c.dmodel_t*)zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dmodel_t), loadname.ToString());
 
         loadmodel->submodels = output;
         loadmodel->numsubmodels = count;
@@ -872,7 +872,7 @@ public unsafe class model_c
         medge_t* output;
         int i, count;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dedge_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.dedge_t)) != 0)
         {
@@ -880,15 +880,15 @@ public unsafe class model_c
         }
 
         count = l->filelen / sizeof(bspfile_c.dedge_t);
-        output = zone_c.Hunk_AllocName((count + 1) * sizeof(bspfile_c.dedge_t), loadname);
+        output = (medge_t*)zone_c.Hunk_AllocName((count + 1) * sizeof(bspfile_c.dedge_t), loadname.ToString());
 
         loadmodel->edges = output;
         loadmodel->numedges = count;
 
         for (i = 0; i < count; i++, input++, output++)
         {
-            output->v[0] = (ushort)common_c.LittleShort(input->v[0]);
-            output->v[1] = (ushort)common_c.LittleShort(input->v[1]);
+            output->v[0] = (ushort)common_c.LittleShort((short)input->v[0]);
+            output->v[1] = (ushort)common_c.LittleShort((short)input->v[1]);
         }
     }
 
@@ -900,7 +900,7 @@ public unsafe class model_c
         int miptex;
         float len1, len2;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.texinfo_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.texinfo_t)) != 0)
         {
@@ -908,7 +908,7 @@ public unsafe class model_c
         }
 
         count = l->filelen / sizeof(bspfile_c.texinfo_t);
-        output = zone_c.Hunk_AllocName(count * sizeof(mtexinfo_t), loadname);
+        output = (mtexinfo_t*)zone_c.Hunk_AllocName(count * sizeof(mtexinfo_t), loadname.ToString());
 
         loadmodel->texinfo = output;
         loadmodel->numtexinfo = count;
@@ -1033,7 +1033,7 @@ public unsafe class model_c
         int i, count, surfnum;
         int planenum, side;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dface_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.dface_t)) != 0)
         {
@@ -1122,7 +1122,7 @@ public unsafe class model_c
         bspfile_c.dnode_t* input;
         mnode_t* output;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dnode_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.dnode_t)) != 0)
         {
@@ -1146,8 +1146,8 @@ public unsafe class model_c
             p = common_c.LittleLong(input->planenum);
             output->plane = loadmodel->planes + p;
 
-            output->firstsurface = common_c.LittleShort(input->firstface);
-            output->numsurfaces = common_c.LittleShort(input->numfaces);
+            output->firstsurface = (ushort)common_c.LittleShort((short)input->firstface);
+            output->numsurfaces = (ushort)common_c.LittleShort((short)input->numfaces);
 
             for (j = 0; j < 2; j++)
             {
@@ -1159,7 +1159,7 @@ public unsafe class model_c
                 }
                 else
                 {
-                    output->children[j] = (mnode_t*)(loadmodel->leafs + (-1 - p));
+                    output->children[j] = (loadmodel->leafs + (-1 - p));
                 }
             }
         }
@@ -1173,7 +1173,7 @@ public unsafe class model_c
         mleaf_t* output;
         int i, j, count, p;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dleaf_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.dleaf_t)) != 0)
         {
@@ -1197,8 +1197,8 @@ public unsafe class model_c
             p = common_c.LittleLong(input->contents);
             output->contents = p;
 
-            output->firstmarksurface = loadmodel->marksurfaces + common_c.LittleShort(input->firstmarksurface);
-            output->nummarksurfaces = common_c.LittleShort(input->nummarksurfaces);
+            output->firstmarksurface = loadmodel->marksurfaces + common_c.LittleShort((short)input->firstmarksurface);
+            output->nummarksurfaces = common_c.LittleShort((short)input->nummarksurfaces);
 
             p = common_c.LittleLong(input->visofs);
 
@@ -1226,7 +1226,7 @@ public unsafe class model_c
         int i, count;
         hull_t* hull;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dclipnode_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.dclipnode_t)) != 0)
         {
@@ -1234,7 +1234,7 @@ public unsafe class model_c
         }
 
         count = l->filelen / sizeof(bspfile_c.dclipnode_t);
-        output = (bspfile_c.dclipnode_t*)zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dclipnode_t), loadname);
+        output = (bspfile_c.dclipnode_t*)zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dclipnode_t), loadname.ToString());
 
         loadmodel->clipnodes = output;
         loadmodel->numclipnodes = count;
@@ -1282,7 +1282,7 @@ public unsafe class model_c
 
         input = loadmodel->nodes;
         count = loadmodel->numnodes;
-        output = zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dclipnode_t), loadname.ToString());
+        output = (bspfile_c.dclipnode_t*)zone_c.Hunk_AllocName(count * sizeof(bspfile_c.dclipnode_t), loadname.ToString());
 
         hull->clipnodes = output;
         hull->firstclipnode = 0;
@@ -1299,7 +1299,7 @@ public unsafe class model_c
 
                 if (child->contents < 0)
                 {
-                    output->children[j] = child->contents;
+                    output->children[j] = (short)child->contents;
                 }
                 else
                 {
@@ -1315,7 +1315,7 @@ public unsafe class model_c
         short* input;
         msurface_t** output;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (short*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(short*)) != 0)
         {
@@ -1346,7 +1346,7 @@ public unsafe class model_c
         int i, count;
         int* input, output;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (int*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(int*)) != 0)
         {
@@ -1373,7 +1373,7 @@ public unsafe class model_c
         int count;
         int bits;
 
-        input = (void*)(mod_base + l->fileofs);
+        input = (bspfile_c.dplane_t*)(mod_base + l->fileofs);
 
         if ((l->filelen % sizeof(bspfile_c.dplane_t)) != 0)
         {
@@ -1401,7 +1401,7 @@ public unsafe class model_c
             }
 
             output->dist = common_c.LittleFloat(input->dist);
-            output->type = common_c.LittleLong(input->type);
+            output->type = (byte)common_c.LittleLong(input->type);
             output->signbits = (byte)bits;
         }
     }
@@ -1476,11 +1476,11 @@ public unsafe class model_c
                 mod->hulls[j].lastclipnode = mod->numclipnodes - 1;
             }
 
-            mod->firstmodelsurface = bm->firstsurface;
-            mod->nummodelsurfaces = bm->numsurfaces;
+            mod->firstmodelsurface = bm->firstface;
+            mod->nummodelsurfaces = bm->numfaces;
 
-            mathlib_c.VectorCopy(bm->maxs, mod->maxs);
-            mathlib_c.VectorCopy(bm->mins, mod->mins);
+            mathlib_c.VectorCopy(common_c.FloatArrToVector(bm->maxs), mod->maxs);
+            mathlib_c.VectorCopy(common_c.FloatArrToVector(bm->mins), mod->mins);
             mod->radius = RadiusFromBounds(mod->mins, mod->maxs);
 
             mod->numleafs = bm->visleafs;
@@ -1506,7 +1506,7 @@ public unsafe class model_c
 
         pdaliasframe = (modelgen_c.daliasframe_t*)pin;
 
-        common_c.Q_strcpy(name, pdaliasframe->name);
+        common_c.Q_strcpy(name->ToString(), pdaliasframe->name.ToString());
 
         for (i = 0; i < 3; i++)
         {
@@ -1515,7 +1515,7 @@ public unsafe class model_c
         }
 
         pinframe = (modelgen_c.trivertx_t*)(pdaliasframe + 1);
-        pframe = zone_c.Hunk_AllocName(numv * sizeof(modelgen_c.trivertx_t), loadname.ToString());
+        pframe = (modelgen_c.trivertx_t*)zone_c.Hunk_AllocName(numv * sizeof(modelgen_c.trivertx_t), loadname.ToString());
 
         *pframeindex = (int)((byte*)pframe - (byte*)pheader);
 
@@ -1584,7 +1584,7 @@ public unsafe class model_c
 
         for (i = 0; i < numframes; i++)
         {
-            ptemp = Mod_LoadAliasFrame(ptemp, &paliasgroup->frames[i].frame, numv, &paliasgroup->frames[i].bboxmin, &paliasgroup->frames[i].bboxmax, pheader, name);
+            ptemp = Mod_LoadAliasFrame(ptemp, paliasgroup->frames[i].frame, numv, &paliasgroup->frames[i].bboxmin, &paliasgroup->frames[i].bboxmax, pheader, name);
         }
 
         return ptemp;
@@ -1596,7 +1596,7 @@ public unsafe class model_c
         byte* pskin, pinskin;
         ushort* pusskin;
 
-        pskin = zone_c.Hunk_AllocName(skinsize * r_main_c.r_pixbytes, loadname.ToString());
+        pskin = (byte*)zone_c.Hunk_AllocName(skinsize * r_main_c.r_pixbytes, loadname.ToString());
         pinskin = (byte*)pin;
         *pskinindex = (int)(pskin - (byte*)pheader);
 
@@ -1665,7 +1665,7 @@ public unsafe class model_c
 
         for (i = 0; i < numskins; i++)
         {
-            ptemp = Mod_LoadAliasSkin(ptemp, &paliasskingroup->skindescs[i].skin, skinsize, pheader);
+            ptemp = Mod_LoadAliasSkin(ptemp, paliasskingroup->skindescs[i].skin, skinsize, pheader);
         }
 
         return ptemp;

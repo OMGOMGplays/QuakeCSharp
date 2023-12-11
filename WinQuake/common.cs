@@ -67,18 +67,18 @@ public unsafe class common_c
         public link_t* prev, next;
     }
 
-    public void ClearLink(link_t* l)
+    public static void ClearLink(link_t* l)
     {
         l->prev = l->next = l;
     }
 
-    public void RemoveLink(link_t l)
+    public static void RemoveLink(link_t l)
     {
         l.next->prev = l.prev;
         l.prev->next = l.next;
     }
 
-    public void InsertLinkBefore(link_t* l, link_t* before)
+    public static void InsertLinkBefore(link_t* l, link_t* before)
     {
         l->next = before;
         l->prev = before;
@@ -610,7 +610,7 @@ public unsafe class common_c
         bufs[1] = (byte)(c >> 8);
     }
 
-    public unsafe void MSG_WriteLong(sizebuf_t sb, int c)
+    public static void MSG_WriteLong(sizebuf_t sb, int c)
     {
         int buf;
         byte* bufs;
@@ -1321,10 +1321,8 @@ public unsafe class common_c
         {
             if (*ofs == '/')
             {
-                string pathstr = Marshal.PtrToStringAnsi((IntPtr)path);
-
                 *ofs = '\0';
-                sys_win_c.Sys_mkdir(pathstr);
+                sys_win_c.Sys_mkdir(path);
                 *ofs = '/';
             }
         }
@@ -1806,5 +1804,38 @@ public unsafe class common_c
         }
 
         return input_char;
+    }
+
+    public static Vector3 FloatToVector(float* input)
+    {
+        Vector3 temp = new();
+
+        temp.X = input[0];
+        temp.Y = input[1];
+        temp.Z = input[2];
+
+        return temp;
+    }
+
+    public static Vector3 FloatArrToVector(float[] input)
+    {
+        Vector3 temp = new();
+
+        temp.X = input[0];
+        temp.Y = input[1];
+        temp.Z = input[2];
+
+        return temp;
+    }
+
+    public static float* VectorToFloat(Vector3 input)
+    {
+        float* temp = null;
+
+        temp[0] = input.X;
+        temp[1] = input.Y;
+        temp[2] = input.Z;
+
+        return temp;
     }
 }

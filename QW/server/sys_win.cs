@@ -1,4 +1,4 @@
-﻿namespace Quake;
+﻿namespace Quake.Server;
 
 public unsafe class sys_win_c
 {
