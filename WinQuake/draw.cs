@@ -782,12 +782,12 @@ public unsafe class draw_c
         VID_LockBuffer();
     }
 
-    public void Draw_BeginDisc()
+    public static void Draw_BeginDisc()
     {
         D_BeginDirectRect(vid_win_c.vid.width - 24, 0, draw_disc->data, 24, 24);
     }
 
-    public void Draw_EndDisc()
+    public static void Draw_EndDisc()
     {
         D_EndDirectRect(vid_win_c.vid.width - 24, 0, 24, 24);
     }

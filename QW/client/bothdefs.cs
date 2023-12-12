@@ -1,4 +1,4 @@
-﻿namespace Quake;
+﻿namespace Quake.Client;
 
 public class bothdefs_c
 {

@@ -120,16 +120,16 @@ public unsafe class sv_main_c
         }
     }
 
-    public void SV_DropClient(client_t* drop)
+    public static void SV_DropClient(server_c.client_t* drop)
     {
-        common_c.MSG_WriteByte(&drop->netchan.message, svc_disconnect);
+        common_c.MSG_WriteByte(&drop->netchan.message, protocol_c.svc_disconnect);
 
-        if (drop->state == cs_spawned)
+        if (drop->state == server_c.client_state_t.cs_spawned)
         {
             if (drop->spectator == 0)
             {
-                pr_global_struct->self = EDICT_TO_PROG(drop->edict);
-                PR_ExecuteProgram(pr_global_struct->ClientDisconnect);
+                progs_c.pr_global_struct->self = progs_c.EDICT_TO_PROG(drop->edict);
+                pr_exec_c.PR_ExecuteProgram(pr_global_struct->ClientDisconnect);
             }
             else if (SpectatorDisconnect)
             {

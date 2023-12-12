@@ -629,7 +629,7 @@ public unsafe class common_c
         public int l;
     }
 
-    public unsafe void MSG_WriteFloat(sizebuf_t sb, float f)
+    public static void MSG_WriteFloat(sizebuf_t sb, float f)
     {
         MSG_WriteFloat_Union dat = new();
 
@@ -823,12 +823,12 @@ public unsafe class common_c
         {
             if (!buf.allowoverflow)
             {
-                sys_win_c.Sys_Error("SZ_GetSpace: overflow without allowoverflow set");
+                sys_win_c.Sys_Error(StringToChar("SZ_GetSpace: overflow without allowoverflow set"));
             }
 
             if (length > buf.maxsize)
             {
-                sys_win_c.Sys_Error("SZ_GetSpace: %i is > full buffer size", length);
+                sys_win_c.Sys_Error(StringToChar($"SZ_GetSpace: {length} is > full buffer size"));
             }
 
             buf.overflowed = true;
@@ -1086,7 +1086,7 @@ public unsafe class common_c
             console_c.Con_Printf("Playing shareware version.\n");
             if (com_modified)
             {
-                sys_win_c.Sys_Error("You must have the registered version to use modified games");
+                sys_win_c.Sys_Error(StringToChar("You must have the registered version to use modified games"));
                 return;
             }
         }
@@ -1098,7 +1098,7 @@ public unsafe class common_c
         {
             if (pop[i] != BigShort((short)check[i]))
             {
-                sys_win_c.Sys_Error("Corrupted data file.");
+                sys_win_c.Sys_Error(StringToChar("Corrupted data file."));
             }
         }
 
@@ -1162,7 +1162,7 @@ public unsafe class common_c
         }
 
         largv = argvdummy;
-        com_argv = largv;
+        com_argv = StringToChar(largv);
 
         if (COM_CheckParm("-rogue") != 0)
         {
@@ -1212,12 +1212,9 @@ public unsafe class common_c
 
     public static string va(string format, params object[] args)
     {
-        va_list argptr;
         string _string = null;
 
-        va_start(argptr, format);
-        vsprintf(_string, format, argptr);
-        va_end(argptr);
+        Console.WriteLine($"{_string}");
 
         return _string;
     }
@@ -1304,11 +1301,11 @@ public unsafe class common_c
 
         if (handle == -1)
         {
-            sys_win_c.Sys_Printf($"COM_WriteFile: failed on {name}\n");
+            sys_win_c.Sys_Printf(StringToChar($"COM_WriteFile: failed on {name}\n"));
             return;
         }
 
-        sys_win_c.Sys_Printf($"COM_WriteFile: {name}\n");
+        sys_win_c.Sys_Printf(StringToChar($"COM_WriteFile: {name}\n"));
         sys_win_c.Sys_FileWrite(handle, data, len);
         sys_win_c.Sys_FileClose(handle);
     }
@@ -1368,9 +1365,9 @@ public unsafe class common_c
         int findtime, cachetime;
 
         if ((file != null) && (handle != 0))
-            sys_win_c.Sys_Error("COM_FindFile: both handle and file set");
+            sys_win_c.Sys_Error(StringToChar("COM_FindFile: both handle and file set"));
         if ((file == null) && (handle == 0))
-            sys_win_c.Sys_Error("COM_FindFile: neither handle or file set");
+            sys_win_c.Sys_Error(StringToChar("COM_FindFile: neither handle or file set"));
 
         // search through the path, one element at a time
         if (proghack)
@@ -1392,7 +1389,7 @@ public unsafe class common_c
                     if (pak.files[i].name.Equals(*filename))
                     {
                         // found it!
-                        sys_win_c.Sys_Printf($"PackFile: {pak.filename} : {filename->ToString()}\n");
+                        sys_win_c.Sys_Printf(StringToChar($"PackFile: {pak.filename} : {filename->ToString()}\n"));
                         if (handle != 0)
                         {
                             handle = pak.handle;
@@ -1429,7 +1426,7 @@ public unsafe class common_c
 
                 netpath = netpath_char;
 
-                findtime = sys_win_c.Sys_FileTime(netpath->ToString());
+                findtime = sys_win_c.Sys_FileTime(netpath);
                 if (findtime == -1)
                     continue;
 
@@ -1449,7 +1446,7 @@ public unsafe class common_c
                     }
 
                     cachepath = cachepath_char;
-                    cachetime = sys_win_c.Sys_FileTime(cachepath->ToString());
+                    cachetime = sys_win_c.Sys_FileTime(cachepath);
 
                     if (cachetime < findtime)
                     {
@@ -1459,7 +1456,7 @@ public unsafe class common_c
                     netpath = cachepath;
                 }
 
-                sys_win_c.Sys_Printf($"FindFile: {netpath->ToString()}\n");
+                sys_win_c.Sys_Printf(StringToChar($"FindFile: {netpath->ToString()}\n"));
                 com_filesize = sys_win_c.Sys_FileOpenRead(netpath, out i);
                 if (handle != 0)
                     handle = i;
@@ -1471,7 +1468,7 @@ public unsafe class common_c
             }
         }
 
-        sys_win_c.Sys_Printf($"FindFile: can't find {filename->ToString()}\n");
+        sys_win_c.Sys_Printf(StringToChar($"FindFile: can't find {filename->ToString()}\n"));
 
         if (handle != 0)
             handle = -1;
@@ -1481,12 +1478,12 @@ public unsafe class common_c
         return -1;
     }
 
-    public static int COM_OpenFile(string filename, int handle)
+    public static int COM_OpenFile(char* filename, int handle)
     {
         return COM_FindFile(filename, handle, null);
     }
 
-    public static int COM_FOpenFile(string filename, FileStream file)
+    public static int COM_FOpenFile(char* filename, FileStream file)
     {
         return COM_FindFile(filename, 0, file);
     }
@@ -1497,7 +1494,7 @@ public unsafe class common_c
 
         for (s = com_searchpaths; !s->Equals(default(searchpath_t)); s = s->next)
         {
-            if (s->pack && s->pack.handle == h)
+            if (s->pack != null && s->pack.handle == h)
             {
                 return;
             }
@@ -1530,11 +1527,11 @@ public unsafe class common_c
 
         if (usehunk == 1)
         {
-            buf = Hunk_AllocName(len + 1, _base);
+            buf = (byte*)zone_c.Hunk_AllocName(len + 1, _base);
         }
         else if (usehunk == 2)
         {
-            buf = Hunk_TempAlloc(len + 1);
+            buf = (byte*)zone_c.Hunk_TempAlloc(len + 1);
         }
         else if (usehunk == 0)
         {
@@ -1542,13 +1539,13 @@ public unsafe class common_c
         }
         else if (usehunk == 3)
         {
-            buf = Cache_Alloc(loadcache, len + 1, _base);
+            buf = (byte*)zone_c.Cache_Alloc(loadcache, len + 1, _base);
         }
         else if (usehunk == 4)
         {
             if (len + 1 > loadsize)
             {
-                buf = Hunk_TempAlloc(len + 1);
+                buf = (byte*)zone_c.Hunk_TempAlloc(len + 1);
             }
             else
             {
@@ -1557,20 +1554,20 @@ public unsafe class common_c
         }
         else
         {
-            sys_win_c.Sys_Error("COM_LoadFile: bad usehunk");
+            sys_win_c.Sys_Error(StringToChar("COM_LoadFile: bad usehunk"));
         }
 
         if (buf == null)
         {
-            sys_win_c.Sys_Error("COM_LoadFile: not enough space for %s", path);
+            sys_win_c.Sys_Error(StringToChar($"COM_LoadFile: not enough space for {path}"));
         }
 
         buf[len] = 0;
 
-        Draw_BeginDisc();
+        draw_c.Draw_BeginDisc();
         sys_win_c.Sys_FileRead(h, buf, len);
         COM_CloseFile(h);
-        Draw_EndDisc();
+        draw_c.Draw_EndDisc();
 
         return buf;
     }
@@ -1582,7 +1579,7 @@ public unsafe class common_c
 
     public static void COM_LoadCacheFile(string path, zone_c.cache_user_t cu)
     {
-        loadcache = cu;
+        loadcache = &cu;
         COM_LoadFile(path, 3);
     }
 
@@ -1617,7 +1614,7 @@ public unsafe class common_c
         if (header.id[0] != 'P' || header.id[1] != 'A'
             || header.id[2] != 'C' || header.id[3] != 'K')
         {
-            sys_win_c.Sys_Error("%s has %i files", packfile, numpackfiles);
+            sys_win_c.Sys_Error(StringToChar($"{packfile} has {numpackfiles} files"));
         }
 
         if (numpackfiles != PAK0_COUNT)
@@ -1628,7 +1625,7 @@ public unsafe class common_c
         newfiles = (packfile_t*)zone_c.Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
 
         sys_win_c.Sys_FileSeek(packhandle, header.dirofs);
-        sys_win_c.Sys_FileRead(packhandle, (void*)info, header.dirlen);
+        sys_win_c.Sys_FileRead(packhandle, info, header.dirlen);
 
         CRC_Init(&crc);
 
@@ -1774,7 +1771,7 @@ public unsafe class common_c
 
                     if (!search->pack.Equals(default(searchpath_t)))
                     {
-                        sys_win_c.Sys_Error("Couldn't load packfile: %s", com_argv[i]);
+                        sys_win_c.Sys_Error(StringToChar($"Couldn't load packfile: {com_argv[i]}"));
                     }
                 }
                 else

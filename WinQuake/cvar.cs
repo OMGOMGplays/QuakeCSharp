@@ -135,7 +135,7 @@ public unsafe class cvar_c
         }
     }
 
-    public void Cvar_SetValue(string var_name, float value)
+    public static void Cvar_SetValue(string var_name, float value)
     {
         string val = null;
 

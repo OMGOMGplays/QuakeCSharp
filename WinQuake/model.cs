@@ -218,7 +218,7 @@ public unsafe class model_c
 
     public struct model_t
     {
-        public char[] name;
+        public char* name;
         public bool needload;
 
         public modtype_t type;
@@ -394,7 +394,7 @@ public unsafe class model_c
         return decompressed;
     }
 
-    public byte* Mod_LeafPVS(mleaf_t* leaf, model_t* model)
+    public static byte* Mod_LeafPVS(mleaf_t* leaf, model_t* model)
     {
         if (leaf == model->leafs)
         {
@@ -552,7 +552,7 @@ public unsafe class model_c
         return mod;
     }
 
-    public model_t* Mod_ForName(char* name, bool crash)
+    public static model_t* Mod_ForName(char* name, bool crash)
     {
         model_t* mod;
 

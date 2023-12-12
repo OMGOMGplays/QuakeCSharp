@@ -195,7 +195,7 @@ public unsafe class world_c
         return anode;
     }
 
-    public void SV_ClearWorld()
+    public static void SV_ClearWorld()
     {
         SV_InitBoxHull();
 

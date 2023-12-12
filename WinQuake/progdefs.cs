@@ -13,7 +13,7 @@ public unsafe class progdefs_c
         public float time;
         public float frametime;
         public float force_retouch;
-        public string mapname;
+        public char* mapname;
         public float deathmatch;
         public float coop;
         public float teamplay;
@@ -78,7 +78,7 @@ public unsafe class progdefs_c
         public Vector3 avelocity;
         public Vector3 punchangle;
         public string classname;
-        public string model;
+        public char* model;
         public float frame;
         public float skin;
         public float effects;
