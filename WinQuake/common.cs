@@ -26,7 +26,7 @@ public unsafe class common_c
 
     public static string[] com_token = new string[1024];
     public static int com_argc;
-    public static string com_argv;
+    public static char* com_argv;
 
     public static int CMDLINE_LENGTH = 256;
     string[] cmd_cmdline = new string[CMDLINE_LENGTH];
@@ -558,7 +558,7 @@ public unsafe class common_c
         return f;
     }
 
-    public unsafe void MSG_WriteChar(sizebuf_t sb, int c)
+    public static void MSG_WriteChar(sizebuf_t sb, int c)
     {
         int buf;
         byte* bufs;

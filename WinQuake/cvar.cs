@@ -143,7 +143,7 @@ public unsafe class cvar_c
         Cvar_Set(var_name, val);
     }
 
-    public void Cvar_RegisterVariable(cvar_t* variable)
+    public static void Cvar_RegisterVariable(cvar_t* variable)
     {
         char* oldstr;
 
