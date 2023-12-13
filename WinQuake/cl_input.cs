@@ -214,7 +214,7 @@ public unsafe class cl_input_c
     }
 
     public cvar_c.cvar_t cl_upspeed = new cvar_c.cvar_t { name = "cl_upspeed", value = (char)200 };
-    public cvar_c.cvar_t cl_forwardspeed = new cvar_c.cvar_t { name = "cl_forwardspeed", value = (char)200, archive = true };
+    public static cvar_c.cvar_t cl_forwardspeed = new cvar_c.cvar_t { name = "cl_forwardspeed", value = (char)200, archive = true };
     public cvar_c.cvar_t cl_backspeed = new cvar_c.cvar_t { name = "cl_backspeed", value = (char)200, archive = true };
     public cvar_c.cvar_t cl_sidespeed = new cvar_c.cvar_t { name = "cl_sidespeed", value = (char)350 };
 

@@ -9,10 +9,10 @@ public unsafe class cl_main_c
     public cvar_c.cvar_t cl_nolerp = new cvar_c.cvar_t { name = "cl_nolerp", value = (char)0 };
 
     public static cvar_c.cvar_t lookspring = new cvar_c.cvar_t { name = "lookspring", value = (char)0, archive = true };
-    public cvar_c.cvar_t lookstrafe = new cvar_c.cvar_t { name = "lookstrafe", value = (char)0, archive = true };
+    public static cvar_c.cvar_t lookstrafe = new cvar_c.cvar_t { name = "lookstrafe", value = (char)0, archive = true };
     public static cvar_c.cvar_t sensitivity = new cvar_c.cvar_t { name = "sensitivity", value = (char)3, archive = true };
 
-    public cvar_c.cvar_t m_pitch = new cvar_c.cvar_t { name = "m_pitch", value = (char)0.022, archive = true };
+    public static cvar_c.cvar_t m_pitch = new cvar_c.cvar_t { name = "m_pitch", value = (char)0.022, archive = true };
     public cvar_c.cvar_t m_yaw = new cvar_c.cvar_t { name = "m_yaw", value = (char)0.022, archive = true };
     public cvar_c.cvar_t m_forward = new cvar_c.cvar_t { name = "m_forward", value = (char)1, archive = true };
     public cvar_c.cvar_t m_side = new cvar_c.cvar_t { name = "m_side", value = (char)0.8, archive = true };
