@@ -618,8 +618,8 @@ public unsafe class screen_c
 		console_c.Con_ClearNotify();
 	}
 
-	string scr_notifystring;
-	bool scr_drawdialog;
+	public static string scr_notifystring;
+	public static bool scr_drawdialog;
 
 	public void SCR_DrawNotifyString()
 	{
@@ -665,9 +665,9 @@ public unsafe class screen_c
 		} while (true);
 	}
 
-	public int SCR_ModalMessage(char* text)
+	public static int SCR_ModalMessage(char* text)
 	{
-		if (cls.state == ca_dedicated)
+		if (client_c.cls.state == client_c.cactive_t.ca_dedicated)
 		{
 			return 1;
 		}
@@ -683,14 +683,14 @@ public unsafe class screen_c
 
 		do
 		{
-			key_count -= 1;
+			keys_c.key_count -= 1;
 			sys_win_c.Sys_SendKeyEvents();
-		} while (key_lastpress != 'y' && key_lastpress != 'n' && key_lastpress != K_ESCAPE);
+		} while (keys_c.key_lastpress != 'y' && keys_c.key_lastpress != 'n' && keys_c.key_lastpress != keys_c.K_ESCAPE);
 
 		scr_fullupdate = 0;
 		SCR_UpdateScreen();
 
-		return key_lastpress == 'y';
+		return keys_c.key_lastpress == 'y' ? 1 : 0;
 	}
 
 	public void SCR_BringDownConsole()

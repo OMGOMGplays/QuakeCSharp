@@ -88,7 +88,7 @@ public unsafe class keys_c
     public char[][] key_lines = new char[MAXCMDLINE][];
     public int key_linepos;
     public int shift_down = 0;
-    public int key_lastpress;
+    public static int key_lastpress;
 
     public int edit_line = 0;
     public int history_line = 0;
@@ -343,7 +343,7 @@ public unsafe class keys_c
     }
 
     public char[] chat_buffer = new char[32];
-    public bool team_message = false;
+    public static bool team_message = false;
 
     public void Key_Message(int key)
     {

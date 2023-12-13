@@ -2,15 +2,15 @@
 
 public unsafe class cl_main_c
 {
-    public cvar_c.cvar_t cl_name = new cvar_c.cvar_t { name = "_cl_name", value = "player".ToCharArray()[0], archive = true };
-    public cvar_c.cvar_t cl_color = new cvar_c.cvar_t { name = "cl_color", value = (char)0, archive = true };
+    public static cvar_c.cvar_t cl_name = new cvar_c.cvar_t { name = "_cl_name", value = "player".ToCharArray()[0], archive = true };
+    public static cvar_c.cvar_t cl_color = new cvar_c.cvar_t { name = "cl_color", value = (char)0, archive = true };
 
     public cvar_c.cvar_t cl_shownet = new cvar_c.cvar_t { name = "cl_shownet", value = (char)0 };
     public cvar_c.cvar_t cl_nolerp = new cvar_c.cvar_t { name = "cl_nolerp", value = (char)0 };
 
     public static cvar_c.cvar_t lookspring = new cvar_c.cvar_t { name = "lookspring", value = (char)0, archive = true };
     public cvar_c.cvar_t lookstrafe = new cvar_c.cvar_t { name = "lookstrafe", value = (char)0, archive = true };
-    public cvar_c.cvar_t sensitivity = new cvar_c.cvar_t { name = "sensitivity", value = (char)3, archive = true };
+    public static cvar_c.cvar_t sensitivity = new cvar_c.cvar_t { name = "sensitivity", value = (char)3, archive = true };
 
     public cvar_c.cvar_t m_pitch = new cvar_c.cvar_t { name = "m_pitch", value = (char)0.022, archive = true };
     public cvar_c.cvar_t m_yaw = new cvar_c.cvar_t { name = "m_yaw", value = (char)0.022, archive = true };
@@ -23,7 +23,7 @@ public unsafe class cl_main_c
     public render_c.efrag_t[] cl_efrags = new render_c.efrag_t[client_c.MAX_EFRAGS];
     public static render_c.entity_t* cl_entities;
     public render_c.entity_t[] cl_static_entites = new render_c.entity_t[client_c.MAX_STATIC_ENTITIES];
-    public client_c.lightstyle_t[] cl_lightstyle = new client_c.lightstyle_t[bothdefs_c.MAX_LIGHTSTYLES];
+    public client_c.lightstyle_t[] cl_lightstyle = new client_c.lightstyle_t[quakedef_c.MAX_LIGHTSTYLES];
     public static client_c.dlight_t* cl_dlights;
 
     public static int cl_numvisedicts;
@@ -168,7 +168,7 @@ public unsafe class cl_main_c
         }
     }
 
-    public void CL_NextDemo()
+    public static void CL_NextDemo()
     {
         char[] str = new char[1024];
 

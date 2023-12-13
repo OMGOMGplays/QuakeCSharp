@@ -34,9 +34,9 @@ public unsafe class vid_c
         public pixel_t* direct;
     }
 
-    public viddef_t vid;
-    public ushort[] d_8to16table = new ushort[256];
-    public ushort[] d_8to24table = new ushort[256];
+    public static viddef_t vid;
+    public static ushort[] d_8to16table = new ushort[256];
+    public static ushort[] d_8to24table = new ushort[256];
     public delegate void* vid_menudrawfn();
     public delegate void* vid_menukeyfn(int key);
 }
