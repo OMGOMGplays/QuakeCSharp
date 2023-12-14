@@ -97,7 +97,7 @@ public unsafe class keys_c
 
     public static int key_count;
 
-    public char* keybindings;
+    public static char* keybindings;
     public bool[] consolekeys = new bool[256];
     public bool[] menubound = new bool[256];
     public int[] keyshift = new int[256];
@@ -426,7 +426,7 @@ public unsafe class keys_c
         return -1;
     }
 
-    public string Key_KeynumToString(int keynum)
+    public static string Key_KeynumToString(int keynum)
     {
         keyname_t* kn = default;
         char[] tinystr = new char[2];
@@ -454,7 +454,7 @@ public unsafe class keys_c
         return "<UNKOWN KEYNUM>";
     }
 
-    public void Key_SetBinding(int keynum, char* binding)
+    public static void Key_SetBinding(int keynum, char* binding)
     {
         string* _new;
         int l;
