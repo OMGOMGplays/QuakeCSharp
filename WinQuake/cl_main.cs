@@ -18,7 +18,7 @@ public unsafe class cl_main_c
     public cvar_c.cvar_t m_side = new cvar_c.cvar_t { name = "m_side", value = (char)0.8, archive = true };
 
     public static client_c.client_static_t cls;
-    public static sv_main_c.client_state_t cl;
+    public static client_c.client_state_t cl;
 
     public render_c.efrag_t[] cl_efrags = new render_c.efrag_t[client_c.MAX_EFRAGS];
     public static render_c.entity_t* cl_entities;
@@ -59,7 +59,7 @@ public unsafe class cl_main_c
         cl.free_efrags[i].entnext = null;
     }
 
-    public void CL_Disconnect()
+    public static void CL_Disconnect()
     {
         S_StopAllSounds(true);
 
@@ -283,7 +283,7 @@ public unsafe class cl_main_c
         return dl;
     }
 
-    public void CL_DecayLights()
+    public static void CL_DecayLights()
     {
         int i;
         client_c.dlight_t* dl;
@@ -569,7 +569,7 @@ public unsafe class cl_main_c
         }
     }
 
-    public int CL_ReadFromServer()
+    public static int CL_ReadFromServer()
     {
         int ret;
 
@@ -605,7 +605,7 @@ public unsafe class cl_main_c
         return 0;
     }
 
-    public void CL_SendCmd()
+    public static void CL_SendCmd()
     {
         client_c.usercmd_t cmd;
 
@@ -648,7 +648,7 @@ public unsafe class cl_main_c
         common_c.SZ_Clear(cls.message);
     }
 
-    public void CL_Init()
+    public static void CL_Init()
     {
         common_c.SZ_Alloc(cls.message, 1024);
 

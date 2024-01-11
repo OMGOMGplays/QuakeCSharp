@@ -273,6 +273,11 @@ public unsafe class console_c
         }
     }
 
+    public static void Con_Print(string txt)
+    {
+        Con_Print(common_c.StringToChar(txt));
+    }
+
     public static void Con_DebugLog(string file, string fmt, params object[] args)
     {
         string data;
@@ -327,6 +332,11 @@ public unsafe class console_c
                 inupdate = false;
             }
         }
+    }
+
+    public static void Con_Printf(string fmt, params object[] args)
+    {
+        Con_Printf(common_c.StringToChar(fmt));
     }
 
     public static void Con_DPrintf(string fmt, params object[] args)

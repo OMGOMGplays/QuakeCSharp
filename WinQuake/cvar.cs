@@ -30,7 +30,7 @@ public unsafe class cvar_c
         return null;
     }
 
-    public float Cvar_VariableValue(string var_name)
+    public static float Cvar_VariableValue(string var_name)
     {
         cvar_t* var;
 
@@ -143,11 +143,11 @@ public unsafe class cvar_c
         Cvar_Set(var_name, val);
     }
 
-    public static void Cvar_RegisterVariable(cvar_t* variable)
+    public static void Cvar_RegisterVariable(cvar_t variable)
     {
         char* oldstr;
 
-        char[] var_name_arr = variable->name.ToCharArray();
+        char[] var_name_arr = variable.name.ToCharArray();
         char* var_name_char = null;
 
         for (int i = 0; i < var_name_arr.Length; i++)
@@ -155,25 +155,25 @@ public unsafe class cvar_c
             var_name_char += var_name_arr[i];
         }
 
-        if (Cvar_FindVar(variable->name) != null)
+        if (Cvar_FindVar(variable.name) != null)
         {
-            console_c.Con_Printf($"Can't register variable {variable->name}, already defined\n");
+            console_c.Con_Printf($"Can't register variable {variable.name}, already defined\n");
             return;
         }
 
         if (cmd_c.Cmd_Exists(var_name_char))
         {
-            console_c.Con_Printf($"Cvar_RegisterVariable: {variable->name} is a command\n");
+            console_c.Con_Printf($"Cvar_RegisterVariable: {variable.name} is a command\n");
             return;
         }
 
-        oldstr = variable->str;
-        variable->str = (char*)zone_c.Z_Malloc(common_c.Q_strlen(variable->str->ToString()) + 1);
-        common_c.Q_strcpy(variable->str->ToString(), oldstr->ToString());
-        variable->value = (char)common_c.Q_atof(variable->str);
+        oldstr = variable.str;
+        variable.str = (char*)zone_c.Z_Malloc(common_c.Q_strlen(variable.str->ToString()) + 1);
+        common_c.Q_strcpy(variable.str->ToString(), oldstr->ToString());
+        variable.value = (char)common_c.Q_atof(variable.str);
 
-        variable->next = cvar_vars;
-        cvar_vars = variable;
+        variable.next = cvar_vars;
+        cvar_vars = &variable;
     }
 
     public static bool Cvar_Command()
@@ -197,7 +197,7 @@ public unsafe class cvar_c
         return true;
     }
 
-    public void Cvar_WriteVariables(FileStream* f)
+    public static void Cvar_WriteVariables(StreamWriter f)
     {
         cvar_t* var;
 

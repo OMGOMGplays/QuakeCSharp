@@ -93,34 +93,12 @@ public unsafe class sys_win_c
         }
     }
 
-    public static int Sys_FileOpenRead(char* path, out int handle, out int length)
+    public static int Sys_FileOpenRead(char* path)
     {
+        int i;
         int t;
 
-        t = vid_win_c.VID_ForceUnlockedAndReturnState();
-        handle = -1;
-        length = -1;
-
-        try
-        {
-            int i = findhandle();
-
-            using (FileStream fs = File.Open(path->ToString(), FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                sys_handles[i] = fs;
-                handle = i;
-                length = (int)fs.Length;
-
-                vid_win_c.VID_ForceLockState(t);
-
-                return length;
-            }
-        }
-        catch (Exception ex)
-        {
-            Sys_Error($"Error opening file {path} for reading: {ex.Message}");
-            return -1;
-        }
+        
     }
 
     public static int Sys_FileOpenWrite(char* path)
@@ -143,7 +121,7 @@ public unsafe class sys_win_c
         }
         catch (Exception ex)
         {
-            Sys_Error($"Error opening {path}: {ex.Message}");
+            Sys_Error($"Error opening {path->ToString()}: {ex.Message}");
         }
 
         vid_win_c.VID_ForceLockState(t);
@@ -202,7 +180,7 @@ public unsafe class sys_win_c
         vid_win_c.VID_ForceLockState(t);
     }
 
-    public static int Sys_FileRead(int handle, byte[] dest, int count)
+    public static int Sys_FileRead(int handle, byte* dest, int count)
     {
         int t, x;
 
@@ -225,7 +203,7 @@ public unsafe class sys_win_c
         return sys_handles[handle] ?? throw new InvalidOperationException("Invalid handle type.");
     }
 
-    public static int Sys_FileWrite(int handle, byte[] data, int count)
+    public static int Sys_FileWrite(int handle, void* data, int count)
     {
         int t, x;
 
@@ -233,7 +211,7 @@ public unsafe class sys_win_c
 
         try
         {
-            x = FileStreamFromHandle(hande).Write(data, 0, count);
+            x = FileStreamFromHandle(handle).Write(data, 0, count);
         }
         finally
         {
@@ -443,6 +421,11 @@ public unsafe class sys_win_c
         Environment.Exit(1);
     }
 
+    public static void Sys_Error(string error, params object[] args)
+    {
+        Sys_Error(common_c.StringToChar(error), args);
+    }
+
     public static void Sys_Printf(char* fmt, params object[] args)
     {
         char[] text = new char[1024];
@@ -454,6 +437,11 @@ public unsafe class sys_win_c
 
             // WriteFile...
         }
+    }
+
+    public static void Sys_Printf(string fmt, params object[] args)
+    {
+        Sys_Printf(common_c.StringToChar(fmt), args);
     }
 
     [DllImport("kernel32.dll", SetLastError = true)]
@@ -591,7 +579,7 @@ public unsafe class sys_win_c
     [return: MarshalAs(UnmanagedType.Bool)]
     static extern bool ReadConsoleInput(IntPtr hConsoleInput, [Out] INPUT_RECORD[] lpbuffer, uint nLength, uint* lpNumberOfEventsRead);
 
-    public char* Sys_ConsoleInput()
+    public static char* Sys_ConsoleInput()
     {
         char[] text = new char[256];
         int len;

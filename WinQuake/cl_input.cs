@@ -66,7 +66,7 @@ public unsafe class cl_input_c
 
         if (c[0] != 0)
         {
-            k = common_c.Q_atoi(c);
+            k = common_c.Q_atoi(c->ToString());
         }
         else
         {
@@ -232,11 +232,11 @@ public unsafe class cl_input_c
 
         if ((in_speed.state & 1) != 0)
         {
-            speed = host_frametime * cl_anglespeedkey.value;
+            speed = (float)(host_c.host_frametime * cl_anglespeedkey.value);
         }
         else
         {
-            speed = host_frametime;
+            speed = (float)(host_c.host_frametime);
         }
 
         if ((in_strafe.state & 1) == 0)
@@ -360,7 +360,7 @@ public unsafe class cl_input_c
 
         in_jump.state &= ~2;
 
-        ms = host_frametime * 1000;
+        ms = host_c.host_frametime * 1000;
 
         if (ms > 250)
         {

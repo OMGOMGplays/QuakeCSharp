@@ -68,7 +68,7 @@ public unsafe class screen_c
 		}
 	}
 
-	public void SCR_EraseCenterString()
+	public static void SCR_EraseCenterString()
 	{
 		int y;
 
@@ -91,7 +91,7 @@ public unsafe class screen_c
 		draw_c.Draw_TileClear(0, y, vid.width, 8 * scr_erase_lines);
 	}
 
-	public void SCR_DrawCenterString()
+	public static void SCR_DrawCenterString()
 	{
 		char* start;
 		int l;
@@ -99,9 +99,9 @@ public unsafe class screen_c
 		int x, y;
 		int remaining;
 
-		if (cl.intermission)
+		if (cl_main_c.cl.intermission != 0)
 		{
-			remaining = scr_printspeed.value * (cl.time - scr_centertime_start);
+			remaining = (int)(scr_printspeed.value * (cl_main_c.cl.time - scr_centertime_start));
 		}
 		else
 		{
@@ -113,7 +113,7 @@ public unsafe class screen_c
 
 		if (scr_center_lines <= 4)
 		{
-			y = (int)(vid_win_c.vid.height * 0.35);
+			y = (int)(vid_c.vid.height * 0.35);
 		}
 		else
 		{
@@ -158,7 +158,7 @@ public unsafe class screen_c
 		} while (true);
 	}
 
-	public void SCR_CheckDrawCenterString()
+	public static void SCR_CheckDrawCenterString()
 	{
 		scr_copytop = 1;
 
@@ -167,9 +167,9 @@ public unsafe class screen_c
 			scr_erase_center = scr_center_lines;
 		}
 
-		scr_centertime_off -= host_frametime;
+		scr_centertime_off -= (float)host_c.host_frametime;
 
-		if (scr_centertime_off <= 0 && !cl.intermission)
+		if (scr_centertime_off <= 0 && cl_main_c.cl.intermission == 0)
 		{
 			return;
 		}
@@ -203,7 +203,7 @@ public unsafe class screen_c
 
 	public static void SCR_CalcRefDef()
 	{
-		vid_win_c.vrect_t* vrect = null;
+		vid_c.vrect_t* vrect = null;
 		float size;
 
 		scr_fullupdate = 0;
@@ -234,7 +234,7 @@ public unsafe class screen_c
         r_main_c.r_refdef.fov_x = scr_fov.value;
 		r_main_c.r_refdef.fov_y = CalcFov(r_main_c.r_refdef.fov_x, r_main_c.r_refdef.vrect.width, r_main_c.r_refdef.vrect.height);
 
-		if (cl.intermission)
+		if (cl_main_c.cl.intermission != 0)
 		{
 			size = 120;
 		}
@@ -283,24 +283,24 @@ public unsafe class screen_c
 		vid.recalc_refdef = 1;
 	}
 
-	public void SCR_Init()
+	public static void SCR_Init()
 	{
-		Cvar_RegisterVariable(scr_fov);
-		Cvar_RegisterVariable(scr_viewsize);
-		Cvar_RegisterVariable(scr_conspeed);
-		Cvar_RegisterVariable(scr_showram);
-		Cvar_RegisterVariable(scr_showturtle);
-		Cvar_RegisterVariable(scr_showpause);
-		Cvar_RegisterVariable(scr_centertime);
-		Cvar_RegisterVariable(scr_printspeed);
+		cvar_c.Cvar_RegisterVariable(scr_fov);
+		cvar_c.Cvar_RegisterVariable(scr_viewsize);
+		cvar_c.Cvar_RegisterVariable(scr_conspeed);
+		cvar_c.Cvar_RegisterVariable(scr_showram);
+		cvar_c.Cvar_RegisterVariable(scr_showturtle);
+		cvar_c.Cvar_RegisterVariable(scr_showpause);
+		cvar_c.Cvar_RegisterVariable(scr_centertime);
+		cvar_c.Cvar_RegisterVariable(scr_printspeed);
 
-		Cmd_AddCommand("screenshot", SCR_ScreenShot_f);
-		Cmd_AddCommand("sizeup", SCR_SizeUp_f);
-		Cmd_AddCommand("sizedown", SCR_SizeDown_f);
+		cmd_c.Cmd_AddCommand("screenshot", SCR_ScreenShot_f);
+		cmd_c.Cmd_AddCommand("sizeup", SCR_SizeUp_f);
+		cmd_c.Cmd_AddCommand("sizedown", SCR_SizeDown_f);
 
-		scr_ram = Draw_PicFromWad("ram");
-		scr_net = Draw_PicFromWad("net");
-		scr_turtle = Draw_PicFromWad("turtle");
+		scr_ram = draw_c.Draw_PicFromWad("ram");
+		scr_net = draw_c.Draw_PicFromWad("net");
+		scr_turtle = draw_c.Draw_PicFromWad("turtle");
 
 		scr_initialized = true;
 	}
@@ -378,7 +378,7 @@ public unsafe class screen_c
 		draw_c.Draw_Pic((vid.width - pic->width) / 2, (vid.height - 48 - pic->height) / 2, pic);
 	}
 
-	public void SCR_DrawLoading()
+	public static void SCR_DrawLoading()
 	{
 		wad_c.qpic_t* pic;
 
@@ -400,7 +400,7 @@ public unsafe class screen_c
 			return;
 		}
 
-		bool con_forcedup = cl.worldmodel == null || cls.signon != SIGNONS;
+		bool con_forcedup = cl_main_c.cl.worldmodel == null || client_c.cls.signon != SIGNONS;
 
 		if (con_forcedup)
 		{
@@ -418,7 +418,7 @@ public unsafe class screen_c
 
 		if (scr_conlines < scr_con_current)
 		{
-			scr_con_current -= scr_conspeed.value * host_frametime;
+			scr_con_current -= (float)(scr_conspeed.value * host_c.host_frametime);
 
 			if (scr_conlines > scr_con_current)
 			{
@@ -427,7 +427,7 @@ public unsafe class screen_c
 		}
 		else if (scr_conlines > scr_con_current)
 		{
-			scr_con_current += scr_conspeed.value * host_frametime;
+			scr_con_current += (float)(scr_conspeed.value * host_c.host_frametime);
 
 			if (scr_conlines < scr_con_current)
 			{
@@ -438,13 +438,13 @@ public unsafe class screen_c
 		if (clearconsole++ < vid.numpages)
 		{
 			scr_copytop = 1;
-			Draw_TileClear(0, (int)scr_con_current, vid.width, vid.height - (int)scr_con_current);
+			draw_c.Draw_TileClear(0, (int)scr_con_current, vid.width, vid.height - (int)scr_con_current);
 			Sbar_Changed();
 		}
 		else if (clearnotify++ < vid.numpages)
 		{
 			scr_copytop = 1;
-			Draw_TileClear(0, 0, vid.width, console_c.con_notifylines);
+			draw_c.Draw_TileClear(0, 0, vid.width, console_c.con_notifylines);
 		}
 		else
 		{
@@ -547,11 +547,11 @@ public unsafe class screen_c
 		common_c.COM_WriteFile(filename, pcx, length);
 	}
 
-	public void SCR_ScreenShot_f()
+	public static void SCR_ScreenShot_f()
 	{
 		int i;
 		char[] pcxname = new char[80];
-		char[] checkname = new char[quakedef_c.MAX_OSPATH];
+		char* checkname = null;
 
 		common_c.Q_strcpy(pcxname.ToString(), "quake00.pcx");
 
@@ -561,7 +561,7 @@ public unsafe class screen_c
 			pcxname[6] = (char)(i % 10 + '0');
 			Console.WriteLine($"{common_c.com_gamedir}/{pcxname}");
 
-			if (sys_win_c.Sys_FileTime(checkname.ToString()) == -1)
+			if (sys_win_c.Sys_FileTime(checkname) == -1)
 			{
 				break;
 			}
@@ -575,7 +575,7 @@ public unsafe class screen_c
 
 		D_EnableBackBufferAccess();
 
-		WritePCXfile(pcxname, vid.buffer, vid.width, vid.height, vid.rowbytes, host_basepal);
+		WritePCXfile(pcxname, vid.buffer, vid.width, vid.height, vid.rowbytes, host_c.host_basepal);
 
 		D_DisableBackBufferAccess();
 
@@ -586,12 +586,12 @@ public unsafe class screen_c
 	{
 		S_StopAllSounds(true);
 
-		if (cl_main_c.cls.state != ca_connected)
+		if (cl_main_c.cls.state != client_c.cactive_t.ca_connected)
 		{
 			return;
 		}
 
-		if (cls.signon != SIGNONS)
+		if (client_c.cls.signon != SIGNONS)
 		{
 			return;
 		}
@@ -618,10 +618,10 @@ public unsafe class screen_c
 		console_c.Con_ClearNotify();
 	}
 
-	public static string scr_notifystring;
+	public static char* scr_notifystring;
 	public static bool scr_drawdialog;
 
-	public void SCR_DrawNotifyString()
+	public static void SCR_DrawNotifyString()
 	{
 		char* start;
 		int l;
@@ -645,7 +645,7 @@ public unsafe class screen_c
 
 				for (j = 0; j < l; j++, x += 8)
 				{
-					Draw_Character(x, y, start[j]);
+					draw_c.Draw_Character(x, y, start[j]);
 				}
 
 				y += 8;
@@ -672,7 +672,7 @@ public unsafe class screen_c
 			return 1;
 		}
 
-		scr_notifystring = text->ToString();
+		scr_notifystring = text;
 
 		scr_fullupdate = 0;
 		scr_drawdialog = true;
@@ -704,15 +704,15 @@ public unsafe class screen_c
 			SCR_UpdateScreen();
 		}
 
-		cl.cshifts[0].percent = 0;
-		VID_SetPalette(host_basepal);
+		cl_main_c.cl.cshifts[0].percent = 0;
+		vid_win_c.VID_SetPalette(host_c.host_basepal);
 	}
 
 	public static void SCR_UpdateScreen()
 	{
 		float oldscr_viewsize = 0.0f;
 		float oldlcd_x = 0.0f;
-		vid_win_c.vrect_t vrect;
+		vid_c.vrect_t vrect;
 
 		if (scr_skipupdate || block_drawing)
 		{
@@ -735,7 +735,7 @@ public unsafe class screen_c
 			}
 		}
 
-		if (cls.state == ca_dedicated)
+		if (client_c.cls.state == client_c.cactive_t.ca_dedicated)
 		{
 			return;
 		}
@@ -779,7 +779,7 @@ public unsafe class screen_c
 		if (scr_fullupdate++ < vid.numpages)
 		{
 			scr_copyeverything = 1;
-			Draw_TileClear(0, 0, vid.width, vid.height);
+			draw_c.Draw_TileClear(0, 0, vid.width, vid.height);
 			Sbar_Changed();
 		}
 
@@ -790,11 +790,11 @@ public unsafe class screen_c
 
 		D_DisableBackBufferAccess();
 
-		VID_LockBuffer();
+		vid_win_c.VID_LockBuffer();
 
 		V_RenderView();
 
-		VID_UnlockBuffer();
+		vid_win_c.VID_UnlockBuffer();
 
 		D_EnableBackBufferAccess();
 
@@ -810,16 +810,16 @@ public unsafe class screen_c
 			SCR_DrawLoading();
 			Sbar_Draw();
 		}
-		else if (cl.intermission == 1 && keys_c.key_dest == keys_c.keydest_t.key_game)
+		else if (cl_main_c.cl.intermission == 1 && keys_c.key_dest == keys_c.keydest_t.key_game)
 		{
 			Sbar_IntermissionOverlay();
 		}
-		else if (cl.intermission == 2 && keys_c.key_dest == keys_c.keydest_t.key_game)
+		else if (cl_main_c.cl.intermission == 2 && keys_c.key_dest == keys_c.keydest_t.key_game)
 		{
 			Sbar_FinaleOverlay();
 			SCR_CheckDrawCenterString();
 		}
-		else if (cl.intermission == 3 && keys_c.key_dest == keys_c.keydest_t.key_game)
+		else if (cl_main_c.cl.intermission == 3 && keys_c.key_dest == keys_c.keydest_t.key_game)
 		{
 			SCR_CheckDrawCenterString();
 		}

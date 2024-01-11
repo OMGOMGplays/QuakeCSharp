@@ -27,7 +27,7 @@ public unsafe class zone_c
 
 	public static memzone_t* mainzone;
 
-	public unsafe void Z_ClearZone(memzone_t* zone, int size)
+	public static void Z_ClearZone(memzone_t* zone, int size)
 	{
 		memblock_t* block = default;
 
@@ -674,7 +674,7 @@ public unsafe class zone_c
 		return null;
 	}
 
-	public void Cache_Flush()
+	public static void Cache_Flush()
 	{
 		while (cache_head->next != cache_head)
 		{
@@ -701,7 +701,7 @@ public unsafe class zone_c
 	{
 	}
 
-	public void Cache_Init()
+	public static void Cache_Init()
 	{
 		cache_head->next = cache_head->prev = cache_head;
 		cache_head->lru_next = cache_head->lru_prev = cache_head;
@@ -785,7 +785,7 @@ public unsafe class zone_c
 		return Cache_Check(c);
 	}
 
-	public void Memory_Init(void* buf, int size)
+	public static void Memory_Init(void* buf, int size)
 	{
 		int p;
 		int zonesize = DYNAMIC_SIZE;

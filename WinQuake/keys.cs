@@ -84,9 +84,9 @@ public unsafe class keys_c
 
     public enum keydest_t { key_game, key_console, key_message, key_menu };
 
-    public const int MAXCMDLINE = 256;
-    public char[][] key_lines = new char[MAXCMDLINE][];
-    public int key_linepos;
+    public static int MAXCMDLINE = 256;
+    public static char[][] key_lines = new char[MAXCMDLINE][];
+    public static int key_linepos;
     public int shift_down = 0;
     public static int key_lastpress;
 
@@ -98,9 +98,9 @@ public unsafe class keys_c
     public static int key_count;
 
     public static char* keybindings;
-    public bool[] consolekeys = new bool[256];
-    public bool[] menubound = new bool[256];
-    public int[] keyshift = new int[256];
+    public static bool[] consolekeys = new bool[256];
+    public static bool[] menubound = new bool[256];
+    public static int[] keyshift = new int[256];
     public int[] key_repeats = new int[256];
     public bool[] keydown = new bool[256];
 
@@ -204,15 +204,15 @@ public unsafe class keys_c
 
         if (key == K_ENTER)
         {
-            Cbuf_AddText(key_lines[edit_line] + 1);
-            Cbuf_AddText("\n");
-            console_c.Con_Printf($"{key_lines[edit_line, 0]}\n");
+            cmd_c.Cbuf_AddText((char*)(key_lines[edit_line][0] + (char)1));
+            cmd_c.Cbuf_AddText(common_c.StringToChar("\n"));
+            console_c.Con_Printf($"{key_lines[edit_line][0]}\n");
             edit_line = (edit_line + 1) & 31;
             history_line = edit_line;
             key_lines[edit_line][0] = ']';
             key_linepos = 1;
 
-            if (cl_main_c.cls.state == ca_disconnected)
+            if (cl_main_c.cls.state == client_c.cactive_t.ca_disconnected)
             {
                 screen_c.SCR_UpdateScreen();
             }
@@ -297,9 +297,9 @@ public unsafe class keys_c
         {
             console_c.con_backscroll += 2;
 
-            if (console_c.con_backscroll > console_c.con_totallines - (vid_win_c.vid.height >> 3) - 1)
+            if (console_c.con_backscroll > console_c.con_totallines - (vid_c.vid.height >> 3) - 1)
             {
-                console_c.con_backscroll = console_c.con_totallines - (vid_win_c.vid.height >> 3) - 1;
+                console_c.con_backscroll = (int)(console_c.con_totallines - (vid_c.vid.height >> 3) - 1);
             }
 
             return;
@@ -309,9 +309,9 @@ public unsafe class keys_c
         {
             console_c.con_backscroll -= 2;
 
-            if (console_c.con_backscroll > console_c.con_totallines - (vid_win_c.vid.height >> 3) - 1)
+            if (console_c.con_backscroll > console_c.con_totallines - (vid_c.vid.height >> 3) - 1)
             {
-                console_c.con_backscroll = console_c.con_totallines - (vid_win_c.vid.height >> 3) - 1;
+                console_c.con_backscroll = (int)(console_c.con_totallines - (vid_c.vid.height >> 3) - 1);
             }
 
             return;
@@ -319,7 +319,7 @@ public unsafe class keys_c
 
         if (key == K_HOME)
         {
-            console_c.con_backscroll = console_c.con_totallines - (vid_win_c.vid.height >> 3) - 1;
+            console_c.con_backscroll = (int)(console_c.con_totallines - (vid_c.vid.height >> 3) - 1);
             return;
         }
 
@@ -342,7 +342,7 @@ public unsafe class keys_c
         }
     }
 
-    public char[] chat_buffer = new char[32];
+    public char* chat_buffer;
     public static bool team_message = false;
 
     public void Key_Message(int key)
@@ -353,15 +353,15 @@ public unsafe class keys_c
         {
             if (team_message)
             {
-                Cbuf_AddText("say_team \"");
+                cmd_c.Cbuf_AddText(common_c.StringToChar("say_team \""));
             }
             else
             {
-                Cbuf_AddText("say \"");
+                cmd_c.Cbuf_AddText(common_c.StringToChar("say \""));
             }
 
-            Cbuf_AddText(chat_buffer);
-            Cbuf_AddText("\"\n");
+            cmd_c.Cbuf_AddText(chat_buffer);
+            cmd_c.Cbuf_AddText(common_c.StringToChar("\"\n"));
 
             key_dest = keydest_t.key_game;
             chat_bufferlen = 0;
@@ -401,7 +401,7 @@ public unsafe class keys_c
         chat_buffer[chat_bufferlen] = '\0';
     }
 
-    public int Key_StringToKeyNum(char* str)
+    public static int Key_StringToKeyNum(char* str)
     {
         keyname_t* kn = default;
 
@@ -477,11 +477,11 @@ public unsafe class keys_c
         keybindings[keynum] = _new->ToCharArray().First();
     }
 
-    public void Key_Unbind_f()
+    public static void Key_Unbind_f()
     {
         int b;
 
-        if (Cmd_Argc() != 2)
+        if (cmd_c.Cmd_Argc() != 2)
         {
             console_c.Con_Printf("unbind <key> : remove commands from a key\n");
             return;
@@ -498,7 +498,7 @@ public unsafe class keys_c
         Key_SetBinding(b, null);
     }
 
-    public void Key_Unbindall_f()
+    public static void Key_Unbindall_f()
     {
         int i;
 
@@ -511,7 +511,7 @@ public unsafe class keys_c
         }
     }
 
-    public void Key_Bind_f()
+    public static void Key_Bind_f()
     {
         int i, c, b;
         char* cmd = null;
@@ -561,7 +561,7 @@ public unsafe class keys_c
         Key_SetBinding(b, cmd);
     }
 
-    public void Key_WriteBindings(File* f)
+    public static void Key_WriteBindings(StreamWriter f)
     {
         int i;
 
@@ -574,7 +574,7 @@ public unsafe class keys_c
         }
     }
 
-    public void Key_Init()
+    public static void Key_Init()
     {
         int i;
 
@@ -704,12 +704,12 @@ public unsafe class keys_c
                     break;
 
                 case keydest_t.key_menu:
-                    M_Keydown(key);
+                    menu_c.M_Keydown(key);
                     break;
 
                 case keydest_t.key_game:
                 case keydest_t.key_console:
-                    M_ToggleMenu_f();
+                    menu_c.M_ToggleMenu_f();
                     break;
 
                 default:
@@ -746,7 +746,7 @@ public unsafe class keys_c
 
         if (cl_main_c.cls.demoplayback && down && consolekeys[key] && key_dest == keydest_t.key_game)
         {
-            M_ToggleMenu_f();
+            menu_c.M_ToggleMenu_f();
             return;
         }
 
@@ -788,7 +788,7 @@ public unsafe class keys_c
                 break;
 
             case keydest_t.key_menu:
-                M_Keydown(key);
+                menu_c.M_Keydown(key);
                 break;
 
             case keydest_t.key_game:

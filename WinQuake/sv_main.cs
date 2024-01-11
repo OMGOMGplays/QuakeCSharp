@@ -109,7 +109,7 @@ public unsafe class sv_main_c
 
         if (sound_num == quakedef_c.MAX_SOUNDS || sv.sound_precache[sound_num] == 0)
         {
-            console_c.Con_Printf($"SV_StartSound: {sample->ToString()} not precached\n");
+            console_c.Con_Printf(common_c.StringToChar($"SV_StartSound: {sample->ToString()} not precached\n"));
             return;
         }
 
@@ -175,7 +175,7 @@ public unsafe class sv_main_c
 
         Console.WriteLine(message, pr_edict_c.pr_strings + sv.edicts->v.message);
 
-        common_c.MSG_WriteString(client->message, message);
+        common_c.MSG_WriteString(client->message, *message);
 
         for (*s = sv.model_precache + 1; *s != null; s++)
         {
@@ -216,7 +216,7 @@ public unsafe class sv_main_c
 
         client = svs.clients + clientnum;
 
-        console_c.Con_DPrintf($"Client {client->netconnection->address} connected\n");
+        console_c.Con_DPrintf($"Client {client->netconnection->address->ToString()} connected\n");
 
         edictnum = clientnum + 1;
 
@@ -403,7 +403,7 @@ public unsafe class sv_main_c
 
             if (msg->maxsize - msg->cursize < 16)
             {
-                console_c.Con_Printf("packet overflow\n");
+                console_c.Con_Printf(common_c.StringToChar("packet overflow\n"));
                 return;
             }
 
@@ -474,7 +474,7 @@ public unsafe class sv_main_c
                 bits |= protocol_c.U_MOREBITS;
             }
 
-            common_c.MSG_WriteByte(msg, bits | protocol_c.U_SIGNAL);
+            common_c.MSG_WriteByte(*msg, bits | protocol_c.U_SIGNAL);
 
             if ((bits & protocol_c.U_MOREBITS) != 0)
             {
@@ -721,7 +721,7 @@ public unsafe class sv_main_c
 
         bits |= protocol_c.SU_WEAPON;
 
-        common_c.MSG_WriteByte(msg, protocol_c.svc_clientdata);
+        common_c.MSG_WriteByte(*msg, protocol_c.svc_clientdata);
         common_c.MSG_WriteShort(*msg, bits);
 
         if ((bits & protocol_c.SU_VIEWHEIGHT) != 0)
@@ -761,7 +761,7 @@ public unsafe class sv_main_c
 
         if ((bits & protocol_c.SU_WEAPON) != 0)
         {
-            common_c.MSG_WriteByte(*msg, SV_ModelIndex(progs_c.pr_strings + ent->v.weaponmodel));
+            common_c.MSG_WriteByte(*msg, SV_ModelIndex(*progs_c.pr_strings + common_c.StringToChar(ent->v.weaponmodel)));
         }
 
         common_c.MSG_WriteShort(*msg, (int)ent->v.health);
@@ -1160,12 +1160,12 @@ public unsafe class sv_main_c
 
         if (sv.worldmodel == null)
         {
-            console_c.Con_Printf($"Couldn't spawn server {sv.modelname->ToString()}\n");
+            console_c.Con_Printf(common_c.StringToChar($"Couldn't spawn server {sv.modelname->ToString()}\n"));
             sv.active = false;
             return;
         }
 
-        sv.models[1] = sv.worldmodel;
+        sv.models[1] = *sv.worldmodel;
 
         world_c.SV_ClearWorld();
 

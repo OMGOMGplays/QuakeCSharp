@@ -59,7 +59,7 @@ public unsafe class sv_main_c
         return sv.paused;
     }
 
-    public void SV_Shutdown()
+    public static void SV_Shutdown()
     {
         Master_Shutdown();
 
@@ -129,7 +129,7 @@ public unsafe class sv_main_c
             if (drop->spectator == 0)
             {
                 progs_c.pr_global_struct->self = progs_c.EDICT_TO_PROG(drop->edict);
-                pr_exec_c.PR_ExecuteProgram(pr_global_struct->ClientDisconnect);
+                pr_exec_c.PR_ExecuteProgram(pr_edict_c.pr_global_struct->ClientDisconnect);
             }
             else if (SpectatorDisconnect)
             {
@@ -172,7 +172,7 @@ public unsafe class sv_main_c
         SV_FullClientUpdate(drop, &sv.reliable_datagram);
     }
 
-    public int SV_CalcPing(client_t* cl)
+    public int SV_CalcPing(server_c.client_t* cl)
     {
         float ping;
         int i;
@@ -201,10 +201,10 @@ public unsafe class sv_main_c
         return (int)ping * 1000;
     }
 
-    public void SV_FullClientUpdate(client_t* client, common_c.sizebuf_t buf)
+    public void SV_FullClientUpdate(server_c.client_t* client, common_c.sizebuf_t buf)
     {
         int i;
-        char info;
+        char info = '\0';
 
         i = client - svs.clients;
 
@@ -224,7 +224,7 @@ public unsafe class sv_main_c
         common_c.MSG_WriteByte(buf, i);
         common_c.MSG_WriteFloat(buf, realtime - client->connection_started);
 
-        common_c.Q_strcpy(info, client->userinfo);
+        common_c.Q_strcpy(info.ToString(), client->userinfo.ToString());
         Info_RemovePrefixedKeys(info, '_');
 
         common_c.MSG_WriteByte(buf, svc_updateuserinfo);
@@ -233,7 +233,7 @@ public unsafe class sv_main_c
         common_c.MSG_WriteString(buf, info);
     }
 
-    public void SV_FullUpdateToClient(client_t* client, client_t* cl)
+    public void SV_FullUpdateToClient(server_c.client_t* client, server_c.client_t* cl)
     {
         ClientReliableCheckBlock(cl, 24 + common_c.Q_strlen(client->userinfo));
 
@@ -251,7 +251,7 @@ public unsafe class sv_main_c
     public void SVC_Status()
     {
         int i;
-        client_t* cl;
+        server_c.client_t* cl;
         int ping;
         int top, bottom;
 

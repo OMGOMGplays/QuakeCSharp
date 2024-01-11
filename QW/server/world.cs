@@ -204,7 +204,7 @@ public unsafe class world_c
         SV_CreateAreaNode(0, sv.worldmodel->mins, sv.worldmodel->maxs);
     }
 
-    public void SV_UnlinkEdict(progs_c.edict_t* ent)
+    public static void SV_UnlinkEdict(progs_c.edict_t* ent)
     {
         if (ent->area.prev == null)
         {
@@ -310,7 +310,7 @@ public unsafe class world_c
         }
     }
 
-    public void SV_LinkEdict(progs_c.edict_t* ent, bool touch_triggers)
+    public static void SV_LinkEdict(progs_c.edict_t* ent, bool touch_triggers)
     {
         areanode_t* node;
 
@@ -441,9 +441,9 @@ public unsafe class world_c
 
 #endif
 
-    public int SV_PointContents(Vector3 p)
+    public static int SV_PointContents(Vector3 p)
     {
-        return SV_HullPointContents(&sv.worldmodel->hulls[0], 0, p);
+        return SV_HullPointContents(&server_c.sv.worldmodel->hulls[0], 0, p);
     }
 
     public progs_c.edict_t* SV_TestEntityPosition(progs_c.edict_t* ent)
@@ -750,7 +750,7 @@ public unsafe class world_c
         }
     }
 
-    public void SV_MoveBounds(Vector3 start, Vector3 mins, Vector3 maxs, Vector3 end, Vector3 boxmins, Vector3 boxmaxs)
+    public static void SV_MoveBounds(Vector3 start, Vector3 mins, Vector3 maxs, Vector3 end, Vector3 boxmins, Vector3 boxmaxs)
     {
         //boxmins[0] = boxmins[1] = boxmins[2] = -9999;
         //boxmaxs[0] = boxmaxs[1] = boxmaxs[2] = 9999;
@@ -772,14 +772,14 @@ public unsafe class world_c
         }
     }
 
-    public trace_t SV_Move(Vector3 start, Vector3 mins, Vector3 maxs, Vector3 end, int type, progs_c.edict_t* passedict)
+    public static trace_t SV_Move(Vector3 start, Vector3 mins, Vector3 maxs, Vector3 end, int type, progs_c.edict_t* passedict)
     {
-        moveclip_t clip;
+        moveclip_t clip = new();
         int i;
 
-        common_c.Q_memset(&clip, 0, sizeof(moveclip_t));
+        common_c.Q_memset(clip, 0, sizeof(moveclip_t));
 
-        clip.trace = SV_ClipMoveToEntity(sv.edicts, start, mins, maxs, end);
+        clip.trace = SV_ClipMoveToEntity(server_c.sv.edicts, start, mins, maxs, end);
 
         clip.start = common_c.VectorToFloat(start);
         clip.end = common_c.VectorToFloat(end);
@@ -804,7 +804,7 @@ public unsafe class world_c
 
         SV_MoveBounds(start, clip.mins2, clip.maxs2, end, clip.boxmins, clip.boxmaxs);
 
-        SV_ClipToLinks(sv_areanodes, &clip);
+        SV_ClipToLinks(server_c.sv_areanodes, &clip);
 
         return clip.trace;
     }

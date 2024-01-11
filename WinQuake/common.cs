@@ -231,6 +231,16 @@ public unsafe class common_c
         return false; // Unreachable, still kept, cause why not!!
     }
 
+    public static bool Q_strcmp(char* s1, char* s2)
+    {
+        return Q_strcmp(s1->ToString(), s2->ToString());
+    }
+
+    public static bool Q_strcmp(char s1, char* s2)
+    {
+        return Q_strcmp(s1.ToString(), s2->ToString());
+    }
+
     public static int Q_strncmp(char* s1, char* s2, int count)
     {
         while (true)
@@ -1625,13 +1635,13 @@ public unsafe class common_c
         newfiles = (packfile_t*)zone_c.Hunk_AllocName(numpackfiles * sizeof(packfile_t), "packfile");
 
         sys_win_c.Sys_FileSeek(packhandle, header.dirofs);
-        sys_win_c.Sys_FileRead(packhandle, info, header.dirlen);
+        sys_win_c.Sys_FileRead(packhandle, (byte*)&info, header.dirlen);
 
-        CRC_Init(&crc);
+        crc_c.CRC_Init(&crc);
 
         for (i = 0; i < header.dirlen; i++)
         {
-            CRC_ProcessByte(&crc, ((byte*)info)[i]);
+            crc_c.CRC_ProcessByte(&crc, ((byte*)&info)[i]);
         }
 
         if (crc != PAK0_CRC)

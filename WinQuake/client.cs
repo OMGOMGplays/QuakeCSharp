@@ -66,7 +66,7 @@ public unsafe class client_c
     public struct beam_t
     {
         public int entity;
-        public model_t* model;
+        public model_c.model_t* model;
         public float endtime;
         public Vector3 start, end;
     }
@@ -104,7 +104,7 @@ public unsafe class client_c
         public float td_starttime;
 
         public int signon;
-        public qsocket_t* netcon;
+        public net_c.qsocket_t* netcon;
         public common_c.sizebuf_t message;
     }
 
@@ -157,7 +157,7 @@ public unsafe class client_c
 
         public float last_received_message;
 
-        public model_t* model_precache;
+        public model_c.model_t* model_precache;
         public sfx_t* sound_precache;
 
         public char[] levelname;
@@ -165,11 +165,11 @@ public unsafe class client_c
         public int maxclients;
         public int gametype;
 
-        public model_t* worldmodel;
+        public model_c.model_t* worldmodel;
         public efrag_t* free_efrags;
         public int num_entities;
         public int num_statics;
-        public entity_t viewent;
+        public viewent;
 
         public int cdtrack, looptrack;
 
@@ -229,7 +229,7 @@ public unsafe class client_c
 
     public static int MAX_VISEDICTS = 256;
     public static int cl_numvisedicts;
-    public static entity_t* cl_visedicts;
+    public static render_c.entity_t* cl_visedicts;
 
     public struct kbutton_t
     {

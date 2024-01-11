@@ -11,21 +11,21 @@ public unsafe class cmd_c
         public char* value;
     }
 
-    public cmdalias_t* cmd_alias;
+    public static cmdalias_t* cmd_alias;
 
     public int trashtest;
     public int* trashspot;
 
-    public bool cmd_wait;
+    public static bool cmd_wait;
 
-    public void Cmd_Wait_f()
+    public static void Cmd_Wait_f()
     {
         cmd_wait = true;
     }
 
     public static common_c.sizebuf_t cmd_text;
 
-    public void Cbuf_Init()
+    public static void Cbuf_Init()
     {
         common_c.SZ_Alloc(cmd_text, 8192);
     }
@@ -45,7 +45,7 @@ public unsafe class cmd_c
         common_c.SZ_Write(cmd_text, (int)text, common_c.Q_strlen(text->ToString()));
     }
 
-    public void Cbuf_InsertText(char* text)
+    public static void Cbuf_InsertText(char* text)
     {
         char* temp;
         int templen;
@@ -72,7 +72,7 @@ public unsafe class cmd_c
         }
     }
 
-    public void Cbuf_Execute()
+    public static void Cbuf_Execute()
     {
         int i;
         char* text;
@@ -133,7 +133,7 @@ public unsafe class cmd_c
         src_command
     }
 
-    public void Cmd_StuffCmds_f()
+    public static void Cmd_StuffCmds_f()
     {
         int i, j;
         int s;
@@ -214,7 +214,7 @@ public unsafe class cmd_c
         zone_c.Z_Free(build);
     }
 
-    public void Cmd_Exec_f()
+    public static void Cmd_Exec_f()
     {
         char* f;
         int mark;
@@ -240,7 +240,7 @@ public unsafe class cmd_c
         zone_c.Hunk_FreeToLowMark(mark);
     }
 
-    public void Cmd_Echo_f()
+    public static void Cmd_Echo_f()
     {
         int i;
 
@@ -252,7 +252,7 @@ public unsafe class cmd_c
         console_c.Con_Printf("\n");
     }
 
-    public char* CopyString(char* input)
+    public static char* CopyString(char* input)
     {
         char* output;
 
@@ -261,7 +261,7 @@ public unsafe class cmd_c
         return output;
     }
 
-    public void Cmd_Alias_f()
+    public static void Cmd_Alias_f()
     {
         cmdalias_t* a;
         char* cmd = null;
@@ -338,11 +338,11 @@ public unsafe class cmd_c
     public static char* cmd_null_string = null;
     public static char* cmd_args = null;
 
-    public cmd_source_t cmd_source;
+    public static cmd_source_t cmd_source;
 
     public static cmd_function_t* cmd_functions;
 
-    public void Cmd_Init()
+    public static void Cmd_Init()
     {
         Cmd_AddCommand("stuffcmds", Cmd_StuffCmds_f);
         Cmd_AddCommand("exec", Cmd_Exec_f);
@@ -427,7 +427,7 @@ public unsafe class cmd_c
     {
         cmd_function_t* cmd;
 
-        if (sv_main_c.host_initialized)
+        if (host_c.host_initialized)
         {
             sys_win_c.Sys_Error("Cmd_AddCommand after host_initialized");
         }
@@ -500,7 +500,7 @@ public unsafe class cmd_c
         return null;
     }
 
-    public void Cmd_ExecuteString(char* text, cmd_source_t src)
+    public static void Cmd_ExecuteString(char* text, cmd_source_t src)
     {
         cmd_function_t* cmd;
         cmdalias_t* a = null;
@@ -528,7 +528,7 @@ public unsafe class cmd_c
         }
     }
 
-    public void Cmd_ForwardToServer()
+    public static void Cmd_ForwardToServer()
     {
         if (client_c.cls.state != client_c.cactive_t.ca_connected)
         {

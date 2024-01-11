@@ -112,15 +112,15 @@ public unsafe class mathlib_c
 
     public static float anglemod(float a)
     {
-		//if (a >= 0) 
-		//{
-		//	a -= 360*(int)(a/360);
-		//}
-		//else 
-		//{
-		//	a += 360(1 + (int)(-a/360));
-		//}
-        
+        //if (a >= 0) 
+        //{
+        //	a -= 360*(int)(a/360);
+        //}
+        //else 
+        //{
+        //	a += 360(1 + (int)(-a/360));
+        //}
+
         a = (360.0f / 65536) * ((int)(a * (65536 / 360.0f)) & 65535);
         return a;
     }
@@ -306,12 +306,12 @@ public unsafe class mathlib_c
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
 
-    public static float DotProduct_V(Vector3 a, Vector3 b)
+    public static float DotProduct(Vector3 a, Vector3 b)
     {
         return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
     }
 
-    public static float DotProduct_FV(float[] a, Vector3 b)
+    public static float DotProduct(float[] a, Vector3 b)
     {
         return a[0] * b.X + a[1] * b.Y + a[2] * b.Z;
     }
@@ -337,11 +337,93 @@ public unsafe class mathlib_c
         output[2] = veca[2] + vecb[2];
     }
 
+    #region VectorCopy
+
     public static void VectorCopy(Vector3 input, Vector3 output)
     {
         output[0] = input[0];
         output[1] = input[1];
         output[2] = input[2];
+    }
+
+    public static void VectorCopy(float* input, Vector3 output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+    public static void VectorCopy(float[] input, Vector3 output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+    public static void VectorCopy(Vector3 input, float* output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+    public static void VectorCopy(Vector3 input, float[] output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+    public static void VectorCopy(float* input, float* output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+    public static void VectorCopy(float[] input, float[] output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+    public static void VectorCopy(float[] input, float* output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+    public static void VectorCopy(float* input, float[] output)
+    {
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+    }
+
+#endregion
+
+    public static float* VecToFloatPtr(Vector3 input)
+    {
+        float* output = null;
+
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+
+        return output;
+    }
+
+    public static Vector3 FloatPtrToVec(float* input)
+    {
+        Vector3 output = new();
+
+        output[0] = input[0];
+        output[1] = input[1];
+        output[2] = input[2];
+
+        return output;
     }
 
     public static void CrossProduct(Vector3 v1, Vector3 v2, Vector3 cross)

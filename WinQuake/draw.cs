@@ -14,8 +14,8 @@ public unsafe class draw_c
     public static rectdesc_t r_rectdesc;
 
     public static byte* draw_chars;
-    public wad_c.qpic_t* draw_disc;
-    public wad_c.qpic_t* draw_backtile;
+    public static wad_c.qpic_t* draw_disc;
+    public static wad_c.qpic_t* draw_backtile;
 
     public struct cachepic_t
     {
@@ -27,7 +27,7 @@ public unsafe class draw_c
     public static cachepic_t* menu_cachepics;
     public static int menu_numcachepics;
 
-    public wad_c.qpic_t* Draw_PicFromWad(string name)
+    public static wad_c.qpic_t* Draw_PicFromWad(string name)
     {
         return (wad_c.qpic_t*)wad_c.W_GetLumpName(name);
     }
@@ -78,7 +78,7 @@ public unsafe class draw_c
         return dat;
     }
 
-    public void Draw_Init()
+    public static void Draw_Init()
     {
         int i;
 

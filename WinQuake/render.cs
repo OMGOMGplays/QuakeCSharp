@@ -77,9 +77,9 @@ public unsafe class render_c
     public int reinit_surfcache;
 
     public static refdef_t r_refdef;
-    public Vector3 r_origin, vpn, vright, vup;
+    public static Vector3 r_origin, vpn, vright, vup;
 
-    public texture_t* r_notexture_mip;
+    public model_c.texture_t* r_notexture_mip;
 
     public bool r_cache_trash;
 }

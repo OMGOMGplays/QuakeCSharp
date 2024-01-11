@@ -172,8 +172,8 @@ public class quakedef_c
 
 	public struct entity_state_t
 	{
-		public vec3_t origin;
-		public vec3_t angles;
+		public Vector3 origin;
+		public Vector3 angles;
 		public int modelindex;
 		public int frame;
 		public int colormap;
@@ -186,7 +186,7 @@ public class quakedef_c
 		public string basedir;
 		public string cachedir;
 		public int argc;
-		public string argv;
+		public char* argv;
 		public void* membase;
 		public int memsize;
 	}
@@ -195,9 +195,9 @@ public class quakedef_c
 
 	public static quakeparms_t host_parms;
 
-	public cvar_t sys_ticrate;
-	public cvar_t sys_nostdout;
-	public cvar_t developer;
+	public cvar_c.cvar_t sys_ticrate;
+	public cvar_c.cvar_t sys_nostdout;
+	public cvar_c.cvar_t developer;
 
 	public bool host_initialized;
 	public double host_frametime;
@@ -205,6 +205,4 @@ public class quakedef_c
 	public int host_colormap;
 	public int host_framecount;
 	public static double realtime;
-
-
 }

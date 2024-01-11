@@ -71,7 +71,7 @@ public unsafe class wad_c
 		}
 	}
 
-	public void W_LoadWadFile(string filename)
+	public static void W_LoadWadFile(string filename)
 	{
 		lumpinfo_t* lump_p;
 		wadinfo_t* header;

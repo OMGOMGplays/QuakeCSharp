@@ -290,7 +290,7 @@ public unsafe class model_c
     public static int NL_NEEDS_LOADED = 1;
     public static int NL_UNREFERENCED = 2;
 
-    public void Mod_Init()
+    public static void Mod_Init()
     {
         common_c.Q_memset(*mod_novis, 0xff, bspfile_c.MAX_MAP_LEAFS / 8);
     }
@@ -316,7 +316,7 @@ public unsafe class model_c
         return mod->cache.data;
     }
 
-    public mleaf_t* Mod_PointInLeaf(Vector3 p, model_t* model)
+    public static mleaf_t* Mod_PointInLeaf(Vector3 p, model_t* model)
     {
         mnode_t* node;
         float d;
@@ -404,7 +404,7 @@ public unsafe class model_c
         return Mod_DecompressVis(leaf->compressed_vis, model);
     }
 
-    public void Mod_ClearAll()
+    public static void Mod_ClearAll()
     {
         int i;
         model_t* mod;

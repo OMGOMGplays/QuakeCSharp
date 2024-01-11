@@ -4,7 +4,7 @@ public unsafe class progs_c
 {
     public struct eval_t
     {
-        public string str;
+        public char* str;
         public float _float;
         public float[] vector;
         public pr_comp_c.func_t function;

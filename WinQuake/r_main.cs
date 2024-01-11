@@ -108,15 +108,15 @@ public unsafe class r_main_c
     public void CreatePassages() { }
     public void SetVisibilityByPassages() { }
 
-    public void R_InitTextures()
+    public static void R_InitTextures()
     {
         int x, y, m;
         byte* dest;
 
-        r_notexture_mip = zone_c.Hunk_Alloc(sizeof(texture_t) + 16 * 16 + 8 * 8 + 4 * 4 + 2 * 2, "notexture");
+        r_notexture_mip = (model_c.texture_t*)zone_c.Hunk_AllocName(sizeof(model_c.texture_t) + 16 * 16 + 8 * 8 + 4 * 4 + 2 * 2, "notexture");
 
         r_notexture_mip->width = r_notexture_mip->height = 16;
-        r_notexture_mip->offsets[0] = sizeof(texture_t);
+        r_notexture_mip->offsets[0] = (uint)sizeof(model_c.texture_t);
         r_notexture_mip->offsets[1] = r_notexture_mip->offsets[0] + 16 * 16;
         r_notexture_mip->offsets[2] = r_notexture_mip->offsets[1] + 8 * 8;
         r_notexture_mip->offsets[3] = r_notexture_mip->offsets[2] + 4 * 4;
@@ -142,7 +142,7 @@ public unsafe class r_main_c
         }
     }
 
-    public void R_Init()
+    public static void R_Init()
     {
         int dummy;
 
@@ -153,30 +153,30 @@ public unsafe class r_main_c
         cmd_c.Cmd_AddCommand("timerefresh", R_TimeRefresh_f);
         cmd_c.Cmd_AddCommand("pointfile", R_ReadPointFile_f);
 
-        cvar_c.Cvar_RegisterVariable(&r_draworder);
-        cvar_c.Cvar_RegisterVariable(&r_speeds);
-        cvar_c.Cvar_RegisterVariable(&r_timegraph);
-        cvar_c.Cvar_RegisterVariable(&r_graphheight);
-        cvar_c.Cvar_RegisterVariable(&r_drawflat);
-        cvar_c.Cvar_RegisterVariable(&r_ambient);
-        cvar_c.Cvar_RegisterVariable(&r_clearcolor);
-        cvar_c.Cvar_RegisterVariable(&r_waterwarp);
-        cvar_c.Cvar_RegisterVariable(&r_fullbright);
-        cvar_c.Cvar_RegisterVariable(&r_drawentities);
-        cvar_c.Cvar_RegisterVariable(&r_drawviewmodel);
-        cvar_c.Cvar_RegisterVariable(&r_aliasstats);
-        cvar_c.Cvar_RegisterVariable(&r_dspeeds);
-        cvar_c.Cvar_RegisterVariable(&r_reportsurfout);
-        cvar_c.Cvar_RegisterVariable(&r_maxsurfs);
-        cvar_c.Cvar_RegisterVariable(&r_numsurfs);
-        cvar_c.Cvar_RegisterVariable(&r_reportedgeout);
-        cvar_c.Cvar_RegisterVariable(&r_maxedges);
-        cvar_c.Cvar_RegisterVariable(&r_numedges);
-        cvar_c.Cvar_RegisterVariable(&r_aliastransbase);
-        cvar_c.Cvar_RegisterVariable(&r_aliastransadj);
+        cvar_c.Cvar_RegisterVariable(r_draworder);
+        cvar_c.Cvar_RegisterVariable(r_speeds);
+        cvar_c.Cvar_RegisterVariable(r_timegraph);
+        cvar_c.Cvar_RegisterVariable(r_graphheight);
+        cvar_c.Cvar_RegisterVariable(r_drawflat);
+        cvar_c.Cvar_RegisterVariable(r_ambient);
+        cvar_c.Cvar_RegisterVariable(r_clearcolor);
+        cvar_c.Cvar_RegisterVariable(r_waterwarp);
+        cvar_c.Cvar_RegisterVariable(r_fullbright);
+        cvar_c.Cvar_RegisterVariable(r_drawentities);
+        cvar_c.Cvar_RegisterVariable(r_drawviewmodel);
+        cvar_c.Cvar_RegisterVariable(r_aliasstats);
+        cvar_c.Cvar_RegisterVariable(r_dspeeds);
+        cvar_c.Cvar_RegisterVariable(r_reportsurfout);
+        cvar_c.Cvar_RegisterVariable(r_maxsurfs);
+        cvar_c.Cvar_RegisterVariable(r_numsurfs);
+        cvar_c.Cvar_RegisterVariable(r_reportedgeout);
+        cvar_c.Cvar_RegisterVariable(r_maxedges);
+        cvar_c.Cvar_RegisterVariable(r_numedges);
+        cvar_c.Cvar_RegisterVariable(r_aliastransbase);
+        cvar_c.Cvar_RegisterVariable(r_aliastransadj);
 
-        Cvar_SetValue("r_maxedges", (float)NUMSTACKEDGES);
-        Cvar_SetValue("r_maxsurfs", (float)NUMSTACKSURFACES);
+        cvar_c.Cvar_SetValue("r_maxedges", (float)NUMSTACKEDGES);
+        cvar_c.Cvar_SetValue("r_maxsurfs", (float)NUMSTACKSURFACES);
 
         view_clipplanes[0].leftedge = true;
         view_clipplanes[1].rightedge = true;
@@ -255,7 +255,7 @@ public unsafe class r_main_c
 #endif
     }
 
-    public static void R_SetVrect(vid_win_c.vrect_t* pvrectin, vid_win_c.vrect_t* pvrect, int lineadj)
+    public static void R_SetVrect(vid_c.vrect_t* pvrectin, vid_c.vrect_t* pvrect, int lineadj)
     {
         int h;
         float size;
@@ -301,7 +301,7 @@ public unsafe class r_main_c
         }
     }
 
-    public static void R_ViewChanged(vid_win_c.vrect_t* pvrect, int lineadj, float aspect)
+    public static void R_ViewChanged(vid_c.vrect_t* pvrect, int lineadj, float aspect)
     {
         int i;
         float res_scale;

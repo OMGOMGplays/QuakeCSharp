@@ -172,7 +172,7 @@ public unsafe class r_sky_c
             {
                 ofs = baseofs + ((x + xshift) & d_iface_c.SKYMASK);
 
-                *pd = vid_win_c.d_8to16table[(*(pnewsky + 128) & *(byte*)bottommask[ofs]) | *(byte*)bottomsky[ofs]];
+                *pd = vid_c.d_8to16table[(*(pnewsky + 128) & *(byte*)bottommask[ofs]) | *(byte*)bottomsky[ofs]];
                 pnewsky++;
                 pd++;
             }
