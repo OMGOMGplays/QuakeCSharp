@@ -922,7 +922,7 @@ public unsafe class pr_cmds_c
         {
             if (server_c.sv.sound_precache[i] == null)
             {
-                server_c.sv.sound_precache[i] = s;
+                server_c.sv.sound_precache[i] = *s;
                 return;
             }
 
@@ -1285,11 +1285,11 @@ public unsafe class pr_cmds_c
         ent->v.angles[1] = mathlib_c.anglemod(current + move);
     }
 
-#if !QUAKE2
+#if QUAKE2
     public static void PF_changepitch()
     {
         progs_c.edict_t* ent;
-        float ideal, current, move, speed;
+        float ideal, current, move = 0, speed;
 
         ent = progs_c.G_EDICT(OFS_PARM0);
         current = mathlib_c.anglemod(ent->v.angles[0]);
@@ -1298,7 +1298,291 @@ public unsafe class pr_cmds_c
 
         if (current == ideal)
         {
+            return;
+        }
 
+        if (ideal > current)
+        {
+            if (move >= 180)
+            {
+                move = move - 360;
+            }
+        }
+        else
+        {
+            if (move <= 180)
+            {
+                move = move + 360;
+            }
+        }
+
+        if (move > 0)
+        {
+            if (move > speed)
+            {
+                move = speed;
+            }
+        }
+        else
+        {
+            if (move < -speed)
+            {
+                move = -speed;
+            }
+        }
+
+        ent->v.angles[0] = mathlib_c.anglemod(current + move);
+    }
+#endif
+
+    public const int MSG_BROADCAST = 0;
+    public const int MSG_ONE = 1;
+    public const int MSG_ALL = 2;
+    public const int MSG_INIT = 3;
+
+    public static common_c.sizebuf_t WriteDest()
+    {
+        int entnum;
+        int dest;
+        progs_c.edict_t* ent;
+
+        dest = progs_c.G_FLOAT(OFS_PARM0);
+
+        switch (dest)
+        {
+            case MSG_BROADCAST:
+                return server_c.sv.datagram;
+
+            case MSG_ONE:
+                ent = progs_c.PROG_TO_EDICT(pr_edict_c.pr_global_struct->msg_entity);
+                entnum = progs_c.NUM_FOR_EDICT(ent);
+
+                if (entnum < 1 || entnum > server_c.svs.maxclients)
+                {
+                    pr_exec_c.PR_RunError("WriteDest: not a client");
+                }
+
+                return server_c.svs.clients[entnum - 1].message;
+
+            case MSG_ALL:
+                return server_c.sv.reliable_datagram;
+
+            case MSG_INIT:
+                return server_c.sv.signon;
+
+            default:
+                pr_exec_c.PR_RunError("WriteDest: bad destination");
+                break;
+        }
+
+        return default;
+    }
+
+    public static void PF_WriteByte()
+    {
+        common_c.MSG_WriteByte(WriteDest, progs_c.G_FLOAT(OFS_PARM1));
+    }
+
+    public static void PF_WriteChar()
+    {
+        common_c.MSG_WriteChar(WriteDest, progs_c.G_FLOAT(OFS_PARM1));
+    }
+
+    public static void PF_WriteShort()
+    {
+        common_c.MSG_WriteShort(WriteDest, progs_c.G_FLOAT(OFS_PARM1));
+    }
+
+    public static void PF_WriteLong()
+    {
+        common_c.MSG_WriteLong(WriteDest, progs_c.G_FLOAT(OFS_PARM1));
+    }
+
+    public static void PF_WriteAngle()
+    {
+        common_c.MSG_WriteAngle(WriteDest, progs_c.G_FLOAT(OFS_PARM1));
+    }
+
+    public static void PF_WriteCoord()
+    {
+        common_c.MSG_WriteCoord(WriteDest, progs_c.G_FLOAT(OFS_PARM1));
+    }
+
+    public static void PF_WriteString()
+    {
+        common_c.MSG_WriteString(WriteDest, progs_c.G_STRING(OFS_PARM1));
+    }
+
+    public static void PF_WriteEntity()
+    {
+        common_c.MSG_WriteShort(WriteDest, progs_c.G_EDICTNUM(OFS_PARM1));
+    }
+
+    public static extern int SV_ModelIndex(char* name);
+
+    public static void PF_makestatic()
+    {
+        progs_c.edict_t* ent;
+        int i;
+
+        ent = progs_c.G_EDICT(OFS_PARM0);
+
+        common_c.MSG_WriteByte(server_c.sv.signon, protocol_c.svc_spawnstatic);
+
+        common_c.MSG_WriteByte(server_c.sv.signon, SV_ModelIndex(*pr_edict_c.pr_strings + ent->v.model));
+
+        common_c.MSG_WriteByte(server_c.sv.signon, (int)ent->v.frame);
+        common_c.MSG_WriteByte(server_c.sv.signon, (int)ent->v.colormap);
+        common_c.MSG_WriteByte(server_c.sv.signon, (int)ent->v.skin);
+
+        for (i = 0; i < 3; i++)
+        {
+            common_c.MSG_WriteCoord(server_c.sv.signon, ent->v.origin[i]);
+            common_c.MSG_WriteAngle(server_c.sv.signon, ent->v.angles[i]);
+        }
+
+        pr_edict_c.ED_Free(ent);
+    }
+
+    public static void PF_setspawnparameters()
+    {
+        progs_c.edict_t* ent;
+        int i;
+        server_c.client_t* client;
+
+        ent = progs_c.G_EDICT(OFS_PARM0);
+        i = progs_c.NUM_FOR_EDICT(ent);
+
+        if (i < 1 || i > server_c.svs.maxclients)
+        {
+            pr_exec_c.PR_RunError("Entity is not a client");
+        }
+
+        client = server_c.svs.clients + (i - 1);
+
+        for (i = 0; i < server_c.NUM_SPAWN_PARMS; i++)
+        {
+            (&pr_edict_c.pr_global_struct->parm1)[i] = client->spawn_parms[i];
+        }
+    }
+
+    public static void PF_changelevel()
+    {
+#if QUAKE2
+        char* s1, s2;
+
+        if (server_c.svs.changelevel_issued)
+        {
+            return;
+        }
+
+        server_c.svs.changelevel_issued = true;
+
+        s1 = progs_c.G_STRING(OFS_PARM0);
+        s2 = progs_c.G_STRING(OFS_PARM1);
+
+        if ((int)pr_edict_c.pr_global_struct->serverflags & (SFL_NEW_UNIT | SFL_NEW_EPISODE) != 0)
+        {
+            cmd_c.Cbuf_AddText(common_c.va($"changelevel {*s1} {*s2}\n"));
+        }
+        else
+        {
+            cmd_c.Cbuf_AddText(common_c.va($"changelevel2 {*s1} {*s2}\n"));
+        }
+#else
+        char* s;
+
+        if (server_c.svs.changelevel_issued)
+        {
+            return;
+        }
+
+        server_c.svs.changelevel_issued = true;
+
+        s = progs_c.G_STRING(OFS_PARM0);
+        cmd_c.Cbuf_AddText(common_c.va($"changelevel {*s}\n"));
+#endif
+    }
+
+#if !QUAKE2
+    public const int CONTENT_WATER = -3;
+    public const int CONTENT_SLIME = -4;
+    public const int CONTENT_LAVA = -5;
+
+    public const int FL_IMMUNE_WATER = 131072;
+    public const int FL_IMMUNE_SLIME = 262144;
+    public const int FL_IMMUNE_LAVA = 524288;
+
+    public const int CHAN_VOICE = 2;
+    public const int CHAN_BODY = 4;
+
+    public const int ATTN_NORM = 1;
+
+    public static void PF_WaterMove()
+    {
+        progs_c.edict_t* self;
+        int flags;
+        int waterlevel;
+        int watertype;
+        float drownlevel;
+        float damage = 0.0f;
+
+        self = progs_c.PROG_TO_EDICT(pr_edict_c.pr_global_struct->self);
+
+        if (self->v.movetype == server_c.MOVETYPE_NOCLIP)
+        {
+            self->v.air_finished = server_c.sv.time + 12;
+            progs_c.G_FLOAT(OFS_RETURN) = damage;
+            return;
+        }
+
+        if (self->v.health < 0)
+        {
+            progs_c.G_FLOAT(OFS_RETURN) = damage;
+            return;
+        }
+
+        if (self->v.deadflag == server_c.DEAD_NO)
+        {
+            drownlevel = 3;
+        }
+        else
+        {
+            drownlevel = 1;
+        }
+
+        flags = (int)self->v.flags;
+        waterlevel = (int)self->v.waterlevel;
+        watertype = (int)self->v.watertype;
+
+        if ((flags & (FL_IMMUNE_WATER + server_c.FL_GODMODE)) == 0)
+        {
+            if (((flags & server_c.FL_SWIM) != 0 && (waterlevel < drownlevel)) || (waterlevel >= drownlevel))
+            {
+                if (self->v.air_finished < server_c.sv.time)
+                {
+                    if (self->v.pain_finished < server_c.sv_time)
+                    {
+                        self->v.dmg = self->v.dmg + 2;
+
+                        if (self->v.dmg > 15)
+                        {
+                            self->v.dmg = 10;
+                        }
+
+                        damage = self->v.dmg;
+                        self->v.pain_finished = server_c.sv.time + 1.0;
+                    }
+                }
+                else
+                {
+                    if (self->v.air_finished < server_c.sv.time)
+                    {
+                        sv_send_c.SV_StartSound(self, CHAN_VOICE, "player/gasp2.wav", 255, ATTN_NORM);
+                    }
+                    else if (self->v.air_finished < server_c.sv.time)
+                }
+            }
         }
     }
 #endif

@@ -45,6 +45,11 @@ public unsafe class cmd_c
         common_c.SZ_Write(cmd_text, (int)text, common_c.Q_strlen(text->ToString()));
     }
 
+    public static void Cbuf_AddText(string text)
+    {
+        Cbuf_AddText(common_c.StringToChar(text));
+    }
+
     public static void Cbuf_InsertText(char* text)
     {
         char* temp;
