@@ -408,7 +408,7 @@ public unsafe class pr_cmds_c
         common_c.MSG_WriteByte(server_c.sv.signon, (int)attenuation * 64);
     }
 
-    public static void SF_sound()
+    public static void PF_sound()
     {
         char* sample;
         int channel;
@@ -904,6 +904,11 @@ public unsafe class pr_cmds_c
         }
     }
 
+    public static void PF_precache_file()
+    {
+        progs_c.G_INT(OFS_RETURN) = progs_c.G_INT(OFS_PARM0);
+    }
+
     public static void PF_precache_sound()
     {
         char* s;
@@ -999,7 +1004,7 @@ public unsafe class pr_cmds_c
         yaw = progs_c.G_FLOAT(OFS_PARM0);
         dist = progs_c.G_FLOAT(OFS_PARM1);
 
-        if (((int)ent->v.flags & (server_c.FL_ONGROUND|server_c.FL_FLY|server_c.FL_SWIM)) == 0)
+        if (((int)ent->v.flags & (server_c.FL_ONGROUND | server_c.FL_FLY | server_c.FL_SWIM)) == 0)
         {
             progs_c.G_FLOAT(OFS_RETURN) = 0;
             return;
@@ -1504,7 +1509,7 @@ public unsafe class pr_cmds_c
 #endif
     }
 
-#if !QUAKE2
+#if QUAKE2
     public const int CONTENT_WATER = -3;
     public const int CONTENT_SLIME = -4;
     public const int CONTENT_LAVA = -5;
@@ -1580,10 +1585,214 @@ public unsafe class pr_cmds_c
                     {
                         sv_send_c.SV_StartSound(self, CHAN_VOICE, "player/gasp2.wav", 255, ATTN_NORM);
                     }
-                    else if (self->v.air_finished < server_c.sv.time)
+                    else if (self->v.air_finished < server_c.sv.time + 9)
+                    {
+                        sv_send_c.SV_StartSound(self, CHAN_VOICE, "player/gasp1.wav", 255, ATTN_NORM);
+                    }
+
+                    self->v.air_finished = server_c.sv.time + 12.0f;
+                    self->v.dmg = 2;
                 }
             }
         }
+
+        if (waterlevel == 0)
+        {
+            if ((flags & server_c.FL_INWATER) != 0)
+            {
+                sv_send_c.SV_StartSound(self, CHAN_BODY, "misc/outwater.wav", 255, ATTN_NORM);
+                self->v.flags = (float)(flags & ~server_c.FL_INWATER);
+            }
+
+            self->v.air_finished = server_c.sv.time + 12.0f;
+            progs_c.G_FLOAT(OFS_RETURN) = damage;
+            return;
+        }
+
+        if (watertype == CONTENT_LAVA)
+        {
+            if ((flags & (FL_IMMUNE_LAVA + server_c.FL_GODMODE)) == 0)
+            {
+                if (self->v.dmgtime < server_c.sv.time)
+                {
+                    if (self->v.radsuit_finished < server_c.sv.time)
+                    {
+                        self->v.dmgtime = server_c.sv.time + 0.2f;
+                    }
+                    else
+                    {
+                        self->v.dmgtime = server_c.sv.time + 1.0f;
+                    }
+
+                    damage = (float)(10 * waterlevel);
+                }
+            }
+        }
+        else if (watertype == CONTENT_SLIME)
+        {
+            if ((flags & (FL_IMMUNE_SLIME + server_c.FL_GODMODE)) == 0)
+            {
+                if (self->v.dmgtime < server_c.sv.time)
+                {
+                    if (self->v.radsuit_finished < server_c.sv.time)
+                    {
+                        self->v.dmgtime = server_c.sv.time + 0.2f;
+                    }
+                    else
+                    {
+                        self->v.dmgtime = server_c.sv.time + 1.0f;
+                    }
+
+                    damage = (float)(10 * waterlevel);
+                }
+            }
+        }
+
+        if ((flags & server_c.FL_INWATER) == 0)
+        {
+            if (watertype == CONTENT_LAVA)
+            {
+                sv_send_c.SV_StartSound(self, CHAN_BODY, "player/inlava.wav", 255, ATTN_NORM);
+            }
+
+            if (watertype == CONTENT_WATER)
+            {
+                sv_send_c.SV_StartSound(self, CHAN_BODY, "player/inh2o.wav", 255, ATTN_NORM);
+            }
+
+            if (watertype == CONTENT_SLIME)
+            {
+                sv_send_c.SV_StartSound(self, CHAN_BODY, "player/slimbrn2.wav", 255, ATTN_NORM);
+            }
+
+            self->v.flags = (float)(flags | server_c.FL_INWATER);
+            self->v.dmgtime = 0;
+        }
+
+        if ((flags & server_c.FL_WATERJUMP) == 0)
+        {
+            mathlib_c.VectorMA(self->v.velocity, -0.8f * self->v.waterlevel * host_c.host_frametime, self->v.velocity, self->v.velocity);
+        }
+
+        progs_c.G_FLOAT(OFS_RETURN) = damage;
+    }
+
+    public static void PF_sin()
+    {
+        progs_c.G_FLOAT(OFS_RETURN) = MathF.Sin(progs_c.G_FLOAT(OFS_PARM0));
+    }
+
+    public static void PF_cos()
+    {
+        progs_c.G_FLOAT(OFS_RETURN) = MathF.Cos(progs_c.G_FLOAT(OFS_PARM0));
+    }
+
+    public static void PF_sqrt()
+    {
+        progs_c.G_FLOAT(OFS_RETURN) = mathlib_c.sqrt(progs_c.G_FLOAT(OFS_PARM0));
     }
 #endif
+
+    public static void PF_Fixme()
+    {
+        pr_exec_c.PR_RunError("unimplemented builtin");
+    }
+
+    public static Action[] pr_builtin =
+    {
+        PF_Fixme,
+        PF_makevectors,
+        PF_setorigin,
+        PF_setmodel,
+        PF_setsize,
+        PF_Fixme,
+        PF_break,
+        PF_random,
+        PF_sound,
+        PF_normalize,
+        PF_error,
+        PF_objerror,
+        PF_vlen,
+        PF_vectoyaw,
+        PF_Spawn,
+        PF_Remove,
+        PF_traceline,
+        PF_checkclient,
+        PF_Find,
+        PF_precache_sound,
+        PF_precache_model,
+        PF_stuffcmd,
+        PF_findradius,
+        PF_bprint,
+        PF_sprint,
+        PF_dprint,
+        PF_ftos,
+        PF_vtos,
+        PF_coredump,
+        PF_traceon,
+        PF_traceoff,
+        PF_eprint,
+        PF_walkmove,
+        PF_Fixme,
+        PF_droptofloor,
+        PF_pointcontents,
+        PF_Fixme,
+        PF_fabs,
+        PF_aim,
+        PF_cvar,
+        PF_localcmd,
+        PF_nextent,
+        PF_particle,
+        PF_changeyaw,
+        PF_Fixme,
+        PF_vectoangles,
+
+        PF_WriteByte,
+        PF_WriteChar,
+        PF_WriteShort,
+        PF_WriteLong,
+        PF_WriteCoord,
+        PF_WriteAngle,
+        PF_WriteString,
+        PF_WriteEntity,
+
+#if QUAKE2
+        PF_sin,
+        PF_cos,
+        PF_sqrt,
+        PF_changepitch,
+        PF_TraceToss,
+        PF_etos,
+        PF_WaterMove
+#else
+        PF_Fixme,
+        PF_Fixme,
+        PF_Fixme,
+        PF_Fixme,
+        PF_Fixme,
+        PF_Fixme,
+        PF_Fixme,
+#endif
+
+        sv_move_c.SV_MoveToGoal,
+        PF_precache_file,
+        PF_makestatic,
+
+        PF_changelevel,
+        PF_Fixme,
+
+        PF_cvar_set,
+        PF_centerprint,
+
+        PF_ambientsound,
+
+        PF_precache_model,
+        PF_precache_sound,
+        PF_precache_file,
+
+        PF_setspawnparameters
+    };
+
+    public static Action* pr_builtins = pr_builtin;
+    public static int pr_numbuiltins = sizeof(pr_builtin) / sizeof(pr_builtin[0]);
 }

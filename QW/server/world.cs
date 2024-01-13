@@ -446,7 +446,7 @@ public unsafe class world_c
         return SV_HullPointContents(&server_c.sv.worldmodel->hulls[0], 0, p);
     }
 
-    public progs_c.edict_t* SV_TestEntityPosition(progs_c.edict_t* ent)
+    public static progs_c.edict_t* SV_TestEntityPosition(progs_c.edict_t* ent)
     {
         trace_t trace;
 
