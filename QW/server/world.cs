@@ -20,9 +20,9 @@ public unsafe class world_c
         public progs_c.edict_t* ent;
     }
 
-    public static int MOVE_NORMAL = 0;
-    public static int MOVE_NOMONSTERS = 1;
-    public static int MOVE_MISSILE = 2;
+    public const int MOVE_NORMAL = 0;
+    public const int MOVE_NOMONSTERS = 1;
+    public const int MOVE_MISSILE = 2;
 
     public struct areanode_t
     {
@@ -33,8 +33,8 @@ public unsafe class world_c
         public common_c.link_t solid_edicts;
     }
 
-    public static int AREA_DEPTH = 4;
-    public static int AREA_NODES = 32;
+    public const int AREA_DEPTH = 4;
+    public const int AREA_NODES = 32;
 
     // world.c
     public struct moveclip_t
@@ -110,7 +110,7 @@ public unsafe class world_c
                 sv_main_c.SV_Error(common_c.StringToChar("SOLID_BSP without MOVETYPE_PUSH"));
             }
 
-            model = sv.models[(int)ent->v.modelindex];
+            model = server_c.sv.models[(int)ent->v.modelindex];
 
             if (model == null || model->type != model_c.modtype_t.mod_brush)
             {

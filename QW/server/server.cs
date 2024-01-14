@@ -2,9 +2,9 @@
 
 public unsafe class server_c
 {
-    public static int MAX_MASTERS = 8;
+    public const int MAX_MASTERS = 8;
 
-    public static int MAX_SIGNON_BUFFERS = 8;
+    public const int MAX_SIGNON_BUFFERS = 8;
 
     public enum server_state_t
     {
@@ -30,14 +30,14 @@ public unsafe class server_c
 
         public char[] name;
         public char[] modelname;
-        public model_t* worldmodel;
+        public model_c.model_t* worldmodel;
         public char* model_precache;
         public char* sound_precache;
         public char* lightstyles;
-        public model_t* models;
+        public model_c.model_t* models;
 
         public int num_edicts;
-        public edict_t* edicts;
+        public progs_c.edict_t* edicts;
 
         public byte* pvs, phs;
 
@@ -145,7 +145,7 @@ public unsafe class server_c
 
         public int chokecount;
         public int delta_sequence;
-        public netchan_t netchan;
+        public net_c.netchan_t netchan;
     }
 
     public static int STATFRAMES = 100;
@@ -192,58 +192,58 @@ public unsafe class server_c
         public challenge_t challenges;
     }
 
-    public static int MOVETYPE_NONE = 0;
-    public static int MOVETYPE_ANGLENOCLIP = 1;
-    public static int MOVETYPE_ANGLECLIP = 2;
-    public static int MOVETYPE_WALK = 3;
-    public static int MOVETYPE_STEP = 4;
-    public static int MOVETYPE_FLY = 5;
-    public static int MOVETYPE_TOSS = 6;
-    public static int MOVETYPE_PUSH = 7;
-    public static int MOVETYPE_NOCLIP = 8;
-    public static int MOVETYPE_FLYMISSILE = 9;
-    public static int MOVETYPE_BOUNCE = 10;
+    public const int MOVETYPE_NONE = 0;
+    public const int MOVETYPE_ANGLENOCLIP = 1;
+    public const int MOVETYPE_ANGLECLIP = 2;
+    public const int MOVETYPE_WALK = 3;
+    public const int MOVETYPE_STEP = 4;
+    public const int MOVETYPE_FLY = 5;
+    public const int MOVETYPE_TOSS = 6;
+    public const int MOVETYPE_PUSH = 7;
+    public const int MOVETYPE_NOCLIP = 8;
+    public const int MOVETYPE_FLYMISSILE = 9;
+    public const int MOVETYPE_BOUNCE = 10;
 
-    public static int SOLID_NOT = 0;
-    public static int SOLID_TRIGGER = 1;
-    public static int SOLID_BBOX = 2;
-    public static int SOLID_SLIDEBOX = 3;
-    public static int SOLID_BSP = 4;
+    public const int SOLID_NOT = 0;
+    public const int SOLID_TRIGGER = 1;
+    public const int SOLID_BBOX = 2;
+    public const int SOLID_SLIDEBOX = 3;
+    public const int SOLID_BSP = 4;
 
-    public static int DEAD_NO = 0;
-    public static int DEAD_DYING = 1;
-    public static int DEAD_DEAD = 2;
+    public const int DEAD_NO = 0;
+    public const int DEAD_DYING = 1;
+    public const int DEAD_DEAD = 2;
 
-    public static int DAMAGE_NO = 0;
-    public static int DAMAGE_YES = 1;
-    public static int DAMAGE_AIM = 2;
+    public const int DAMAGE_NO = 0;
+    public const int DAMAGE_YES = 1;
+    public const int DAMAGE_AIM = 2;
 
-    public static int FL_FLY = 1;
-    public static int FL_SWIM = 2;
-    public static int FL_GLIMPSE = 4;
-    public static int FL_CLIENT = 8;
-    public static int FL_INWATER = 16;
-    public static int FL_MONSTER = 32;
-    public static int FL_GODMODE = 64;
-    public static int FL_NOTARGET = 128;
-    public static int FL_ITEM = 256;
-    public static int FL_ONGROUND = 512;
-    public static int FL_PARTIALGROUND = 1024;
-    public static int FL_WATERJUMP = 2048;
+    public const int FL_FLY = 1;
+    public const int FL_SWIM = 2;
+    public const int FL_GLIMPSE = 4;
+    public const int FL_CLIENT = 8;
+    public const int FL_INWATER = 16;
+    public const int FL_MONSTER = 32;
+    public const int FL_GODMODE = 64;
+    public const int FL_NOTARGET = 128;
+    public const int FL_ITEM = 256;
+    public const int FL_ONGROUND = 512;
+    public const int FL_PARTIALGROUND = 1024;
+    public const int FL_WATERJUMP = 2048;
 
-    public static int EF_BRIGHTLIGHT = 4;
-    public static int EF_DIMLIGHT = 8;
+    public const int EF_BRIGHTLIGHT = 4;
+    public const int EF_DIMLIGHT = 8;
 
-    public static int SPAWNFLAG_NOT_EASY = 256;
-    public static int SPAWNFLAG_NOT_MEDIUM = 512;
-    public static int SPAWNFLAG_NOT_HARD = 1024;
-    public static int SPAWNFLAG_NOT_DEATHMATCH = 2048;
+    public const int SPAWNFLAG_NOT_EASY = 256;
+    public const int SPAWNFLAG_NOT_MEDIUM = 512;
+    public const int SPAWNFLAG_NOT_HARD = 1024;
+    public const int SPAWNFLAG_NOT_DEATHMATCH = 2048;
 
-    public static int MULTICAST_ALL = 0;
-    public static int MULTICAST_PHS = 1;
-    public static int MULTICAST_PVS = 2;
+    public const int MULTICAST_ALL = 0;
+    public const int MULTICAST_PHS = 1;
+    public const int MULTICAST_PVS = 2;
 
-    public static int MULTICAST_ALL_R = 3;
-    public static int MULTICAST_PHS_R = 4;
-    public static int MULTICAST_PVS_R = 5;
+    public const int MULTICAST_ALL_R = 3;
+    public const int MULTICAST_PHS_R = 4;
+    public const int MULTICAST_PVS_R = 5;
 }

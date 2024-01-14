@@ -7,12 +7,12 @@ public unsafe class progs_c
         public char* str;
         public float _float;
         public float[] vector;
-        public pr_comp_c.func_t function;
+        public Action function;
         public int _int;
         public int edict;
     }
 
-    public static int MAX_ENT_LEAFS = 16;
+    public const int MAX_ENT_LEAFS = 16;
 
     public struct edict_t
     {
@@ -22,13 +22,11 @@ public unsafe class progs_c
         public int num_leafs;
         public short[] leafnums;
 
-        public progdefs_c.entity_state_t baseline;
+        public quakedef_c.entity_state_t baseline;
 
         public float freetime;
         public progdefs_c.entvars_t v;
     }
-
-    //public static void EDICT_FROM_AREA(common_c.link_t l
 
     public static pr_comp_c.dprograms_t* progs;
     public static pr_comp_c.dfunction_t* pr_functions;
@@ -53,7 +51,7 @@ public unsafe class progs_c
     public static pr_comp_c.dfunction_t* pr_xfunction;
     public static int pr_xstatement;
 
-    public static pr_comp_c.func_t SpectatorConnect;
-    public static pr_comp_c.func_t SpectatorThink;
-    public static pr_comp_c.func_t SpectatorDisconnect;
+    public static Action SpectatorConnect;
+    public static Action SpectatorThink;
+    public static Action SpectatorDisconnect;
 }

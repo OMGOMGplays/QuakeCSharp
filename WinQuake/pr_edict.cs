@@ -217,6 +217,11 @@ public unsafe class pr_edict_c
         return (progs_c.eval_t*)((char*)&ed->v + def->ofs * 4);
     }
 
+    public static progs_c.eval_t* GetEdictFieldValue(progs_c.edict_t* ed, string field)
+    {
+        return GetEdictFieldValue(ed, common_c.StringToChar(field));
+    }
+
     public static char* PR_ValueString(pr_comp_c.etype_t type, progs_c.eval_t* val)
     {
         char* line = null;
