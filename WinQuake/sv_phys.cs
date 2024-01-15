@@ -1456,7 +1456,7 @@ public unsafe class sv_phys_c
         server_c.sv.time += host_c.host_frametime;
     }
 
-#if !QUAKE2
+#if QUAKE2
     public static world_c.trace_t SV_Trace_Toss(progs_c.edict_t* ent, progs_c.edict_t* ignore)
     {
         progs_c.edict_t tempent;

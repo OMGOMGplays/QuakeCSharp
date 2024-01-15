@@ -462,7 +462,7 @@ public unsafe class world_c
 
     public static float DIST_EPSILON = 0.03125f;
 
-    public bool SV_RecursiveHullCheck(model_c.hull_t* hull, int num, float p1f, float p2f, Vector3 p1, Vector3 p2, trace_t* trace)
+    public static bool SV_RecursiveHullCheck(model_c.hull_t* hull, int num, float p1f, float p2f, Vector3 p1, Vector3 p2, trace_t* trace)
     {
         bspfile_c.dclipnode_t* node;
         model_c.mplane_t* plane;

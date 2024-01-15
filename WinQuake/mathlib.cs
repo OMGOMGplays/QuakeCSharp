@@ -316,6 +316,17 @@ public unsafe class mathlib_c
         return a[0] * b.X + a[1] * b.Y + a[2] * b.Z;
     }
 
+    public static float DotProduct(float* a, Vector3 b)
+    {
+        return a[0] * b.X + a[1] * b.Y + a[2] * b.Z;
+    }
+
+    public static float DotProduct(float* a, float* b)
+    {
+
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    }
+
     public static void VectorSubtract(Vector3 veca, Vector3 vecb, Vector3 output)
     {
         output[0] = veca[0] - vecb[0];
@@ -455,7 +466,24 @@ public unsafe class mathlib_c
         return length;
     }
 
-    public static float Length_F(float[] f)
+    public static float Length(float[] f)
+    {
+        int i;
+        float length;
+
+        length = 0;
+
+        for (i = 0; i < 3; i++)
+        {
+            length += f[i] * f[i];
+        }
+
+        length = (float)sqrt(length);
+
+        return length;
+    }
+
+    public static float Length(float* f)
     {
         int i;
         float length;

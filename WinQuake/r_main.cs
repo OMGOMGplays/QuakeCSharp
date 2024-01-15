@@ -20,7 +20,7 @@ public unsafe class r_main_c
 
     public static int numbtofpolys;
     public static btofpoly_t* pbtofpolys;
-    public static mvertex_t* r_pcurrentvertbase;
+    public static model_c.mvertex_t* r_pcurrentvertbase;
 
     public int c_surf;
     public int r_maxsurfsseen, r_maxedgesseen, r_cnumsurfs;
@@ -52,7 +52,7 @@ public unsafe class r_main_c
     public static float verticalFieldOfView;
     public static float xOrigin, yOrigin;
 
-    public static mplane_t[] screenedge = new mplane_t[4];
+    public static model_c.mplane_t[] screenedge = new model_c.mplane_t[4];
 
     public static int r_framecount = 1;
     public static int r_visframecount;
@@ -81,29 +81,29 @@ public unsafe class r_main_c
     public static float dp_time1, dp_time2, db_time1, db_time2, rw_time1, rw_time2;
     public static float se_time1, se_time2, de_time1, de_time2, dv_time1, dv_time2;
 
-    public static cvar_c.cvar_t r_draworder = new cvar_c.cvar_t { name = "r_draworder", value = 0 };
-    public cvar_c.cvar_t r_speeds = new cvar_c.cvar_t { name = "r_speeds", value = 0 };
-    public cvar_c.cvar_t r_timegraph = new cvar_c.cvar_t { name = "r_timegraph", value = 0 };
-    public cvar_c.cvar_t r_graphheight = new cvar_c.cvar_t { name = "r_graphheight", value = 10 };
-    public cvar_c.cvar_t r_clearcolor = new cvar_c.cvar_t { name = "r_clearcolor", value = 2 };
-    public cvar_c.cvar_t r_waterwarp = new cvar_c.cvar_t { name = "r_waterwarp", value = 1 };
-    public cvar_c.cvar_t r_fullbright = new cvar_c.cvar_t { name = "r_fullbright", value = 0 };
-    public cvar_c.cvar_t r_drawentities = new cvar_c.cvar_t { name = "r_drawentities", value = 1 };
-    public cvar_c.cvar_t r_drawviewmodel = new cvar_c.cvar_t { name = "r_drawviewmodel", value = 1 };
-    public cvar_c.cvar_t r_aliasstats = new cvar_c.cvar_t { name = "r_polymodelstats", value = 0 };
-    public cvar_c.cvar_t r_dspeeds = new cvar_c.cvar_t { name = "r_dspeeds", value = 0};
-    public cvar_c.cvar_t r_drawflat = new cvar_c.cvar_t { name = "r_drawflat", value = 0 };
-    public cvar_c.cvar_t r_ambient = new cvar_c.cvar_t { name = "r_ambient", value = 0 };
-    public cvar_c.cvar_t r_reportsurfout = new cvar_c.cvar_t { name = "r_reportsurfout", value = 0 };
-    public cvar_c.cvar_t r_maxsurfs = new cvar_c.cvar_t { name = "r_maxsurfs", value = 0 };
-    public cvar_c.cvar_t r_numsurfs = new cvar_c.cvar_t { name = "r_numsurfs", value = 0 };
-    public cvar_c.cvar_t r_reportedgeout = new cvar_c.cvar_t { name = "r_reportedgeout", value = 0 };
-    public cvar_c.cvar_t r_maxedges = new cvar_c.cvar_t { name = "r_maxedges", value = 0 };
-    public cvar_c.cvar_t r_numedges = new cvar_c.cvar_t { name = "r_numedges", value = 0 };
-    public cvar_c.cvar_t r_aliastransbase = new cvar_c.cvar_t { name = "r_aliastransbase", value = 200 };
-    public cvar_c.cvar_t r_aliastransadj = new cvar_c.cvar_t { name = "r_aliastransadj", value = 100 };
+    public static cvar_c.cvar_t r_draworder = new cvar_c.cvar_t { name = "r_draworder", value = (char)0 };
+    public static cvar_c.cvar_t r_speeds = new cvar_c.cvar_t { name = "r_speeds", value = (char)0 };
+    public static cvar_c.cvar_t r_timegraph = new cvar_c.cvar_t { name = "r_timegraph", value = (char)0 };
+    public static cvar_c.cvar_t r_graphheight = new cvar_c.cvar_t { name = "r_graphheight", value = (char)10 };
+    public static cvar_c.cvar_t r_clearcolor = new cvar_c.cvar_t { name = "r_clearcolor", value = (char)2 };
+    public static cvar_c.cvar_t r_waterwarp = new cvar_c.cvar_t { name = "r_waterwarp", value = (char)1 };
+    public static cvar_c.cvar_t r_fullbright = new cvar_c.cvar_t { name = "r_fullbright", value = (char)0 };
+    public static cvar_c.cvar_t r_drawentities = new cvar_c.cvar_t { name = "r_drawentities", value = (char)1 };
+    public static cvar_c.cvar_t r_drawviewmodel = new cvar_c.cvar_t { name = "r_drawviewmodel", value = (char)1 };
+    public static cvar_c.cvar_t r_aliasstats = new cvar_c.cvar_t { name = "r_polymodelstats", value = (char)0 };
+    public static cvar_c.cvar_t r_dspeeds = new cvar_c.cvar_t { name = "r_dspeeds", value = (char)0 };
+    public static cvar_c.cvar_t r_drawflat = new cvar_c.cvar_t { name = "r_drawflat", value = (char)0 };
+    public static cvar_c.cvar_t r_ambient = new cvar_c.cvar_t { name = "r_ambient", value = (char)0 };
+    public static cvar_c.cvar_t r_reportsurfout = new cvar_c.cvar_t { name = "r_reportsurfout", value = (char)0 };
+    public static cvar_c.cvar_t r_maxsurfs = new cvar_c.cvar_t { name = "r_maxsurfs", value = (char)0 };
+    public static cvar_c.cvar_t r_numsurfs = new cvar_c.cvar_t { name = "r_numsurfs", value = (char)0 };
+    public static cvar_c.cvar_t r_reportedgeout = new cvar_c.cvar_t { name = "r_reportedgeout", value = (char)0 };
+    public static cvar_c.cvar_t r_maxedges = new cvar_c.cvar_t { name = "r_maxedges", value = (char)0 };
+    public static cvar_c.cvar_t r_numedges = new cvar_c.cvar_t { name = "r_numedges", value = (char)0 };
+    public static cvar_c.cvar_t r_aliastransbase = new cvar_c.cvar_t { name = "r_aliastransbase", value = (char)200 };
+    public static cvar_c.cvar_t r_aliastransadj = new cvar_c.cvar_t { name = "r_aliastransadj", value = (char)100 };
 
-    public cvar_c.cvar_t scr_fov;
+    public static cvar_c.cvar_t scr_fov;
 
     public void CreatePassages() { }
     public void SetVisibilityByPassages() { }
@@ -541,7 +541,7 @@ public unsafe class r_main_c
             return;
         }
 
-        if ((cl.items & quakedef_c.IT_INVISIBILITY) == 0) 
+        if ((cl.items & quakedef_c.IT_INVISIBILITY) == 0)
         {
             return;
         }

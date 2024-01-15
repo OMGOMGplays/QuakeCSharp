@@ -265,7 +265,7 @@ public unsafe class model_c
         public int nummarksurfaces;
         public msurface_t** marksurfaces;
 
-        public hull_t[] hulls;
+        public hull_t* hulls;
 
         public int numtextures;
         public texture_t** textures;

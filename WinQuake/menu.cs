@@ -4,8 +4,8 @@ namespace Quake;
 
 public unsafe class menu_c
 {
-    public static int MNET_IPX = 1;
-    public static int MNET_TCP = 2;
+    public const int MNET_IPX = 1;
+    public const int MNET_TCP = 2;
 
     public static int m_activenet;
 
@@ -18,6 +18,13 @@ public unsafe class menu_c
     public static int m_return_state;
     public static bool m_return_onerror;
     public static char* m_return_reason;
+
+    public static bool StartingGame = m_multiplayer_cursor == 1 ? true : false;
+    public static bool JoiningGame = m_multiplayer_cursor == 0 ? true : false;
+    public static bool SerialConfig = m_net_cursor == 0 ? true : false;
+    public static bool DirectConfig = m_net_cursor == 1 ? true : false;
+    public static bool IPXConfig = m_net_cursor == 2 ? true : false;
+    public static bool TCPIPConfig = m_net_cursor == 3 ? true : false;
 
     public static m_state state;
 
@@ -196,7 +203,7 @@ public unsafe class menu_c
     }
 
     public static int m_main_cursor;
-    public static int MAIN_ITEMS = 5;
+    public const int MAIN_ITEMS = 5;
 
     public static void M_Menu_Main_f()
     {
@@ -289,7 +296,7 @@ public unsafe class menu_c
     }
 
     public static int m_singleplayer_cursor;
-    public static int SINGLEPLAYER_ITEMS = 3;
+    public const int SINGLEPLAYER_ITEMS = 3;
 
     public static void M_Menu_SinglePlayer_f()
     {
@@ -378,7 +385,7 @@ public unsafe class menu_c
 
     public static int load_cursor;
 
-    public static int MAX_SAVEGAMES = 12;
+    public const int MAX_SAVEGAMES = 12;
     public static char[][] m_filenames = new char[MAX_SAVEGAMES][];
     public static int[] loadable = new int[MAX_SAVEGAMES];
 
@@ -572,7 +579,7 @@ public unsafe class menu_c
     }
 
     public static int m_multiplayer_cursor;
-    public static int MULTIPLAYER_ITEMS = 3;
+    public const int MULTIPLAYER_ITEMS = 3;
 
     public static void M_Menu_MultiPlayer_f()
     {
@@ -666,7 +673,7 @@ public unsafe class menu_c
     public static int setup_top;
     public static int setup_bottom;
 
-    public static int NUM_SETUP_CMDS = 5;
+    public const int NUM_SETUP_CMDS = 5;
 
     public static void M_Menu_Setup_f()
     {
@@ -864,6 +871,8 @@ public unsafe class menu_c
                         setup_hostname[l] = (char)k;
                     }
                 }
+
+                break;
         }
 
         if (setup_top > 13)
@@ -1100,12 +1109,12 @@ public unsafe class menu_c
     }
 
 #if _WIN32
-    public static int OPTIONS_ITEMS = 14;
+    public const int OPTIONS_ITEMS = 14;
 #else
-    public static int OPTIONS_ITEMS = 13;
+    public const int OPTIONS_ITEMS = 13;
 #endif
 
-    public static int SLIDER_RANGE = 10;
+    public const int SLIDER_RANGE = 10;
 
     public static int options_cursor;
 
@@ -1456,7 +1465,7 @@ public unsafe class menu_c
         {"+movedown", "swim down" },
     };
 
-    public static int NUMCOMMANDS = 18;
+    public const int NUMCOMMANDS = 18;
 
     public static int keys_cursor;
     public static int bind_grab;
@@ -1672,7 +1681,7 @@ public unsafe class menu_c
     }
 
     public static int help_page;
-    public static int NUM_HELP_PAGES = 6;
+    public const int NUM_HELP_PAGES = 6;
 
     public static void M_Menu_Help_f()
     {
@@ -1830,7 +1839,7 @@ public unsafe class menu_c
 
     public static int serialConfig_cursor;
     public static int[] serialConfig_cursor_table = new int[] { 48, 64, 80, 96, 112, 132 };
-    public static int NUM_SERIALCONFIG_CMDS = 6;
+    public const int NUM_SERIALCONFIG_CMDS = 6;
 
     public static int[] ISA_uarts = new int[] { 0x3f8, 0x2f8, 0x3e8, 0x2e8 };
     public static int[] ISA_IRQs = new int[] { 4, 3, 4, 3 };
@@ -1861,6 +1870,238 @@ public unsafe class menu_c
             serialConfig_cursor = 5;
         }
 
+        (*net_main_c.GetComPortConfig)(0, &port, &serialConfig_irq, &baudrate, &useModem);
 
+        for (n = 0; n < 4; n++)
+        {
+            if (ISA_uarts[n] == port)
+            {
+                break;
+            }
+        }
+
+        if (n == 4)
+        {
+            n = 0;
+            serialConfig_irq = n + 1;
+        }
+
+        serialConfig_comport = n + 1;
+
+        for (n = 0; n < 6; n++)
+        {
+            if (serialConfig_baudrate[n] == baudrate)
+            {
+                break;
+            }
+        }
+
+        if (n == 6)
+        {
+            n = 5;
+        }
+
+        serialConfig_baud = n;
+
+        m_return_onerror = false;
+        m_return_reason[0] = 0;
+    }
+
+    public static void M_SerialConfig_Draw()
+    {
+        wad_c.qpic_t* p;
+        int basex;
+        char* startJoin;
+        char* directModem;
+
+        M_DrawTransPic(16, 4, draw_c.Draw_CachePic("gfx/qplaque.lmp"));
+        p = draw_c.Draw_CachePic("gfx/p_multi.lmp");
+        basex = (320 - p->width) / 2;
+        M_DrawPic(basex, 4, p);
+
+        if (StartingGame)
+        {
+            startJoin = common_c.StringToChar("New Game");
+        }
+        else
+        {
+            startJoin = common_c.StringToChar("Join Game");
+        }
+
+        if (SerialConfig)
+        {
+            directModem = common_c.StringToChar("Modem");
+        }
+        else
+        {
+            directModem = common_c.StringToChar("Direct Connect");
+        }
+
+        M_Print(basex, 32, common_c.StringToChar(common_c.va($"{*startJoin} - {*directModem}")));
+        basex += 8;
+
+        M_Print(basex, serialConfig_cursor_table[0], common_c.StringToChar("Port"));
+        M_DrawTextBox(160, 40, 4, 1);
+        M_Print(168, serialConfig_cursor_table[1], common_c.StringToChar(common_c.va($"COM{serialConfig_comport}")));
+
+        M_Print(basex, serialConfig_cursor_table[1], common_c.StringToChar("IRQ"));
+        M_DrawTextBox(160, serialConfig_cursor_table[1] - 8, 1, 1);
+        M_Print(168, serialConfig_cursor_table[1], common_c.StringToChar(common_c.va($"{serialConfig_irq}")));
+
+        M_Print(basex, serialConfig_cursor_table[2], common_c.StringToChar("Baud"));
+        M_DrawTextBox(160, serialConfig_cursor_table[2] - 8, 5, 1);
+        M_Print(168, serialConfig_cursor_table[2], common_c.StringToChar(common_c.va($"{serialConfig_baudrate[serialConfig_baud]}")));
+
+        if (SerialConfig)
+        {
+            M_Print(basex, serialConfig_cursor_table[3], common_c.StringToChar("Modem Setup..."));
+
+            if (JoiningGame)
+            {
+                M_Print(basex, serialConfig_cursor_table[4], common_c.StringToChar("Phone number"));
+                M_DrawTextBox(160, serialConfig_cursor_table[4] - 8, 16, 1);
+                M_Print(168, serialConfig_cursor_table[4], serialConfig_phone);
+            }
+        }
+
+        if (JoiningGame)
+        {
+            M_DrawTextBox(basex, serialConfig_cursor_table[5] - 8, 7, 1);
+            M_Print(basex + 8, serialConfig_cursor_table[5], common_c.StringToChar("Connect"));
+        }
+        else
+        {
+            M_DrawTextBox(basex, serialConfig_cursor_table[5] - 8, 2, 1);
+            M_Print(basex + 8, serialConfig_cursor_table[5], common_c.StringToChar("OK"));
+        }
+
+        M_DrawCharacter(basex - 8, serialConfig_cursor_table[serialConfig_cursor], 12 + ((int)(realtime * 4) & 1));
+
+        if (serialConfig_cursor == 4)
+        {
+            M_DrawCharacter(168 + 8 * common_c.Q_strlen(serialConfig_phone->ToString()), serialConfig_cursor_table[serialConfig_cursor], 10 + ((int)(realtime * 4) & 1));
+        }
+
+        if (*m_return_reason != 0)
+        {
+            M_PrintWhite(basex, 148, m_return_reason);
+        }
+    }
+
+    public static void M_SerialConfig_Key(int key)
+    {
+        int l;
+
+        switch (key)
+        {
+            case keys_c.K_ESCAPE:
+                M_Menu_Net_f();
+                break;
+
+            case keys_c.K_UPARROW:
+                snd_null_c.S_LocalSound("misc/menu1.wav");
+                serialConfig_cursor--;
+
+                if (serialConfig_cursor < 0)
+                {
+                    serialConfig_cursor = NUM_SERIALCONFIG_CMDS - 1;
+                }
+                break;
+
+            case keys_c.K_DOWNARROW:
+                snd_null_c.S_LocalSound("misc/menu1.wav");
+                serialConfig_cursor++;
+
+                if (serialConfig_cursor >= NUM_SERIALCONFIG_CMDS)
+                {
+                    serialConfig_cursor = 0;
+                }
+                break;
+
+            case keys_c.K_LEFTARROW:
+                if (serialConfig_cursor > 2)
+                {
+                    break;
+                }
+
+                snd_null_c.S_LocalSound("misc/menu3.wav");
+
+                if (serialConfig_cursor == 0)
+                {
+                    serialConfig_comport--;
+
+                    if (serialConfig_comport == 0)
+                    {
+                        serialConfig_comport = 4;
+                    }
+
+                    serialConfig_comport = ISA_IRQs[serialConfig_comport - 1];
+                }
+
+                if (serialConfig_cursor == 1)
+                {
+                    serialConfig_irq--;
+
+                    if (serialConfig_irq == 6)
+                    {
+                        serialConfig_irq = 5;
+                    }
+
+                    if (serialConfig_irq == 1)
+                    {
+                        serialConfig_irq = 7;
+                    }
+                }
+
+                if (serialConfig_cursor == 2)
+                {
+                    serialConfig_baud--;
+
+                    if (serialConfig_baud < 0)
+                    {
+                        serialConfig_baud = 5;
+                    }
+                }
+
+                break;
+
+            case keys_c.K_RIGHTARROW:
+                if (serialConfig_cursor > 2)
+                {
+                    break;
+                }
+
+            forward:
+                snd_null_c.S_LocalSound("misc/menu3.wav");
+
+                if (serialConfig_cursor == 0)
+                {
+                    serialConfig_comport++;
+
+                    if (serialConfig_comport > 4)
+                    {
+                        serialConfig_comport = 1;
+                    }
+
+                    serialConfig_irq = ISA_IRQs[serialConfig_comport - 1];
+                }
+
+                if (serialConfig_cursor == 1)
+                {
+                    serialConfig_irq++;
+
+                    if (serialConfig_irq == 6)
+                    {
+                        serialConfig_irq = 7;
+                    }
+
+                    if (serialConfig_irq == 8)
+                    {
+                        serialConfig_irq = 2;
+                    }
+                }
+
+
+        }
     }
 }

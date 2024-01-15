@@ -279,7 +279,7 @@ public unsafe class common_c
 		return -1; // Also unreachable
 	}
 
-	public static int Q_strncasecmp(string s1, string s2, int n)
+	public static int Q_strncasecmp(char* s1, string s2, int n)
 	{
 		int c1, c2;
 
@@ -688,16 +688,16 @@ public unsafe class common_c
 	//
 	// Reading functions
 	//
-	int msg_readcount;
-	bool msg_badread;
+	public static int msg_readcount;
+	public static bool msg_badread;
 
-	public void MSG_BeginReading()
+	public static void MSG_BeginReading()
 	{
 		msg_readcount = 0;
 		msg_badread = false;
 	}
 
-	public int MSG_ReadChar()
+	public static int MSG_ReadChar()
 	{
 		int c;
 
@@ -771,7 +771,7 @@ public unsafe class common_c
 		public byte b4;
 	}
 
-	public float MSG_ReadFloat()
+	public static float MSG_ReadFloat()
 	{
 		MSG_ReadFloat_Union dat = new();
 
@@ -786,7 +786,7 @@ public unsafe class common_c
 		return dat.f;
 	}
 
-	public string MSG_ReadString()
+	public static char* MSG_ReadString()
 	{
 		StringBuilder stringBuilder = new();
 		int c;
@@ -810,7 +810,7 @@ public unsafe class common_c
 		return MSG_ReadShort() * (1.0f / 8);
 	}
 
-	public float MSG_ReadAngle()
+	public static float MSG_ReadAngle()
 	{
 		return MSG_ReadChar() * (360.0f / 256);
 	}
