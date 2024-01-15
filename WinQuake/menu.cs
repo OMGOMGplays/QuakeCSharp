@@ -1857,6 +1857,9 @@ public unsafe class menu_c
         int baudrate;
         bool useModem;
 
+        port = baudrate = 0;
+        useModem = false;
+
         keys_c.key_dest = keys_c.keydest_t.key_menu;
         state = m_state.m_serialconfig;
         m_entersound = true;
@@ -1870,7 +1873,7 @@ public unsafe class menu_c
             serialConfig_cursor = 5;
         }
 
-        (*net_main_c.GetComPortConfig)(0, &port, &serialConfig_irq, &baudrate, &useModem);
+        net_main_c.GetComPortConfig(0, port, serialConfig_irq, baudrate, useModem);
 
         for (n = 0; n < 4; n++)
         {
@@ -2101,7 +2104,77 @@ public unsafe class menu_c
                     }
                 }
 
+                if (serialConfig_irq == 2)
+                {
+                    serialConfig_baud++;
 
+                    if (serialConfig_baud > 5)
+                    {
+                        serialConfig_baud = 0;
+                    }
+                }
+
+                break;
+
+            case keys_c.K_ENTER:
+                if (serialConfig_cursor < 3)
+                {
+                    goto forward;
+                }
+
+                m_entersound = true;
+
+                if (serialConfig_cursor == 3)
+                {
+                    net_main_c.SetComPortConfig(0, ISA_uarts[serialConfig_comport - 1], serialConfig_irq, serialConfig_baudrate[serialConfig_baud], SerialConfig);
+
+                    M_Menu_SerialConfig_f();
+                    break;
+                }
+
+                if (serialConfig_cursor == 4)
+                {
+                    serialConfig_cursor = 5;
+                    break;
+                }
+
+                net_main_c.SetComPortConfig(0, ISA_uarts[serialConfig_comport - 1], serialConfig_irq, serialConfig_baudrate[serialConfig_baud], SerialConfig);
+
+                M_ConfigureNetSubsystem();
+
+                if (StartingGame)
+                {
+                    M_Menu_GameOptions_f();
+                    break;
+                }
+
+                m_return_state = m_state.m_net;
+                m_return_onerror = true;
+                keys_c.key_dest = keys_c.keydest_t.key_game;
+                //m_state = m_state.m_none;
+
+                if (SerialConfig)
+                {
+                    cmd_c.Cbuf_AddText(common_c.va($"connect \"{*serialConfig_phone}\"\n"));
+                }
+                else
+                {
+                    cmd_c.Cbuf_AddText("connect\n");
+                }
+                break;
+
+            case keys_c.K_BACKSPACE:
+                if (serialConfig_cursor == 4)
+                {
+                    if (common_c.Q_strlen(serialConfig_phone))
+                    {
+                        serialConfig_phone[common_c.Q_strlen(serialConfig_phone) - 1] = (char)0;
+                    }
+                }
+
+                break;
+
+            
         }
     }
 }

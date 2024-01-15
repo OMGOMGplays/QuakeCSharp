@@ -201,6 +201,11 @@ public unsafe class common_c
 		return count;
 	}
 
+	public static int Q_strlen(char* str)
+	{
+		return Q_strlen(str->ToString());
+	}
+
 	public static string Q_strrchr(string s, char c)
 	{
 		int len = Q_strlen(s);
