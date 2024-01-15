@@ -323,7 +323,7 @@ public unsafe class mathlib_c
         output[2] = veca[2] - vecb[2];
     }
 
-    public static void VectorSubtract_FVV(float* f, Vector3 vec, Vector3 output)
+    public static void VectorSubtract(float* f, Vector3 vec, Vector3 output)
     {
         output[0] = f[0] - vec[0];
         output[1] = f[1] - vec[1];
