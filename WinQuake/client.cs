@@ -36,17 +36,17 @@ public unsafe class client_c
         public int percent;
     }
 
-    public static int CSHIFT_CONTENTS = 0;
-    public static int CSHIFT_DAMAGE = 1;
-    public static int CSHIFT_BONUS = 2;
-    public static int CSHIFT_POWERUP = 3;
-    public static int NUM_CSHIFTS = 4;
+    public const int CSHIFT_CONTENTS = 0;
+    public const int CSHIFT_DAMAGE = 1;
+    public const int CSHIFT_BONUS = 2;
+    public const int CSHIFT_POWERUP = 3;
+    public const int NUM_CSHIFTS = 4;
 
-    public static int NAME_LENGTH = 64;
+    public const int NAME_LENGTH = 64;
 
-    public static int SIGNONS = 4;
+    public const int SIGNONS = 4;
 
-    public static int MAX_DLIGHTS = 32;
+    public const int MAX_DLIGHTS = 32;
 
     public struct dlight_t
     {
@@ -61,7 +61,7 @@ public unsafe class client_c
 #endif
     }
 
-    public static int MAX_BEAMS = 24;
+    public const int MAX_BEAMS = 24;
 
     public struct beam_t
     {
@@ -71,11 +71,11 @@ public unsafe class client_c
         public Vector3 start, end;
     }
 
-    public static int MAX_EFRAGS = 640;
+    public const int MAX_EFRAGS = 640;
 
-    public static int MAX_MAPSTRING = 2048;
-    public static int MAX_DEMOS = 8;
-    public static int MAX_DEMONAME = 16;
+    public const int MAX_MAPSTRING = 2048;
+    public const int MAX_DEMOS = 8;
+    public const int MAX_DEMONAME = 16;
 
     public enum cactive_t
     {
@@ -158,7 +158,7 @@ public unsafe class client_c
         public float last_received_message;
 
         public model_c.model_t* model_precache;
-        public sfx_t* sound_precache;
+        public sound_c.sfx_t* sound_precache;
 
         public char* levelname;
         public int viewentity;
@@ -210,8 +210,8 @@ public unsafe class client_c
     public cvar_c.cvar_t m_forward;
     public cvar_c.cvar_t m_side;
 
-    public static int MAX_TEMP_ENTITIES = 64;
-    public static int MAX_STATIC_ENTITIES = 128;
+    public const int MAX_TEMP_ENTITIES = 64;
+    public const int MAX_STATIC_ENTITIES = 128;
 
     public client_state_t cl;
 
@@ -227,7 +227,7 @@ public unsafe class client_c
         
     }
 
-    public static int MAX_VISEDICTS = 256;
+    public const int MAX_VISEDICTS = 256;
     public static int cl_numvisedicts;
     public static render_c.entity_t* cl_visedicts;
 

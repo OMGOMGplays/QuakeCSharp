@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using lib.libc;
+using System.Security.Cryptography;
 
 namespace Quake;
 
@@ -1787,7 +1788,7 @@ public unsafe class menu_c
         m_quit_prevstate = (int)state;
         state = m_state.m_quit;
         m_entersound = true;
-        msgNumber = new Random().Next(0, 8);
+        msgNumber = rand_c.rand() % 8;
     }
 
     public static void M_Quit_Key(int key)
@@ -1978,7 +1979,7 @@ public unsafe class menu_c
             M_Print(basex + 8, serialConfig_cursor_table[5], common_c.StringToChar("OK"));
         }
 
-        M_DrawCharacter(basex - 8, serialConfig_cursor_table[serialConfig_cursor], 12 + ((int)(realtime * 4) & 1));
+        M_DrawCharacter(basex - 8, serialConfig_cursor_table[serialConfig_cursor], 12 + ((int)(host_c.realtime * 4) & 1));
 
         if (serialConfig_cursor == 4)
         {

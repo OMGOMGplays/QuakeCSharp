@@ -73,4 +73,8 @@ public unsafe class snd_null_c
     public static void S_LocalSound(char* s)
     {
     }
+
+    public static void S_LocalSound(string s)
+    {
+    }
 }
