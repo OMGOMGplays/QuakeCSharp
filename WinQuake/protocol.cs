@@ -2,49 +2,49 @@
 
 public unsafe class protocol_c
 {
-    public static int PROTOCOL_VERSION = 15;
+    public const int PROTOCOL_VERSION = 15;
 
-    public static int U_MOREBITS = (1 << 0);
-    public static int U_ORIGIN1 = (1 << 1);
-    public static int U_ORIGIN2 = (1 << 2);
-    public static int U_ORIGIN3 = (1 << 3);
-    public static int U_ANGLE2 = (1 << 4);
-    public static int U_NOLERP = (1 << 5);
-    public static int U_FRAME = (1 << 6);
-    public static int U_SIGNAL = (1 << 7);
+    public const int U_MOREBITS = (1 << 0);
+    public const int U_ORIGIN1 = (1 << 1);
+    public const int U_ORIGIN2 = (1 << 2);
+    public const int U_ORIGIN3 = (1 << 3);
+    public const int U_ANGLE2 = (1 << 4);
+    public const int U_NOLERP = (1 << 5);
+    public const int U_FRAME = (1 << 6);
+    public const int U_SIGNAL = (1 << 7);
 
-    public static int U_ANGLE1 = (1 << 8);
-    public static int U_ANGLE3 = (1 << 9);
-    public static int U_MODEL = (1 << 10);
-    public static int U_COLORMAP = (1 << 11);
-    public static int U_SKIN = (1 << 12);
-    public static int U_EFFECTS = (1 << 13);
-    public static int U_LONGENTITY = (1 << 14);
+    public const int U_ANGLE1 = (1 << 8);
+    public const int U_ANGLE3 = (1 << 9);
+    public const int U_MODEL = (1 << 10);
+    public const int U_COLORMAP = (1 << 11);
+    public const int U_SKIN = (1 << 12);
+    public const int U_EFFECTS = (1 << 13);
+    public const int U_LONGENTITY = (1 << 14);
 
-    public static int SU_VIEWHEIGHT = (1 << 0);
-    public static int SU_IDEALPITCH = (1 << 1);
-    public static int SU_PUNCH1 = (1 << 2);
-    public static int SU_PUNCH2 = (1 << 3);
-    public static int SU_PUNCH3 = (1 << 4);
-    public static int SU_VELOCITY1 = (1 << 5);
-    public static int SU_VELOCITY2 = (1 << 6);
-    public static int SU_VELOCITY3 = (1 << 7);
-    //public static int SU_AIMENT = (1 << 8);
-    public static int SU_ITEMS = (1 << 9);
-    public static int SU_ONGROUND = (1 << 10);
-    public static int SU_INWATER = (1 << 11);
-    public static int SU_WEAPONFRAME = (1 << 12);
-    public static int SU_ARMOR = (1 << 13);
-    public static int SU_WEAPON = (1 << 14);
+    public const int SU_VIEWHEIGHT = (1 << 0);
+    public const int SU_IDEALPITCH = (1 << 1);
+    public const int SU_PUNCH1 = (1 << 2);
+    public const int SU_PUNCH2 = (1 << 3);
+    public const int SU_PUNCH3 = (1 << 4);
+    public const int SU_VELOCITY1 = (1 << 5);
+    public const int SU_VELOCITY2 = (1 << 6);
+    public const int SU_VELOCITY3 = (1 << 7);
+    //public const int SU_AIMENT = (1 << 8);
+    public const int SU_ITEMS = (1 << 9);
+    public const int SU_ONGROUND = (1 << 10);
+    public const int SU_INWATER = (1 << 11);
+    public const int SU_WEAPONFRAME = (1 << 12);
+    public const int SU_ARMOR = (1 << 13);
+    public const int SU_WEAPON = (1 << 14);
 
-    public static int SND_VOLUME = (1 << 0);
-    public static int SND_ATTENUATION = (1 << 1);
-    public static int SND_LOOPING = (1 << 2);
+    public const int SND_VOLUME = (1 << 0);
+    public const int SND_ATTENUATION = (1 << 1);
+    public const int SND_LOOPING = (1 << 2);
 
-    public static int DEFAULT_VIEWHEIGHT = 22;
+    public const int DEFAULT_VIEWHEIGHT = 22;
 
-    public static int GAME_COOP = 0;
-    public static int GAME_DEATHMATCH = 1;
+    public const int GAME_COOP = 0;
+    public const int GAME_DEATHMATCH = 1;
 
     public static int svc_bad = 0;
     public static int svc_nop = 1;
@@ -97,24 +97,24 @@ public unsafe class protocol_c
     public static int clc_move = 3;
     public static int clc_stringcmd = 4;
 
-    public static int TE_SPIKE = 0;
-    public static int TE_SUPERSPIKE = 1;
-    public static int TE_GUNSHOT = 2;
-    public static int TE_EXPLOSION = 3;
-    public static int TE_TAREXPLOSION = 4;
-    public static int TE_LIGHTNING1 = 5;
-    public static int TE_LIGHTNING2 = 6;
-    public static int TE_WIZSPIKE = 7;
-    public static int TE_KNIGHTSPIKE = 8;
-    public static int TE_LIGHTNING3 = 9;
-    public static int TE_LAVASPLASH = 10;
-    public static int TE_TELEPORT = 11;
-    public static int TE_EXPLOSION2 = 12;
+    public const int TE_SPIKE = 0;
+    public const int TE_SUPERSPIKE = 1;
+    public const int TE_GUNSHOT = 2;
+    public const int TE_EXPLOSION = 3;
+    public const int TE_TAREXPLOSION = 4;
+    public const int TE_LIGHTNING1 = 5;
+    public const int TE_LIGHTNING2 = 6;
+    public const int TE_WIZSPIKE = 7;
+    public const int TE_KNIGHTSPIKE = 8;
+    public const int TE_LIGHTNING3 = 9;
+    public const int TE_LAVASPLASH = 10;
+    public const int TE_TELEPORT = 11;
+    public const int TE_EXPLOSION2 = 12;
 
-    public static int TE_BEAM = 13;
+    public const int TE_BEAM = 13;
 
 #if QUAKE2
-    public static int TE_IMPLOSION = 14;
-    public static int TE_RAILTRAIL = 15;
+    public const int TE_IMPLOSION = 14;
+    public const int TE_RAILTRAIL = 15;
 #endif
 }

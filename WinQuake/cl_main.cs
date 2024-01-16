@@ -1,29 +1,31 @@
-﻿namespace Quake;
+﻿using Quake.Client;
+
+namespace Quake;
 
 public unsafe class cl_main_c
 {
     public static cvar_c.cvar_t cl_name = new cvar_c.cvar_t { name = "_cl_name", value = "player".ToCharArray()[0], archive = true };
     public static cvar_c.cvar_t cl_color = new cvar_c.cvar_t { name = "cl_color", value = (char)0, archive = true };
 
-    public cvar_c.cvar_t cl_shownet = new cvar_c.cvar_t { name = "cl_shownet", value = (char)0 };
-    public cvar_c.cvar_t cl_nolerp = new cvar_c.cvar_t { name = "cl_nolerp", value = (char)0 };
+    public static cvar_c.cvar_t cl_shownet = new cvar_c.cvar_t { name = "cl_shownet", value = (char)0 };
+    public static cvar_c.cvar_t cl_nolerp = new cvar_c.cvar_t { name = "cl_nolerp", value = (char)0 };
 
     public static cvar_c.cvar_t lookspring = new cvar_c.cvar_t { name = "lookspring", value = (char)0, archive = true };
     public static cvar_c.cvar_t lookstrafe = new cvar_c.cvar_t { name = "lookstrafe", value = (char)0, archive = true };
     public static cvar_c.cvar_t sensitivity = new cvar_c.cvar_t { name = "sensitivity", value = (char)3, archive = true };
 
     public static cvar_c.cvar_t m_pitch = new cvar_c.cvar_t { name = "m_pitch", value = (char)0.022, archive = true };
-    public cvar_c.cvar_t m_yaw = new cvar_c.cvar_t { name = "m_yaw", value = (char)0.022, archive = true };
-    public cvar_c.cvar_t m_forward = new cvar_c.cvar_t { name = "m_forward", value = (char)1, archive = true };
-    public cvar_c.cvar_t m_side = new cvar_c.cvar_t { name = "m_side", value = (char)0.8, archive = true };
+    public static cvar_c.cvar_t m_yaw = new cvar_c.cvar_t { name = "m_yaw", value = (char)0.022, archive = true };
+    public static cvar_c.cvar_t m_forward = new cvar_c.cvar_t { name = "m_forward", value = (char)1, archive = true };
+    public static cvar_c.cvar_t m_side = new cvar_c.cvar_t { name = "m_side", value = (char)0.8, archive = true };
 
     public static client_c.client_static_t cls;
     public static client_c.client_state_t cl;
 
-    public render_c.efrag_t[] cl_efrags = new render_c.efrag_t[client_c.MAX_EFRAGS];
+    public static render_c.efrag_t[] cl_efrags = new render_c.efrag_t[client_c.MAX_EFRAGS];
     public static render_c.entity_t* cl_entities;
-    public render_c.entity_t[] cl_static_entites = new render_c.entity_t[client_c.MAX_STATIC_ENTITIES];
-    public client_c.lightstyle_t[] cl_lightstyle = new client_c.lightstyle_t[quakedef_c.MAX_LIGHTSTYLES];
+    public static render_c.entity_t[] cl_static_entites = new render_c.entity_t[client_c.MAX_STATIC_ENTITIES];
+    public static client_c.lightstyle_t[] cl_lightstyle = new client_c.lightstyle_t[quakedef_c.MAX_LIGHTSTYLES];
     public static client_c.dlight_t* cl_dlights;
 
     public static int cl_numvisedicts;
@@ -33,12 +35,12 @@ public unsafe class cl_main_c
     {
         int i;
 
-        if (!sv.active)
+        if (!server_c.sv.active)
         {
-            Host_ClearMemory();
+            host_c.Host_ClearMemory();
         }
 
-        common_c.Q_memset(cl, 0, sizeof(sv_main_c.client_state_t));
+        common_c.Q_memset(cl, 0, sizeof(server_c.client_state_t));
 
         common_c.SZ_Clear(cls.message);
 
@@ -83,9 +85,9 @@ public unsafe class cl_main_c
 
             cls.state = client_c.cactive_t.ca_disconnected;
 
-            if (sv.active)
+            if (server_c.sv.active)
             {
-                Host_ShutdownServer(false);
+                host_c.Host_ShutdownServer(false);
             }
         }
 
@@ -97,9 +99,9 @@ public unsafe class cl_main_c
     {
         CL_Disconnect();
 
-        if (sv.active)
+        if (server_c.sv.active)
         {
-            Host_ShutdownServer(false);
+            host_c.Host_ShutdownServer(false);
         }
     }
 
@@ -117,11 +119,11 @@ public unsafe class cl_main_c
 
         CL_Disconnect();
 
-        cls.netcon = NET_Connect(host);
+        cls.netcon = net_main_c.NET_Connect(common_c.StringToChar(host));
 
         if (cls.netcon == null)
         {
-            Host_Error("CL_Connect: connect failed\n");
+            host_c.Host_Error("CL_Connect: connect failed\n");
         }
 
         console_c.Con_DPrintf($"CL_EstablishConnection: connected to {host}\n");
@@ -170,7 +172,7 @@ public unsafe class cl_main_c
 
     public static void CL_NextDemo()
     {
-        char[] str = new char[1024];
+        char* str = null;
 
         if (cls.demonum == -1)
         {
@@ -192,7 +194,7 @@ public unsafe class cl_main_c
         }
 
         Console.WriteLine($"playdemo {cls.demos[cls.demonum]}\n");
-        Cbuf_InsertText(str);
+        cmd_c.Cbuf_InsertText(str);
         cls.demonum++;
     }
 
@@ -211,13 +213,13 @@ public unsafe class cl_main_c
                 continue;
             }
 
-            console_c.Con_Printf($"{ent->model->name}:{ent->frame} ({ent->origin[0]}, {ent->origin[1]}, {ent->origin[2]}) [{ent->angles[0]}, {ent->angles[1]}, {ent->angles[2]}]\n");
+            console_c.Con_Printf($"{*ent->model->name}:{ent->frame} ({ent->origin[0]}, {ent->origin[1]}, {ent->origin[2]}) [{ent->angles[0]}, {ent->angles[1]}, {ent->angles[2]}]\n");
         }
     }
 
     public void SetPal(int i)
     {
-        int old;
+        int old = 0;
         byte[] pal = new byte[768];
         int c;
 
@@ -289,7 +291,7 @@ public unsafe class cl_main_c
         client_c.dlight_t* dl;
         float time;
 
-        time = cl.time - cl.oldtime;
+        time = (float)(cl.time - cl.oldtime);
 
         dl = cl_dlights;
 
@@ -313,9 +315,9 @@ public unsafe class cl_main_c
     {
         float f, frac;
 
-        f = cl.mtime[0] - cl.mtime[1];
+        f = (float)(cl.mtime[0] - cl.mtime[1]);
 
-        if (f == 0 || cl_nolerp.value != 0 || cls.timedemo || sv.active)
+        if (f == 0 || cl_nolerp.value != 0 || cls.timedemo || server_c.sv.active)
         {
             cl.time = cl.mtime[0];
             return 1;
@@ -327,7 +329,7 @@ public unsafe class cl_main_c
             f = 0.1f;
         }
 
-        frac = (cl.time - cl.mtime[1]) / f;
+        frac = (float)(cl.time - cl.mtime[1]) / f;
 
         if (frac < 0)
         {
@@ -362,9 +364,9 @@ public unsafe class cl_main_c
         render_c.entity_t* ent;
         int i, j;
         float frac, f, d;
-        Vector3 delta = null;
+        Vector3 delta = new();
         float bobjrotate;
-        Vector3 oldorg;
+        Vector3 oldorg = new();
         client_c.dlight_t* dl;
 
         frac = CL_LerpPoint();
@@ -373,14 +375,14 @@ public unsafe class cl_main_c
 
         for (i = 0; i < 3; i++)
         {
-            cl.velocity[i] = cl.mvelocity[1, i] + frac * (cl.mvelocity[0, i] - cl.mvelocity[1, i]);
+            cl.velocity[i] = cl.mvelocity[1][i] + frac * (cl.mvelocity[0][i] - cl.mvelocity[1][i]);
         }
 
         if (cls.demoplayback)
         {
             for (j = 0; j < 3; j++)
             {
-                d = cl.mviewangles[0, j] - cl.mviewangles[1, j];
+                d = cl.mviewangles[0][j] - cl.mviewangles[1][j];
 
                 if (d > 180)
                 {
@@ -391,11 +393,11 @@ public unsafe class cl_main_c
                     d += 360;
                 }
 
-                cl.viewangles[j] = cl.mviewangles[1, j] + frac * d;
+                cl.viewangles[j] = cl.mviewangles[1][j] + frac * d;
             }
         }
 
-        bobjrotate = mathlib_c.anglemod(100 * cl.time);
+        bobjrotate = mathlib_c.anglemod(100 * (float)cl.time);
 
         for (i = 1, ent = cl_entities + 1; i < cl.num_entites; i++, ent++)
         {
@@ -484,7 +486,7 @@ public unsafe class cl_main_c
                 mathlib_c.VectorMA(dl->origin, 18, fv, dl->origin);
                 dl->radius = 200 + (rand() & 31);
                 dl->minlight = 32;
-                dl->die = cl.time + 0.1f;
+                dl->die = (float)cl.time + 0.1f;
             }
 
             if (ent->effects & EF_BRIGHTLIGHT)
@@ -492,7 +494,7 @@ public unsafe class cl_main_c
                 dl = CL_AllocDlight(i);
                 mathlib_c.VectorCopy(ent->origin, dl->origin);
                 dl->radius = 200 + (rand() & 31);
-                dl->die = cl.time + 0.001f;
+                dl->die = (float)cl.time + 0.001f;
             }
 
 #if QUAKE2
@@ -536,7 +538,7 @@ public unsafe class cl_main_c
                 dl = CL_AllocDlight(i);
                 mathlib_c.VectorCopy(ent->origin, dl->origin);
                 dl->radius = 200;
-                dl->die = cl.time + 0.01f;
+                dl->die = (float)cl.time + 0.01f;
             }
             else if (ent->model->flags & EF_GRENADE != 0)
             {
@@ -549,7 +551,7 @@ public unsafe class cl_main_c
 
             ent->forcelink = false;
 
-            if (i == cl.viewentity && chase_active.value == 0)
+            if (i == cl.viewentity && chase_c.chase_active.value == 0)
             {
                 continue;
             }
@@ -563,7 +565,7 @@ public unsafe class cl_main_c
 
             if (cl_numvisedicts < quakedef_c.MAX_EDICTS)
             {
-                cl_visedicts[cl_numvisedicts] = ent;
+                cl_visedicts[cl_numvisedicts] = *ent;
                 cl_numvisedicts++;
             }
         }
@@ -574,7 +576,7 @@ public unsafe class cl_main_c
         int ret;
 
         cl.oldtime = cl.time;
-        cl.time += host_frametime;
+        cl.time += host_c.host_frametime;
 
         do
         {
@@ -582,7 +584,7 @@ public unsafe class cl_main_c
 
             if (ret == -1)
             {
-                Host_Error("CL_ReadFromServer: lost server connection");
+                host_c.Host_Error("CL_ReadFromServer: lost server connection");
             }
 
             if (ret == 0)
@@ -590,7 +592,7 @@ public unsafe class cl_main_c
                 break;
             }
 
-            cl.last_received_message = quakedef_c.realtime;
+            cl.last_received_message = (float)quakedef_c.realtime;
             CL_ParseServerMessage();
         } while (ret != 0 && cls.state == client_c.cactive_t.ca_connected);
 

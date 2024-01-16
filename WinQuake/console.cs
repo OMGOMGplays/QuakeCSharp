@@ -462,7 +462,7 @@ public unsafe class console_c
 
             x = 0;
 
-            draw_c.Draw_String(8, v, new string('say: '));
+            draw_c.Draw_String(8, v, common_c.StringToChar("say: "));
 
             while (chat_buffer[x] != 0)
             {

@@ -327,6 +327,11 @@ public unsafe class mathlib_c
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
 
+    public static float DotProduct(Vector3 a, float[] b)
+    {
+        return a.X * b[0] + a.Y * b[1] + a.Z * b[2];
+    }
+
     public static void VectorSubtract(Vector3 veca, Vector3 vecb, Vector3 output)
     {
         output[0] = veca[0] - vecb[0];

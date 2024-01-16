@@ -160,7 +160,7 @@ public unsafe class client_c
         public model_c.model_t* model_precache;
         public sfx_t* sound_precache;
 
-        public char[] levelname;
+        public char* levelname;
         public int viewentity;
         public int maxclients;
         public int gametype;

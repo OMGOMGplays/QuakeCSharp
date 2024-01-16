@@ -241,7 +241,7 @@ public unsafe class draw_c
         }
     }
 
-    public void Draw_String(int x, int y, string* str)
+    public static void Draw_String(int x, int y, char* str)
     {
         while (str != null)
         {
@@ -824,7 +824,7 @@ public unsafe class draw_c
         }
     }
 
-    public void Draw_Fill(int x, int y, int w, int h, int c)
+    public static void Draw_Fill(int x, int y, int w, int h, int c)
     {
         byte* dest;
         ushort* pusdest;
