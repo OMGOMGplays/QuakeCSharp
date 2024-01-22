@@ -227,6 +227,11 @@ public unsafe class common_c
 		Q_strcpy(dest, src);
 	}
 
+	public static void Q_strcat(char* dest, char* src)
+	{
+		Q_strcat(dest->ToString(), src->ToString());
+	}
+
 	public static bool Q_strcmp(string s1, string s2)
 	{
 		while (true)

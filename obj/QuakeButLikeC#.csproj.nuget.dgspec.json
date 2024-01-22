@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\QuakeButLikeC#.csproj": {}
+    "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QuakeButLikeC#.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\QuakeButLikeC#.csproj": {
+    "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QuakeButLikeC#.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\QuakeButLikeC#.csproj",
+        "projectUniqueName": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QuakeButLikeC#.csproj",
         "projectName": "QuakeButLikeC#",
-        "projectPath": "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\QuakeButLikeC#.csproj",
-        "packagesPath": "C:\\Users\\Loke\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Loke\\Documents\\Programmering\\QuakeC-\\obj\\",
+        "projectPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QuakeButLikeC#.csproj",
+        "packagesPath": "C:\\Users\\Loke.Vigstrand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Loke\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Loke.Vigstrand\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -38,6 +38,9 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "default"
         }
       },
       "frameworks": {

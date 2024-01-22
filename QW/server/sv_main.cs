@@ -51,12 +51,12 @@ public unsafe class sv_main_c
 
     public cvar_c.cvar_t hostname = new cvar_c.cvar_t { name = "hostname", value = ' ', server = true };
 
-    public FileStream* sv_logfile;
-    public FileStream* sv_fraglogfile;
+    public static FileStream* sv_logfile;
+    public static FileStream* sv_fraglogfile;
 
     public bool ServerPaused()
     {
-        return sv.paused;
+        return server_c.sv.paused;
     }
 
     public static void SV_Shutdown()
@@ -75,7 +75,7 @@ public unsafe class sv_main_c
             sv_fraglogfile = null;
         }
 
-        NET_Shutdown();
+        net_main_c.NET_Shutdown();
     }
 
     public static void SV_Error(char* error, params object[] args)
@@ -112,7 +112,7 @@ public unsafe class sv_main_c
         common_c.MSG_WriteString(&net_message, message);
         common_c.MSG_WriteByte(&net_message, svc_disconnect);
 
-        for (i = 0; i < svs.clients; i++, cl++) {
+        for (i = 0; i < server_c.svs.clients; i++, cl++) {
             if (cl->state >= cs_spawned)
             {
                 Netchan_Transit(&cl->netchan, net_message.cursize, net_message.data);
@@ -133,8 +133,8 @@ public unsafe class sv_main_c
             }
             else if (SpectatorDisconnect)
             {
-                pr_global_struct->self = EDICT_TO_PROG(drop->edict);
-                PR_ExecuteProgram(SpectatorDisconnect);
+                pr_edict_c.pr_global_struct->self = progs_c.EDICT_TO_PROG(drop->edict);
+                pr_exec_c.PR_ExecuteProgram(SpectatorDisconnect);
             }
         }
 

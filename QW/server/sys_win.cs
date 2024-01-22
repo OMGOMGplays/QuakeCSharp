@@ -117,6 +117,11 @@ public unsafe class sys_win_c
         Console.WriteLine(fmt);
     }
 
+    public static void Sys_Printf(char* fmt)
+    {
+        Sys_Printf(fmt->ToString());
+    }
+
     public static void Sys_Quit()
     {
         Environment.Exit(0);
