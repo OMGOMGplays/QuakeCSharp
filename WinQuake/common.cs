@@ -295,7 +295,7 @@ public unsafe class common_c
 
 		while (true)
 		{
-			c1 = s1.Length + 1;
+			c1 = s1->ToString().Length + 1;
 			c2 = s2.Length + 1;
 
 			if (n-- < 0)
@@ -332,7 +332,7 @@ public unsafe class common_c
 
 	public static int Q_strcasecmp(string s1, string s2)
 	{
-		return Q_strncasecmp(s1, s2, 99999);
+		return Q_strncasecmp(StringToChar(s1), s2, 99999);
 	}
 
 	public static int Q_atoi(string str)
@@ -406,6 +406,11 @@ public unsafe class common_c
 		}
 
 		return 0;
+	}
+
+	public static int Q_atoi(char* str)
+	{
+		return Q_atoi(str->ToString());
 	}
 
 	public static float Q_atof(char* str)
@@ -711,13 +716,13 @@ public unsafe class common_c
 	{
 		int c;
 
-		if (msg_readcount + 1 > net_message.cursize)
+		if (msg_readcount + 1 > net_main_c.net_message.cursize)
 		{
 			msg_badread = true;
 			return -1;
 		}
 
-		c = (sbyte)net_message.data[msg_readcount];
+		c = (sbyte)net_main_c.net_message.data[msg_readcount];
 		msg_readcount++;
 
 		return c;
@@ -727,13 +732,13 @@ public unsafe class common_c
 	{
 		int c;
 
-		if (msg_readcount + 1 > net_message.cursize)
+		if (msg_readcount + 1 > net_main_c.net_message.cursize)
 		{
 			msg_badread = true;
 			return -1;
 		}
 
-		c = (uint)net_message.data[msg_readcount];
+		c = net_main_c.net_message.data[msg_readcount];
 		msg_readcount++;
 
 		return c;
@@ -743,16 +748,36 @@ public unsafe class common_c
 	{
 		int c;
 
-		if (msg_readcount + 1 > net_message.cursize)
+		if (msg_readcount + 1 > net_main_c.net_message.cursize)
 		{
 			msg_badread = true;
 			return -1;
 		}
 
-		c = net_message.data[msg_readcount]
-			+ (net_message.data[msg_readcount + 1] << 8)
-			+ (net_message.data[msg_readcount + 2] << 16)
-			+ (net_message.data[msg_readcount + 3] << 24);
+		c = net_main_c.net_message.data[msg_readcount]
+			+ (net_main_c.net_message.data[msg_readcount + 1] << 8)
+			+ (net_main_c.net_message.data[msg_readcount + 2] << 16)
+			+ (net_main_c.net_message.data[msg_readcount + 3] << 24);
+
+		msg_readcount += 4;
+
+		return c;
+	}
+
+	public static int MSG_ReadLong()
+	{
+		int c;
+
+		if (msg_readcount + 4 > net_main_c.net_message.cursize)
+		{
+			msg_badread = true;
+			return -1;
+		}
+
+		c = net_main_c.net_message.data[msg_readcount]
+			+ (net_main_c.net_message.data[msg_readcount + 1] << 8)
+			+ (net_main_c.net_message.data[msg_readcount + 2] << 16)
+			+ (net_main_c.net_message.data[msg_readcount + 3] << 24);
 
 		msg_readcount += 4;
 
@@ -785,10 +810,10 @@ public unsafe class common_c
 	{
 		MSG_ReadFloat_Union dat = new();
 
-		dat.b1 = net_message.data[msg_readcount];
-		dat.b2 = net_message.data[msg_readcount + 1];
-		dat.b3 = net_message.data[msg_readcount + 2];
-		dat.b4 = net_message.data[msg_readcount + 3];
+		dat.b1 = (byte)net_main_c.net_message.data[msg_readcount];
+		dat.b2 = (byte)net_main_c.net_message.data[msg_readcount + 1];
+		dat.b3 = (byte)net_main_c.net_message.data[msg_readcount + 2];
+		dat.b4 = (byte)net_main_c.net_message.data[msg_readcount + 3];
 		msg_readcount += 4;
 
 		dat.l = LittleLong(dat.l);
@@ -812,7 +837,7 @@ public unsafe class common_c
 			stringBuilder.Append((char)c);
 		} while (stringBuilder.Length < 2047);
 
-		return stringBuilder.ToString();
+		return StringToChar(stringBuilder.ToString());
 	}
 
 	public static float MSG_ReadCoord()
@@ -1104,7 +1129,7 @@ public unsafe class common_c
 	public static void COM_CheckRegistered()
 	{
 		int h = 0;
-		ushort[] check = new ushort[128];
+		ushort* check = null;
 		int i;
 
 		COM_OpenFile("gfx/pop.lmp", h);
@@ -1123,7 +1148,7 @@ public unsafe class common_c
 			}
 		}
 
-		sys_win_c.Sys_FileRead(h, check, 128);
+		sys_win_c.Sys_FileRead(h, (byte*)check, 128);
 		COM_CloseFile(h);
 
 		for (i = 0; i < 128; i++)
@@ -1134,7 +1159,7 @@ public unsafe class common_c
 			}
 		}
 
-		cvar_c.Cvar_Set("cmdline", com_cmdline);
+		cvar_c.Cvar_Set("cmdline", cmd_c.com_cmdline);
 		cvar_c.Cvar_Set("registered", "1");
 		static_registered = 1;
 		console_c.Con_Printf("Playing registered version.\n");
@@ -1160,7 +1185,7 @@ public unsafe class common_c
 
 			if (n < (CMDLINE_LENGTH - 1))
 			{
-				com_cmdline[n++] = ' ';
+				con_cmdline[n++] = ' ';
 			}
 			else
 			{
@@ -1168,7 +1193,7 @@ public unsafe class common_c
 			}
 		}
 
-		com_cmdline[n] = 0;
+		console_c.con_cmdline[n] = 0;
 
 		safe = false;
 
@@ -1329,7 +1354,7 @@ public unsafe class common_c
 
 		Console.WriteLine(name, $"{com_gamedir}/{filename}");
 
-		handle = sys_win_c.Sys_FileOpenWrite(name);
+		handle = sys_win_c.Sys_FileOpenWrite(StringToChar(name));
 
 		if (handle == -1)
 		{
@@ -1361,24 +1386,24 @@ public unsafe class common_c
 	{
 		int input, output;
 		int remaining, count;
-		string buf = null;
+		char* buf = null;
 
-		remaining = sys_win_c.Sys_OpenFileRead(netpath, &input);
+		remaining = sys_win_c.Sys_FileOpenRead(netpath, &input);
 		COM_CreatePath(cachepath);
 		output = sys_win_c.Sys_FileOpenWrite(cachepath);
 
 		while (remaining > 0)
 		{
-			if (remaining < buf.Length)
+			if (remaining < buf->ToString().Length)
 			{
 				count = remaining;
 			}
 			else
 			{
-				count = buf.Length;
+				count = buf->ToString().Length;
 			}
 
-			sys_win_c.Sys_FileRead(input, buf, count);
+			sys_win_c.Sys_FileRead(input, (byte*)buf, count);
 			sys_win_c.Sys_FileWrite(output, buf, count);
 			remaining -= count;
 		}
@@ -1639,7 +1664,7 @@ public unsafe class common_c
 		int numpackfiles = 0;
 		pack_t* pack;
 		int packhandle;
-		packfile_t info;
+		packfile_t* info;
 		ushort crc;
 
 		if (sys_win_c.Sys_FileOpenRead(packfile, &packhandle) == -1)

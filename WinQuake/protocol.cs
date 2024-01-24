@@ -46,56 +46,56 @@ public unsafe class protocol_c
     public const int GAME_COOP = 0;
     public const int GAME_DEATHMATCH = 1;
 
-    public static int svc_bad = 0;
-    public static int svc_nop = 1;
-    public static int svc_disconnect = 2;
-    public static int svc_updatestat = 3;
-    public static int svc_version = 4;
-    public static int svc_setview = 5;
-    public static int svc_sound = 6;
-    public static int svc_time = 7;
-    public static int svc_print = 8;
-    public static int svc_stufftext = 9;
-    public static int svc_setangle = 10;
-    public static int svc_serverinfo = 11;
-    public static int svc_lightstyle = 12;
-    public static int svc_updatename = 13;
-    public static int svc_updatefrags = 14;
-    public static int svc_clientdata = 15;
-    public static int svc_stopsound = 16;
-    public static int svc_updatecolors = 17;
-    public static int svc_particle = 18;
-    public static int svc_damage = 19;
+    public const int svc_bad = 0;
+    public const int svc_nop = 1;
+    public const int svc_disconnect = 2;
+    public const int svc_updatestat = 3;
+    public const int svc_version = 4;
+    public const int svc_setview = 5;
+    public const int svc_sound = 6;
+    public const int svc_time = 7;
+    public const int svc_print = 8;
+    public const int svc_stufftext = 9;
+    public const int svc_setangle = 10;
+    public const int svc_serverinfo = 11;
+    public const int svc_lightstyle = 12;
+    public const int svc_updatename = 13;
+    public const int svc_updatefrags = 14;
+    public const int svc_clientdata = 15;
+    public const int svc_stopsound = 16;
+    public const int svc_updatecolors = 17;
+    public const int svc_particle = 18;
+    public const int svc_damage = 19;
 
-    public static int svc_spawnstatic = 20;
-    //public static int svc_spawnbinary = 21;
-    public static int svc_spawnbaseline = 22;
+    public const int svc_spawnstatic = 20;
+    //public const int svc_spawnbinary = 21;
+    public const int svc_spawnbaseline = 22;
 
-    public static int svc_temp_entity = 23;
+    public const int svc_temp_entity = 23;
 
-    public static int svc_setpause = 24;
-    public static int svc_signonnum = 25;
+    public const int svc_setpause = 24;
+    public const int svc_signonnum = 25;
 
-    public static int svc_centerprint = 26;
+    public const int svc_centerprint = 26;
 
-    public static int svc_killedmonster = 27;
-    public static int svc_foundsecret = 28;
+    public const int svc_killedmonster = 27;
+    public const int svc_foundsecret = 28;
 
-    public static int svc_spawnstaticsound = 29;
+    public const int svc_spawnstaticsound = 29;
 
-    public static int svc_intermission = 30;
-    public static int svc_finale = 31;
+    public const int svc_intermission = 30;
+    public const int svc_finale = 31;
 
-    public static int svc_cdtrack = 32;
-    public static int svc_sellscreen = 33;
+    public const int svc_cdtrack = 32;
+    public const int svc_sellscreen = 33;
 
-    public static int svc_cutscene = 34;
+    public const int svc_cutscene = 34;
 
-    public static int clc_bad = 0;
-    public static int clc_nop = 1;
-    public static int clc_disconnect = 2;
-    public static int clc_move = 3;
-    public static int clc_stringcmd = 4;
+    public const int clc_bad = 0;
+    public const int clc_nop = 1;
+    public const int clc_disconnect = 2;
+    public const int clc_move = 3;
+    public const int clc_stringcmd = 4;
 
     public const int TE_SPIKE = 0;
     public const int TE_SUPERSPIKE = 1;

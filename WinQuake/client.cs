@@ -166,10 +166,10 @@ public unsafe class client_c
         public int gametype;
 
         public model_c.model_t* worldmodel;
-        public efrag_t* free_efrags;
+        public render_c.efrag_t* free_efrags;
         public int num_entities;
         public int num_statics;
-        public viewent;
+        public int viewent;
 
         public int cdtrack, looptrack;
 
@@ -215,17 +215,13 @@ public unsafe class client_c
 
     public client_state_t cl;
 
-    public efrag_t[] cl_efrags = new efrag_t[MAX_EFRAGS];
-    public static entity_t[] cl_entities = new entity_t[quakedef_c.MAX_EDICTS];
-    public entity_t[] cl_static_entities = new entity_t[MAX_STATIC_ENTITIES];
+    public render_c.efrag_t[] cl_efrags = new render_c.efrag_t[MAX_EFRAGS];
+    public static render_c.entity_t[] cl_entities = new render_c.entity_t[quakedef_c.MAX_EDICTS];
+    public render_c.entity_t[] cl_static_entities = new render_c.entity_t[MAX_STATIC_ENTITIES];
     public lightstyle_t[] cl_lightstyle = new lightstyle_t[quakedef_c.MAX_LIGHTSTYLES];
-    public dlight_t[] cl_dlights = new dlight_t[quakedef_c.MAX_DLIGHTS];
-    public entity_t[] cl_temp_entities = new entity_t[MAX_TEMP_ENTITIES];
+    public dlight_t[] cl_dlights = new dlight_t[MAX_DLIGHTS];
+    public render_c.entity_t[] cl_temp_entities = new render_c.entity_t[MAX_TEMP_ENTITIES];
     public beam_t[] cl_beams = new beam_t[MAX_BEAMS];
-    public dlight_t* CL_AllocDlight(int key)
-    {
-        
-    }
 
     public const int MAX_VISEDICTS = 256;
     public static int cl_numvisedicts;
@@ -240,5 +236,4 @@ public unsafe class client_c
     public kbutton_t in_mlook, in_klook;
     public kbutton_t in_strafe;
     public kbutton_t in_speed;
-
 }

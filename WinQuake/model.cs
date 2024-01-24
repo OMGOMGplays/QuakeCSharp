@@ -7,9 +7,9 @@ public unsafe class model_c
         public Vector3 position;
     }
 
-    public static int SIDE_FRONT = 0;
-    public static int SIDE_BACK = 1;
-    public static int SIDE_ON = 2;
+    public const int SIDE_FRONT = 0;
+    public const int SIDE_BACK = 1;
+    public const int SIDE_ON = 2;
 
     public struct mplane_t
     {
@@ -31,12 +31,12 @@ public unsafe class model_c
         public uint[] offsets;
     }
 
-    public static int SURF_PLANEBACK = 2;
-    public static int SURF_DRAWSKY = 4;
-    public static int SURF_DRAWSPRITE = 8;
-    public static int SURF_DRAWTURB = 0x10;
-    public static int SURF_DRAWTILED = 0x20;
-    public static int SURF_DRAWBACKGROUND = 0x40;
+    public const int SURF_PLANEBACK = 2;
+    public const int SURF_DRAWSKY = 4;
+    public const int SURF_DRAWSPRITE = 8;
+    public const int SURF_DRAWTURB = 0x10;
+    public const int SURF_DRAWTILED = 0x20;
+    public const int SURF_DRAWBACKGROUND = 0x40;
 
     public struct medge_t
     {
@@ -207,14 +207,14 @@ public unsafe class model_c
 
     public enum modtype_t { mod_brush, mod_sprite, mod_alias }
 
-    public static int EF_ROCKET = 1;
-    public static int EF_GRENADE = 2;
-    public static int EF_GIB = 4;
-    public static int EF_ROTATE = 8;
-    public static int EF_TRACER = 16;
-    public static int EF_ZOMGIB = 32;
-    public static int EF_TRACER2 = 64;
-    public static int EF_TRACER3 = 128;
+    public const int EF_ROCKET = 1;
+    public const int EF_GRENADE = 2;
+    public const int EF_GIB = 4;
+    public const int EF_ROTATE = 8;
+    public const int EF_TRACER = 16;
+    public const int EF_ZOMGIB = 32;
+    public const int EF_TRACER2 = 64;
+    public const int EF_TRACER3 = 128;
 
     public struct model_t
     {
@@ -278,17 +278,17 @@ public unsafe class model_c
     }
 
     public model_t* loadmodel;
-    public char[] loadname = new char[32];
+    public static char[] loadname = new char[32];
 
     public byte* mod_novis;
 
-    public static int MAX_MOD_KNOWN = 256;
+    public const int MAX_MOD_KNOWN = 256;
     public model_t* mod_known;
     public int mod_numknown;
 
-    public static int NL_PRESENT = 0;
-    public static int NL_NEEDS_LOADED = 1;
-    public static int NL_UNREFERENCED = 2;
+    public const int NL_PRESENT = 0;
+    public const int NL_NEEDS_LOADED = 1;
+    public const int NL_UNREFERENCED = 2;
 
     public static void Mod_Init()
     {
@@ -420,7 +420,7 @@ public unsafe class model_c
         }
     }
 
-    public model_t* Mod_FindName(char* name)
+    public static model_t* Mod_FindName(char* name)
     {
         int i;
         model_t* mod;
@@ -495,7 +495,7 @@ public unsafe class model_c
         }
     }
 
-    public model_t* Mod_LoadModel(model_t* mod, bool crash)
+    public static model_t* Mod_LoadModel(model_t* mod, bool crash)
     {
         uint* buf;
         byte* stackbuf = null;
@@ -516,19 +516,19 @@ public unsafe class model_c
             }
         }
 
-        buf = (uint*)common_c.COM_LoadStackFile(mod->name.ToString(), stackbuf, 1024);
+        buf = (uint*)common_c.COM_LoadStackFile(mod->name->ToString(), stackbuf, 1024);
 
         if (buf == null)
         {
             if (crash)
             {
-                sys_win_c.Sys_Error($"Mod_NumForName: {mod->name} not found");
+                sys_win_c.Sys_Error($"Mod_NumForName: {*mod->name} not found");
             }
 
             return null;
         }
 
-        common_c.COM_FileBase(mod->name.ToString(), loadname.ToString());
+        common_c.COM_FileBase(mod->name->ToString(), loadname.ToString());
 
         loadmodel = mod;
 
@@ -559,6 +559,11 @@ public unsafe class model_c
         mod = Mod_FindName(name);
 
         return Mod_LoadModel(mod, crash);
+    }
+
+    public static model_t* Mod_ForName(string name, bool crash)
+    {
+        return Mod_ForName(common_c.StringToChar(name), crash);
     }
 
     public byte* mod_base;

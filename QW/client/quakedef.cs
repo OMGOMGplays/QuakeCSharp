@@ -1,16 +1,20 @@
 ﻿global using System;
 global using System.IO;
 global using System.Linq;
-global using System.Collections.Generic;
-global using System.Runtime.InteropServices;
 global using System.Text;
-global using System.Net.Sockets;
 global using System.Numerics;
-global using System.Collections.Immutable;
+global using System.Net.Sockets;
 global using System.Diagnostics;
+global using System.Collections.Generic;
 global using System.Security.Permissions;
+global using System.Collections.Immutable;
+global using System.Runtime.InteropServices;
 
 global using Quake.Server;
+global using Quake.Client;
+
+global using lib;
+global using lib.libc;
 
 namespace Quake;
 

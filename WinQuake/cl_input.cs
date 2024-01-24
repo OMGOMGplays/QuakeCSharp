@@ -213,17 +213,17 @@ public unsafe class cl_input_c
         return val;
     }
 
-    public cvar_c.cvar_t cl_upspeed = new cvar_c.cvar_t { name = "cl_upspeed", value = (char)200 };
+    public static cvar_c.cvar_t cl_upspeed = new cvar_c.cvar_t { name = "cl_upspeed", value = (char)200 };
     public static cvar_c.cvar_t cl_forwardspeed = new cvar_c.cvar_t { name = "cl_forwardspeed", value = (char)200, archive = true };
-    public cvar_c.cvar_t cl_backspeed = new cvar_c.cvar_t { name = "cl_backspeed", value = (char)200, archive = true };
-    public cvar_c.cvar_t cl_sidespeed = new cvar_c.cvar_t { name = "cl_sidespeed", value = (char)350 };
+    public static cvar_c.cvar_t cl_backspeed = new cvar_c.cvar_t { name = "cl_backspeed", value = (char)200, archive = true };
+    public static cvar_c.cvar_t cl_sidespeed = new cvar_c.cvar_t { name = "cl_sidespeed", value = (char)350 };
 
-    public cvar_c.cvar_t cl_movespeedkey = new cvar_c.cvar_t { name = "cl_movespeedkey", value = (char)2.0f };
+    public static cvar_c.cvar_t cl_movespeedkey = new cvar_c.cvar_t { name = "cl_movespeedkey", value = (char)2.0f };
 
-    public cvar_c.cvar_t cl_yawspeed = new cvar_c.cvar_t { name = "cl_yawspeed", value = (char)140 };
-    public cvar_c.cvar_t cl_pitchspeed = new cvar_c.cvar_t { name = "cl_pitchspeed", value = (char)150 };
+    public static cvar_c.cvar_t cl_yawspeed = new cvar_c.cvar_t { name = "cl_yawspeed", value = (char)140 };
+    public static cvar_c.cvar_t cl_pitchspeed = new cvar_c.cvar_t { name = "cl_pitchspeed", value = (char)150 };
 
-    public cvar_c.cvar_t cl_anglespeedkey = new cvar_c.cvar_t { name = "cl_anglespeedkey", value = (char)1.5f };
+    public static cvar_c.cvar_t cl_anglespeedkey = new cvar_c.cvar_t { name = "cl_anglespeedkey", value = (char)1.5f };
 
     public void CL_AdjustAngles()
     {
@@ -285,7 +285,7 @@ public unsafe class cl_input_c
         }
     }
 
-    public void CL_BaseMove(client_c.usercmd_t cmd)
+    public static void CL_BaseMove(client_c.usercmd_t cmd)
     {
         CL_AdjustAngles();
 
@@ -466,7 +466,7 @@ public unsafe class cl_input_c
         Netchan_Transmit(cl_main_c.cls.netchan, buf.cursize, buf.data);
     }
 
-    public void CL_InitInput()
+    public static void CL_InitInput()
     {
         cmd_c.Cmd_AddCommand("+moveup", IN_UpDown);
         cmd_c.Cmd_AddCommand("-moveup", IN_UpUp);

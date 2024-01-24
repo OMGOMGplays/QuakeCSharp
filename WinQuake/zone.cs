@@ -692,7 +692,7 @@ public unsafe class zone_c
 		}
 	}
 
-	public void Cache_Report()
+	public static void Cache_Report()
 	{
 		console_c.Con_Printf($"{(hunk_size - hunk_high_used - hunk_low_used) / (float)(1024 * 1024)} megabyte data cache\n");
 	}

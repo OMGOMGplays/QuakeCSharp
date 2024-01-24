@@ -666,6 +666,11 @@ public unsafe class net_main_c
         return r;
     }
 
+    public static int NET_SendMessage(net_c.qsocket_t* sock, common_c.sizebuf_t data)
+    {
+        return NET_SendMessage(sock, &data);
+    }
+
     public static int NET_SendUnreliableMessage(net_c.qsocket_t* sock, common_c.sizebuf_t* data)
     {
         int r;
@@ -700,6 +705,11 @@ public unsafe class net_main_c
         }
 
         return r;
+    }
+
+    public static int NET_SendUnreliableMessage(net_c.qsocket_t* sock, common_c.sizebuf_t data)
+    {
+        return NET_SendUnreliableMessage(sock, &data);
     }
 
     public static bool NET_CanSendMessage(net_c.qsocket_t* sock)

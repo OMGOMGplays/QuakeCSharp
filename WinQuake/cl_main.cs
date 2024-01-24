@@ -22,7 +22,7 @@ public unsafe class cl_main_c
     public static client_c.client_static_t cls;
     public static client_c.client_state_t cl;
 
-    public static render_c.efrag_t[] cl_efrags = new render_c.efrag_t[client_c.MAX_EFRAGS];
+    public static render_c.efrag_t* cl_efrags;
     public static render_c.entity_t* cl_entities;
     public static render_c.entity_t[] cl_static_entites = new render_c.entity_t[client_c.MAX_STATIC_ENTITIES];
     public static client_c.lightstyle_t[] cl_lightstyle = new client_c.lightstyle_t[quakedef_c.MAX_LIGHTSTYLES];
@@ -31,7 +31,7 @@ public unsafe class cl_main_c
     public static int cl_numvisedicts;
     public static render_c.entity_t* cl_visedicts;
 
-    public void CL_ClearState()
+    public static void CL_ClearState()
     {
         int i;
 
@@ -40,11 +40,11 @@ public unsafe class cl_main_c
             host_c.Host_ClearMemory();
         }
 
-        common_c.Q_memset(cl, 0, sizeof(server_c.client_state_t));
+        common_c.Q_memset(cl, 0, sizeof(client_c.client_state_t));
 
         common_c.SZ_Clear(cls.message);
 
-        common_c.Q_memset(cl_efrags, 0, client_c.MAX_EFRAGS);
+        common_c.Q_memset(*cl_efrags, 0, client_c.MAX_EFRAGS);
         common_c.Q_memset(*cl_entities, 0, quakedef_c.MAX_EDICTS);
         common_c.Q_memset(*cl_dlights, 0, client_c.MAX_DLIGHTS);
         common_c.Q_memset(cl_lightstyle, 0, bothdefs_c.MAX_LIGHTSTYLES);
@@ -55,7 +55,7 @@ public unsafe class cl_main_c
 
         for (i = 0; i < client_c.MAX_EFRAGS - 1; i++)
         {
-            cl.free_efrags[i].entnext = cl.free_efrags[i + 1];
+            cl.free_efrags[i].entnext = &cl.free_efrags[i + 1];
         }
 
         cl.free_efrags[i].entnext = null;
@@ -63,25 +63,25 @@ public unsafe class cl_main_c
 
     public static void CL_Disconnect()
     {
-        S_StopAllSounds(true);
+        snd_null_c.S_StopAllSounds(true);
 
         if (cls.demoplayback)
         {
-            CL_StopPlayback();
+            cl_demo_c.CL_StopPlayback();
         }
         else if (cls.state == client_c.cactive_t.ca_connected)
         {
             if (cls.demorecording)
             {
-                CL_Stop_f();
+                cl_demo_c.CL_Stop_f();
             }
 
             console_c.Con_DPrintf("Sending clc_disconnect\n");
             common_c.SZ_Clear(cls.message);
-            common_c.MSG_WriteByte(cls.message, clc_disconnect);
-            NET_SendUnreliableMessage(cls.netcon, cls.message);
+            common_c.MSG_WriteByte(cls.message, protocol_c.clc_disconnect);
+            net_main_c.NET_SendUnreliableMessage(cls.netcon, client_c.cls.message);
             common_c.SZ_Clear(cls.message);
-            NET_Close(cls.netcon);
+            net_main_c.NET_Close(cls.netcon);
 
             cls.state = client_c.cactive_t.ca_disconnected;
 
@@ -95,7 +95,7 @@ public unsafe class cl_main_c
         cls.signon = 0;
     }
 
-    public void CL_Disconnect_f()
+    public static void CL_Disconnect_f()
     {
         CL_Disconnect();
 
@@ -142,26 +142,26 @@ public unsafe class cl_main_c
         switch (cls.signon)
         {
             case 1:
-                common_c.MSG_WriteByte(cls.message, clc_stringcmd);
+                common_c.MSG_WriteByte(cls.message, protocol_c.clc_stringcmd);
                 common_c.MSG_WriteString(cls.message, *common_c.StringToChar("prespawn"));
                 break;
 
             case 2:
-                common_c.MSG_WriteByte(cls.message, clc_stringcmd);
+                common_c.MSG_WriteByte(cls.message, protocol_c.clc_stringcmd);
                 common_c.MSG_WriteString(cls.message, *common_c.StringToChar(common_c.va($"name \"{cl_name.str->ToString()}\"\n")));
 
-                common_c.MSG_WriteByte(cls.message, clc_stringcmd);
+                common_c.MSG_WriteByte(cls.message, protocol_c.clc_stringcmd);
                 common_c.MSG_WriteString(cls.message, *common_c.StringToChar(common_c.va($"color {(cl_color.value) >> 4} {(cl_color.value) & 15}\n")));
 
-                common_c.MSG_WriteByte(cls.message, clc_stringcmd);
+                common_c.MSG_WriteByte(cls.message, protocol_c.clc_stringcmd);
                 Console.WriteLine($"spawn {cls.spawnparms->ToString()}");
                 common_c.MSG_WriteString(cls.message, *common_c.StringToChar(str.ToString()));
                 break;
 
             case 3:
-                common_c.MSG_WriteByte(cls.message, clc_stringcmd);
+                common_c.MSG_WriteByte(cls.message, protocol_c.clc_stringcmd);
                 common_c.MSG_WriteString(cls.message, *common_c.StringToChar("begin"));
-                Cache_Report();
+                zone_c.Cache_Report();
                 break;
 
             case 4:
@@ -198,7 +198,7 @@ public unsafe class cl_main_c
         cls.demonum++;
     }
 
-    public void CL_PrintEntities_f()
+    public static void CL_PrintEntities_f()
     {
         render_c.entity_t* ent;
         int i;
@@ -217,33 +217,33 @@ public unsafe class cl_main_c
         }
     }
 
-    public void SetPal(int i)
+    public static void SetPal(int i)
     {
         int old = 0;
         byte[] pal = new byte[768];
         int c;
 
-        if (i == old) 
+        if (i == old)
         {
             return;
         }
 
         old = i;
 
-        if (i == 0) 
+        if (i == 0)
         {
-            VID_SetPalette(host_basepal);
+            vid_win_c.VID_SetPalette(host_c.host_basepal);
         }
-        else if (i == 1) 
+        else if (i == 1)
         {
-            for (c = 0; c < 768; c+=3) 
+            for (c = 0; c < 768; c += 3)
             {
                 pal[c] = 0;
-                pal[c+1] = 0;
-                pal[c+2] = 255;
+                pal[c + 1] = 0;
+                pal[c + 2] = 255;
             }
 
-            VID_SetPalette(pal);
+            vid_win_c.VID_SetPalette(pal);
         }
     }
 
@@ -280,7 +280,7 @@ public unsafe class cl_main_c
         }
 
         dl = &cl_dlights[0];
-        common_c.Q_memset(dl, 0, sizeof(client_c.dlight_t));
+        common_c.Q_memset(*dl, 0, sizeof(client_c.dlight_t));
         dl->key = key;
         return dl;
     }
@@ -311,7 +311,7 @@ public unsafe class cl_main_c
         }
     }
 
-    public float CL_LerpPoint()
+    public static float CL_LerpPoint()
     {
         float f, frac;
 
@@ -359,7 +359,7 @@ public unsafe class cl_main_c
         return frac;
     }
 
-    public void CL_RelinkEntities()
+    public static void CL_RelinkEntities()
     {
         render_c.entity_t* ent;
         int i, j;
@@ -457,26 +457,28 @@ public unsafe class cl_main_c
                 }
             }
 
-            if (ent->model->flags & EF_ROTATE)
+            if ((ent->model->flags & model_c.EF_ROTATE) != 0)
             {
                 ent->angles[1] = bobjrotate;
             }
 
-            if (ent->effects & EF_BRIGHTFIELD)
+            if ((ent->effects & server_c.EF_BRIGHTFIELD) != 0)
             {
                 R_EntityParticles(ent);
             }
 
 #if QUAKE2
-            if (ent->effects & EF_DARKFIELD) 
+            if ((ent->effects & server_c.EF_DARKFIELD) != 0) 
             {
                 R_DarkFieldParticles(ent);
             }
 #endif
 
-            if (ent->effects & EF_MUZZLEFLASH)
+            if ((ent->effects & server_c.EF_MUZZLEFLASH) != 0)
             {
                 Vector3 fv, rv, uv;
+
+                fv = rv = uv = new();
 
                 dl = CL_AllocDlight(i);
                 mathlib_c.VectorCopy(ent->origin, dl->origin);
@@ -484,16 +486,16 @@ public unsafe class cl_main_c
                 mathlib_c.AngleVectors(ent->angles, fv, rv, uv);
 
                 mathlib_c.VectorMA(dl->origin, 18, fv, dl->origin);
-                dl->radius = 200 + (rand() & 31);
+                dl->radius = 200 + (rand_c.rand() & 31);
                 dl->minlight = 32;
                 dl->die = (float)cl.time + 0.1f;
             }
 
-            if (ent->effects & EF_BRIGHTLIGHT)
+            if ((ent->effects & server_c.EF_BRIGHTLIGHT) != 0)
             {
                 dl = CL_AllocDlight(i);
                 mathlib_c.VectorCopy(ent->origin, dl->origin);
-                dl->radius = 200 + (rand() & 31);
+                dl->radius = 200 + (rand_c.rand() & 31);
                 dl->die = (float)cl.time + 0.001f;
             }
 
@@ -516,23 +518,23 @@ public unsafe class cl_main_c
             }
 #endif
 
-            if (ent->model->flags & EF_GIB != 0)
+            if ((ent->model->flags & model_c.EF_GIB) != 0)
             {
                 R_RocketTrail(oldorg, ent->origin, 2);
             }
-            else if (ent->model->flags & EF_ZOMGIB != 0)
+            else if ((ent->model->flags & model_c.EF_ZOMGIB) != 0)
             {
                 R_RocketTrail(oldorg, ent->origin, 4);
             }
-            else if (ent->model->flags & EF_TRACER != 0)
+            else if ((ent->model->flags & model_c.EF_TRACER) != 0)
             {
                 R_RocketTrail(oldorg, ent->origin, 3);
             }
-            else if (ent->model->flags & EF_TRACER2 != 0)
+            else if ((ent->model->flags & model_c.EF_TRACER2) != 0)
             {
                 R_RocketTrail(oldorg, ent->origin, 5);
             }
-            else if (ent->model->flags & EF_ROCKET != 0)
+            else if ((ent->model->flags & model_c.EF_ROCKET) != 0)
             {
                 R_RocketTrail(oldorg, ent->origin, 0);
                 dl = CL_AllocDlight(i);
@@ -540,11 +542,11 @@ public unsafe class cl_main_c
                 dl->radius = 200;
                 dl->die = (float)cl.time + 0.01f;
             }
-            else if (ent->model->flags & EF_GRENADE != 0)
+            else if ((ent->model->flags & model_c.EF_GRENADE) != 0)
             {
                 R_RocketTrail(oldorg, ent->origin, 1);
             }
-            else if (ent->model->flags & EF_TRACER3 != 0)
+            else if ((ent->model->flags & model_c.EF_TRACER3) != 0)
             {
                 R_RocketTrail(oldorg, ent->origin, 6);
             }
@@ -609,7 +611,7 @@ public unsafe class cl_main_c
 
     public static void CL_SendCmd()
     {
-        client_c.usercmd_t cmd;
+        client_c.usercmd_t cmd = new();
 
         if (cls.state != client_c.cactive_t.ca_connected)
         {
@@ -618,7 +620,7 @@ public unsafe class cl_main_c
 
         if (cls.signon == client_c.SIGNONS)
         {
-            CL_BaseMove(cmd);
+            cl_input_c.CL_BaseMove(cmd);
 
             IN_Move(cmd);
 
@@ -636,15 +638,15 @@ public unsafe class cl_main_c
             return;
         }
 
-        if (NET_CanSendMessage(cls.netcon) == 0)
+        if (net_main_c.NET_CanSendMessage(cls.netcon))
         {
             console_c.Con_DPrintf("CL_WriteToServer: can't send\n");
             return;
         }
 
-        if (NET_SendMessage(cls.netcon, cls.message) == -1)
+        if (net_main_c.NET_SendMessage(cls.netcon, cls.message) == -1)
         {
-            Host_Error("CL_WriteToServer: lost server connection");
+            host_c.Host_Error("CL_WriteToServer: lost server connection");
         }
 
         common_c.SZ_Clear(cls.message);
@@ -654,19 +656,19 @@ public unsafe class cl_main_c
     {
         common_c.SZ_Alloc(cls.message, 1024);
 
-        CL_InitInput();
-        CL_InitTEnts();
+        cl_input_c.CL_InitInput();
+        cl_tent_c.CL_InitTEnts();
 
         cvar_c.Cvar_RegisterVariable(cl_name);
         cvar_c.Cvar_RegisterVariable(cl_color);
-        cvar_c.Cvar_RegisterVariable(cl_upspeed);
-        cvar_c.Cvar_RegisterVariable(cl_forwardspeed);
-        cvar_c.Cvar_RegisterVariable(cl_backspeed);
-        cvar_c.Cvar_RegisterVariable(cl_sidespeed);
-        cvar_c.Cvar_RegisterVariable(cl_movespeedkey);
-        cvar_c.Cvar_RegisterVariable(cl_yawspeed);
-        cvar_c.Cvar_RegisterVariable(cl_pitchspeed);
-        cvar_c.Cvar_RegisterVariable(cl_anglespeedkey);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_upspeed);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_forwardspeed);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_backspeed);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_sidespeed);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_movespeedkey);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_yawspeed);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_pitchspeed);
+        cvar_c.Cvar_RegisterVariable(cl_input_c.cl_anglespeedkey);
         cvar_c.Cvar_RegisterVariable(cl_shownet);
         cvar_c.Cvar_RegisterVariable(cl_nolerp);
         cvar_c.Cvar_RegisterVariable(lookspring);
@@ -680,9 +682,9 @@ public unsafe class cl_main_c
 
         cmd_c.Cmd_AddCommand("entities", CL_PrintEntities_f);
         cmd_c.Cmd_AddCommand("disconnect", CL_Disconnect_f);
-        cmd_c.Cmd_AddCommand("record", CL_Record_f);
-        cmd_c.Cmd_AddCommand("stop", CL_Stop_f);
-        cmd_c.Cmd_AddCommand("playdemo", CL_PlayDemo_f);
-        cmd_c.Cmd_AddCommand("timedemo", CL_TimeDemo_f);
+        cmd_c.Cmd_AddCommand("record", cl_demo_c.CL_Record_f);
+        cmd_c.Cmd_AddCommand("stop", cl_demo_c.CL_Stop_f);
+        cmd_c.Cmd_AddCommand("playdemo", cl_demo_c.CL_PlayDemo_f);
+        cmd_c.Cmd_AddCommand("timedemo", cl_demo_c.CL_TimeDemo_f);
     }
 }
