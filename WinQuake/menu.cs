@@ -2167,7 +2167,7 @@ public unsafe class menu_c
             case keys_c.K_BACKSPACE:
                 if (serialConfig_cursor == 4)
                 {
-                    if (common_c.Q_strlen(serialConfig_phone))
+                    if (common_c.Q_strlen(serialConfig_phone) != 0)
                     {
                         serialConfig_phone[common_c.Q_strlen(serialConfig_phone) - 1] = (char)0;
                     }

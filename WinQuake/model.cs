@@ -138,7 +138,7 @@ public unsafe class model_c
 
     public struct mspriteframedesc_t
     {
-        public spritegn_c.spriteframetype_t type;
+        public spritegen_c.spriteframetype_t type;
         public mspriteframe_t* frameptr;
     }
 
@@ -277,14 +277,14 @@ public unsafe class model_c
         public zone_c.cache_user_t cache;
     }
 
-    public model_t* loadmodel;
+    public static model_t* loadmodel;
     public static char[] loadname = new char[32];
 
-    public byte* mod_novis;
+    public static byte* mod_novis;
 
     public const int MAX_MOD_KNOWN = 256;
-    public model_t* mod_known;
-    public int mod_numknown;
+    public static model_t* mod_known;
+    public static int mod_numknown;
 
     public const int NL_PRESENT = 0;
     public const int NL_NEEDS_LOADED = 1;
@@ -337,7 +337,7 @@ public unsafe class model_c
             }
 
             plane = node->plane;
-            d = mathlib_c.DotProduct_V(p, plane->normal) - plane->dist;
+            d = mathlib_c.DotProduct(p, plane->normal) - plane->dist;
 
             if (d > 0)
             {
@@ -352,7 +352,7 @@ public unsafe class model_c
         return null;
     }
 
-    public byte* Mod_DecompressVis(byte* input, model_t* model)
+    public static byte* Mod_DecompressVis(byte* input, model_t* model)
     {
         byte* decompressed = null;
         int c;
@@ -433,7 +433,7 @@ public unsafe class model_c
 
         for (i = 0, mod = mod_known; i < mod_numknown; i++, mod++)
         {
-            if (!common_c.Q_strcmp(mod->name.ToString(), name->ToString()))
+            if (!common_c.Q_strcmp(mod->name->ToString(), name->ToString()))
             {
                 break;
             }
@@ -473,14 +473,14 @@ public unsafe class model_c
                 mod_numknown++;
             }
 
-            common_c.Q_strcpy(mod->name.ToString(), name->ToString());
+            common_c.Q_strcpy(mod->name->ToString(), name->ToString());
             mod->needload = NL_NEEDS_LOADED == 0 ? false : true;
         }
 
         return mod;
     }
 
-    public void Mod_TouchModel(char* name)
+    public static void Mod_TouchModel(char* name)
     {
         model_t* mod;
 
@@ -566,7 +566,7 @@ public unsafe class model_c
         return Mod_ForName(common_c.StringToChar(name), crash);
     }
 
-    public byte* mod_base;
+    public static byte* mod_base;
 
     public void Mod_LoadTextures(bspfile_c.lump_t* l)
     {
@@ -815,7 +815,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dvertex_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dvertex_t);
@@ -842,7 +842,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dmodel_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dmodel_t);
@@ -881,7 +881,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dedge_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dedge_t);
@@ -909,7 +909,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.texinfo_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.texinfo_t);
@@ -925,8 +925,8 @@ public unsafe class model_c
                 output->vecs[0][j] = common_c.LittleFloat(input->vecs[0][j]);
             }
 
-            len1 = mathlib_c.Length_F(output->vecs[0]);
-            len2 = mathlib_c.Length_F(output->vecs[1]);
+            len1 = mathlib_c.Length(output->vecs[0]);
+            len2 = mathlib_c.Length(output->vecs[1]);
             len1 = (len1 + len2) / 2;
 
             if (len1 < 0.32f)
@@ -1042,7 +1042,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dface_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dface_t);
@@ -1131,7 +1131,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dnode_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dnode_t);
@@ -1164,7 +1164,7 @@ public unsafe class model_c
                 }
                 else
                 {
-                    output->children[j] = (loadmodel->leafs + (-1 - p));
+                    output->children[j] = loadmodel->leafs + (-1 - p);
                 }
             }
         }
@@ -1182,7 +1182,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dleaf_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dleaf_t);
@@ -1235,7 +1235,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dclipnode_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dclipnode_t);
@@ -1276,7 +1276,7 @@ public unsafe class model_c
         }
     }
 
-    public void Mod_MakeHull0()
+    public static void Mod_MakeHull0()
     {
         mnode_t* input, child;
         bspfile_c.dclipnode_t* output;
@@ -1296,7 +1296,7 @@ public unsafe class model_c
 
         for (i = 0; i < count; i++, output++, input++)
         {
-            output->planenum = input->plane - loadmodel->planes;
+            output->planenum = (int)(input->plane - loadmodel->planes);
 
             for (j = 0; j < 2; j++)
             {
@@ -1308,7 +1308,7 @@ public unsafe class model_c
                 }
                 else
                 {
-                    output->children[j] = child - loadmodel->nodes;
+                    output->children[j] = (short)(child - loadmodel->nodes);
                 }
             }
         }
@@ -1324,7 +1324,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(short*)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(short*);
@@ -1355,7 +1355,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(int*)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(int*);
@@ -1382,7 +1382,7 @@ public unsafe class model_c
 
         if ((l->filelen % sizeof(bspfile_c.dplane_t)) != 0)
         {
-            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {loadmodel->name}");
+            sys_win_c.Sys_Error($"MOD_LoadBmodel: funny lump size in {*loadmodel->name}");
         }
 
         count = l->filelen / sizeof(bspfile_c.dplane_t);
@@ -1411,7 +1411,7 @@ public unsafe class model_c
         }
     }
 
-    public float RadiusFromBounds(Vector3 mins, Vector3 maxs)
+    public static float RadiusFromBounds(Vector3 mins, Vector3 maxs)
     {
         int i;
         Vector3 corner = new Vector3(0f);
@@ -1424,7 +1424,7 @@ public unsafe class model_c
         return mathlib_c.Length(corner);
     }
 
-    public void Mod_LoadBrushModel(model_t* mod, void* buffer)
+    public static void Mod_LoadBrushModel(model_t* mod, void* buffer)
     {
         int i, j;
         bspfile_c.dheader_t* header;
@@ -1438,7 +1438,7 @@ public unsafe class model_c
 
         if (i != bspfile_c.BSPVERSION)
         {
-            sys_win_c.Sys_Error($"Mod_LoadBrushModel: {mod->name} has wrong version number ({i} should be {bspfile_c.BSPVERSION})");
+            sys_win_c.Sys_Error($"Mod_LoadBrushModel: {*mod->name} has wrong version number ({i} should be {bspfile_c.BSPVERSION})");
         }
 
         mod_base = (byte*)header;
@@ -1448,21 +1448,21 @@ public unsafe class model_c
             ((int*)header)[i] = common_c.LittleLong(((int*)header)[i]);
         }
 
-        Mod_LoadVertexes(&header->lumps[bspfile_c.LUMP_VERTEXES]);
-        Mod_LoadEdges(&header->lumps[bspfile_c.LUMP_EDGES]);
-        Mod_LoadSurfedges(&header->lumps[bspfile_c.LUMP_SURFEDGES]);
-        Mod_LoadTextures(&header->lumps[bspfile_c.LUMP_TEXTURES]);
-        Mod_LoadLighting(&header->lumps[bspfile_c.LUMP_LIGHTING]);
-        Mod_LoadPlanes(&header->lumps[bspfile_c.LUMP_PLANES]);
-        Mod_LoadTexInfo(&header->lumps[bspfile_c.LUMP_TEXINFO]);
-        Mod_LoadFaces(&header->lumps[bspfile_c.LUMP_FACES]);
-        Mod_LoadMarksurfaces(&header->lumps[bspfile_c.LUMP_MARKSURFACES]);
-        Mod_LoadVisibility(&header->lumps[bspfile_c.LUMP_VISIBILITY]);
-        Mod_LoadLeafs(&header->lumps[bspfile_c.LUMP_LEAFS]);
-        Mod_LoadNodes(&header->lumps[bspfile_c.LUMP_NODES]);
-        Mod_LoadClipNodes(&header->lumps[bspfile_c.LUMP_CLIPNODES]);
-        Mod_LoadEntities(&header->lumps[bspfile_c.LUMP_ENTITIES]);
-        Mod_LoadSubModels(&header->lumps[bspfile_c.LUMP_MODELS]);
+        Mod_LoadVertexes(header->lumps[bspfile_c.LUMP_VERTEXES]);
+        Mod_LoadEdges(header->lumps[bspfile_c.LUMP_EDGES]);
+        Mod_LoadSurfedges(header->lumps[bspfile_c.LUMP_SURFEDGES]);
+        Mod_LoadTextures(header->lumps[bspfile_c.LUMP_TEXTURES]);
+        Mod_LoadLighting(header->lumps[bspfile_c.LUMP_LIGHTING]);
+        Mod_LoadPlanes(header->lumps[bspfile_c.LUMP_PLANES]);
+        Mod_LoadTexInfo(header->lumps[bspfile_c.LUMP_TEXINFO]);
+        Mod_LoadFaces(header->lumps[bspfile_c.LUMP_FACES]);
+        Mod_LoadMarksurfaces(header->lumps[bspfile_c.LUMP_MARKSURFACES]);
+        Mod_LoadVisibility(header->lumps[bspfile_c.LUMP_VISIBILITY]);
+        Mod_LoadLeafs(header->lumps[bspfile_c.LUMP_LEAFS]);
+        Mod_LoadNodes(header->lumps[bspfile_c.LUMP_NODES]);
+        Mod_LoadClipNodes(header->lumps[bspfile_c.LUMP_CLIPNODES]);
+        Mod_LoadEntities(header->lumps[bspfile_c.LUMP_ENTITIES]);
+        Mod_LoadSubModels(header->lumps[bspfile_c.LUMP_MODELS]);
 
         Mod_MakeHull0();
 
@@ -1497,7 +1497,7 @@ public unsafe class model_c
                 Console.WriteLine(name->ToString(), $"{i + 1}");
                 loadmodel = Mod_FindName(name);
                 *loadmodel = *mod;
-                common_c.Q_strcpy(loadmodel->name.ToString(), name->ToString());
+                common_c.Q_strcpy(loadmodel->name->ToString(), name->ToString());
                 mod = loadmodel;
             }
         }
@@ -1589,7 +1589,7 @@ public unsafe class model_c
 
         for (i = 0; i < numframes; i++)
         {
-            ptemp = Mod_LoadAliasFrame(ptemp, paliasgroup->frames[i].frame, numv, &paliasgroup->frames[i].bboxmin, &paliasgroup->frames[i].bboxmax, pheader, name);
+            ptemp = Mod_LoadAliasFrame(ptemp, paliasgroup->frames[i].frame, numv, paliasgroup->frames[i].bboxmin, paliasgroup->frames[i].bboxmax, pheader, name);
         }
 
         return ptemp;
@@ -1615,7 +1615,7 @@ public unsafe class model_c
 
             for (i = 0; i < skinsize; i++)
             {
-                pusskin[i] = vid_win_c.d_8to16table[pinskin[i]];
+                pusskin[i] = vid_c.d_8to16table[pinskin[i]];
             }
         }
         else
@@ -1676,7 +1676,7 @@ public unsafe class model_c
         return ptemp;
     }
 
-    public void Mod_LoadAliasModel(model_t* mod, void* buffer)
+    public static void Mod_LoadAliasModel(model_t* mod, void* buffer)
     {
         int i;
         modelgen_c.mdl_t* pmodel, pinmodel;

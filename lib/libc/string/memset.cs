@@ -21,7 +21,7 @@ public unsafe class memset_c
 
             for (; len > 0; len--)
             {
-                *xs++ = c;
+                *xs++ = (char)c;
             }
 
             for (len = count / sizeof(IntPtr); len > 0; len--)
@@ -35,7 +35,7 @@ public unsafe class memset_c
 
         for (; count > 0; count--)
         {
-            *xs++ = c;
+            *xs++ = (char)c;
         }
 
         return s;

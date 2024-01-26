@@ -195,7 +195,7 @@ public unsafe class r_main_c
         D_Init();
     }
 
-    public void R_NewMap()
+    public static void R_NewMap()
     {
         int i;
 

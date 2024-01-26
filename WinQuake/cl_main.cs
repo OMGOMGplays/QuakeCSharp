@@ -133,7 +133,7 @@ public unsafe class cl_main_c
         cls.signon = 0;
     }
 
-    public void CL_SignonReply()
+    public static void CL_SignonReply()
     {
         char[] str = new char[8192];
 

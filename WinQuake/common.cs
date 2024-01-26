@@ -29,7 +29,7 @@ public unsafe class common_c
 	public static char* com_argv;
 
 	public const int CMDLINE_LENGTH = 256;
-	string[] cmd_cmdline = new string[CMDLINE_LENGTH];
+	public static string[] cmd_cmdline = new string[CMDLINE_LENGTH];
 
 	public static bool standard_quake = true, rogue, hipnotic;
 

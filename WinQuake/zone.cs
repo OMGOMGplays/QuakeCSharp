@@ -250,7 +250,7 @@ public unsafe class zone_c
 	public static bool hunk_tempactive;
 	public static int hunk_tempmark;
 
-	public void Hunk_Check()
+	public static void Hunk_Check()
 	{
 		hunk_t* h;
 
