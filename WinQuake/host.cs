@@ -77,6 +77,11 @@ public unsafe class host_c
         }
     }
 
+    public static void Host_EndGame(string message, params object[] args)
+    {
+        Host_EndGame(common_c.StringToChar(message));
+    }
+
     public static void Host_Error(char* error, params object[] args)
     {
         char[] str = new char[1024];

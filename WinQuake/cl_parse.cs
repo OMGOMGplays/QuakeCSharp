@@ -599,7 +599,7 @@ public unsafe class cl_parse_c
             {
                 if ((i & (1 << j)) != 0 && (cl_main_c.cl.items & (1 << j)) != 0)
                 {
-                    cl_main_c.cl.item_gettime[j] = cl_main_c.cl.time;
+                    cl_main_c.cl.item_gettime[j] = (float)cl_main_c.cl.time;
                 }
             }
 
@@ -708,7 +708,7 @@ public unsafe class cl_parse_c
 
         dest = cl_main_c.cl.scores[slot].translations;
         source = vid_c.vid.colormap;
-        memcpy_c.memcpy(dest, vid_c.vid.colormap, sizeof(cl_main_c.cl.scores[slot].translations));
+        //memcpy_c.memcpy(dest, vid_c.vid.colormap, sizeof(cl_main_c.cl.scores[slot].translations)); // Lots of errors in one line...
         top = cl_main_c.cl.scores[slot].colors & 0xf0;
         bottom = (cl_main_c.cl.scores[slot].colors & 15) << 4;
 #if GLQUAKE
@@ -727,6 +727,357 @@ public unsafe class cl_parse_c
                 {
                     dest[render_c.TOP_RANGE + j] = source[top + 15 - j];
                 }
+            }
+
+            if (bottom < 128)
+            {
+                memcpy_c.memcpy((object*)(dest + render_c.BOTTOM_RANGE), (object*)(source + bottom), 16);
+            }
+            else
+            {
+                for (j = 0; j < 16; j++)
+                {
+                    dest[render_c.BOTTOM_RANGE + j] = source[bottom + 15 - j];
+                }
+            }
+        }
+    }
+
+    public static void CL_ParseStatic()
+    {
+        render_c.entity_t* ent;
+        int i;
+
+        i = cl_main_c.cl.num_statics;
+
+        if (i >= client_c.MAX_STATIC_ENTITIES)
+        {
+            host_c.Host_Error("Too many static entities");
+        }
+
+        ent = &client_c.cl_static_entities[i];
+        cl_main_c.cl.num_statics++;
+        CL_ParseBaseLine(ent);
+
+        ent->model = cl_main_c.cl.model_precache[ent->baseline.modelindex];
+        ent->frame = ent->baseline.frame;
+        ent->colormap = vid_c.vid.colormap;
+        ent->skinnum = ent->baseline.skin;
+        ent->effects = ent->baseline.effects;
+
+        mathlib_c.VectorCopy(ent->baseline.origin, ent->origin);
+        mathlib_c.VectorCopy(ent->baseline.angles, ent->angles);
+        r_efrag_c.R_AddEfrags(ent);
+    }
+
+    public static void CL_ParseStaticSound()
+    {
+        Vector3 org = new();
+        int sound_num, vol, atten;
+        int i;
+
+        for (i = 0; i < 3; i++)
+        {
+            org[i] = common_c.MSG_ReadCoord();
+        }
+
+        sound_num = common_c.MSG_ReadByte();
+        vol = common_c.MSG_ReadByte();
+        atten = common_c.MSG_ReadByte();
+
+        snd_dma_c.S_StaticSound(cl_main_c.cl.sound_precache[sound_num], org, vol, atten);
+    }
+
+    public static void SHOWNET(char* x)
+    {
+        if (cl_main_c.cl_shownet.value == 2)
+        {
+            console_c.Con_Printf($"{common_c.msg_readcount - 1}:{*x}\n");
+        }
+    }
+
+    public static void SHOWNET(string x)
+    {
+        SHOWNET(common_c.StringToChar(x));
+    }
+
+    public static void CL_ParseServerMessage()
+    {
+        int cmd;
+        int i;
+
+        if (cl_main_c.cl_shownet.value == 1)
+        {
+            console_c.Con_Printf($"{net_c.net_message.cursize} ");
+        }
+        else if (cl_main_c.cl_shownet.value == 2)
+        {
+            console_c.Con_Printf("------------------\n");
+        }
+
+        cl_main_c.cl.onground = false;
+
+        common_c.MSG_BeginReading();
+
+        while (true)
+        {
+            if (common_c.msg_badread)
+            {
+                host_c.Host_Error("CL_ParseServerMessage: Bad server message");
+            }
+
+            cmd = common_c.MSG_ReadByte();
+
+            if (cmd == -1)
+            {
+                SHOWNET("END OF MESSAGE");
+                return;
+            }
+
+            if ((cmd & 128) != 0)
+            {
+                SHOWNET("fast update");
+                CL_ParseUpdate(cmd & 127);
+                continue;
+            }
+
+            SHOWNET(svc_strings[cmd]);
+
+            switch (cmd)
+            {
+                default:
+                    host_c.Host_Error("CL_ParseServerMessage: Illegible server message\n");
+                    break;
+
+                case protocol_c.svc_nop:
+                    break;
+
+                case protocol_c.svc_time:
+                    cl_main_c.cl.mtime[1] = cl_main_c.cl.mtime[0];
+                    cl_main_c.cl.mtime[0] = common_c.MSG_ReadFloat();
+                    break;
+
+                case protocol_c.svc_clientdata:
+                    i = common_c.MSG_ReadShort();
+                    CL_ParseClientdata(i);
+                    break;
+
+                case protocol_c.svc_version:
+                    i = common_c.MSG_ReadLong();
+
+                    if (i != protocol_c.PROTOCOL_VERSION)
+                    {
+                        host_c.Host_Error($"CL_ParseServerMessage: Server is protocol {i} instead of {protocol_c.PROTOCOL_VERSION}\n");
+                    }
+
+                    break;
+
+                case protocol_c.svc_disconnect:
+                    host_c.Host_EndGame("Server disconnected\n");
+                    break;
+
+                case protocol_c.svc_print:
+                    console_c.Con_Printf($"{*common_c.MSG_ReadString()}");
+                    break;
+
+                case protocol_c.svc_centerprint:
+                    screen_c.SCR_CenterPrint(common_c.MSG_ReadString());
+                    break;
+
+                case protocol_c.svc_stufftext:
+                    cmd_c.Cbuf_AddText(common_c.MSG_ReadString());
+                    break;
+
+                case protocol_c.svc_damage:
+                    view_c.V_ParseDamage();
+                    break;
+
+                case protocol_c.svc_serverinfo:
+                    CL_ParseServerInfo();
+                    vid_c.vid.recalc_refdef = 1;
+                    break;
+
+                case protocol_c.svc_setangle:
+                    for (i = 0; i < 3; i++)
+                    {
+                        cl_main_c.cl.viewangles[i] = common_c.MSG_ReadAngle();
+                    }
+
+                    break;
+
+                case protocol_c.svc_setview:
+                    cl_main_c.cl.viewentity = common_c.MSG_ReadShort();
+                    break;
+
+                case protocol_c.svc_lightstyle:
+                    i = common_c.MSG_ReadByte();
+
+                    if (i >= quakedef_c.MAX_LIGHTSTYLES)
+                    {
+                        sys_win_c.Sys_Error("svc_lightstyle > MAX_LIGHTSTYLES");
+                    }
+
+                    common_c.Q_strcpy(cl_main_c.cl_lightstyle[i].map->ToString(), common_c.MSG_ReadString()->ToString());
+                    cl_main_c.cl_lightstyle[i].length = common_c.Q_strlen(cl_main_c.cl_lightstyle[i].map);
+                    break;
+
+                case protocol_c.svc_sound:
+                    CL_ParseStartSoundPacket();
+                    break;
+
+                case protocol_c.svc_stopsound:
+                    i = common_c.MSG_ReadShort();
+                    snd_dma_c.S_StopSound(i >> 3, i & 7);
+                    break;
+
+                case protocol_c.svc_updatename:
+                    sbar_c.Sbar_Changed();
+                    i = common_c.MSG_ReadByte();
+
+                    if (i >= cl_main_c.cl.maxclients)
+                    {
+                        host_c.Host_Error("CL_ParseServerMessage: svc_updatename > MAX_SCOREBOARD");
+                    }
+
+                    strcpy_c.strcpy(cl_main_c.cl.scores[i].name, common_c.MSG_ReadString());
+                    break;
+
+                case protocol_c.svc_updatefrags:
+                    sbar_c.Sbar_Changed();
+                    i = common_c.MSG_ReadByte();
+
+                    if (i >= cl_main_c.cl.maxclients)
+                    {
+                        host_c.Host_Error("CL_ParseServerMessage: svc_updatefrags > MAX_SCOREBOARD");
+                    }
+
+                    cl_main_c.cl.scores[i].frags = common_c.MSG_ReadShort();
+                    break;
+
+                case protocol_c.svc_updatecolors:
+                    sbar_c.Sbar_Changed();
+                    i = common_c.MSG_ReadByte();
+
+                    if (i >= cl_main_c.cl.maxclients)
+                    {
+                        host_c.Host_Error("CL_ParseServerMessage: svc_updatecolors > MAX_SCOREBOARD");
+                    }
+
+                    cl_main_c.cl.scores[i].colors = common_c.MSG_ReadByte();
+                    CL_NewTranslation(i);
+                    break;
+
+                case protocol_c.svc_particle:
+                    r_part_c.R_ParseParticleEffect();
+                    break;
+
+                case protocol_c.svc_spawnbaseline:
+                    i = common_c.MSG_ReadShort();
+                    CL_ParseBaseLine(CL_EntityNum(i));
+                    break;
+
+                case protocol_c.svc_spawnstatic:
+                    CL_ParseStatic();
+                    break;
+
+                case protocol_c.svc_temp_entity:
+                    cl_tent_c.CL_ParseTEnt();
+                    break;
+
+                case protocol_c.svc_setpause:
+                    {
+                        cl_main_c.cl.paused = common_c.MSG_ReadByte() == 0 ? false : true;
+
+                        if (cl_main_c.cl.paused)
+                        {
+                            cd_audio_c.CDAudio_Pause();
+#if _WIN32
+                            vid_win_c.VID_HandlePause(true);
+#endif
+                        }
+                        else
+                        {
+                            cd_audio_c.CDAudio_Resume();
+#if _WIN32
+                            vid_win_c.VID_HandlePause(false);
+#endif
+                        }
+                    }
+                    break;
+
+                case protocol_c.svc_signonnum:
+                    i = common_c.MSG_ReadByte();
+
+                    if (i <= cl_main_c.cls.signon)
+                    {
+                        host_c.Host_Error($"Received signon {i} when at {cl_main_c.cls.signon}");
+                    }
+
+                    cl_main_c.cls.signon = i;
+                    cl_main_c.CL_SignonReply();
+                    break;
+
+                case protocol_c.svc_killedmonster:
+                    cl_main_c.cl.stats[quakedef_c.STAT_MONSTERS]++;
+                    break;
+
+                case protocol_c.svc_foundsecret:
+                    cl_main_c.cl.stats[quakedef_c.STAT_SECRETS]++;
+                    break;
+
+                case protocol_c.svc_updatestat:
+                    i = common_c.MSG_ReadByte();
+
+                    if (i < 0 || i >= quakedef_c.MAX_CL_STATS)
+                    {
+                        sys_win_c.Sys_Error($"svc_updatestat: {i} is invalid");
+                    }
+
+                    cl_main_c.cl.stats[i] = common_c.MSG_ReadLong();
+                    break;
+
+                case protocol_c.svc_spawnstaticsound:
+                    CL_ParseStaticSound();
+                    break;
+
+                case protocol_c.svc_cdtrack:
+                    cl_main_c.cl.cdtrack = common_c.MSG_ReadByte();
+                    cl_main_c.cl.looptrack = common_c.MSG_ReadByte();
+
+                    if ((cl_main_c.cls.demoplayback || cl_main_c.cls.demorecording) && cl_main_c.cls.forcetrack != -1)
+                    {
+                        cd_audio_c.CDAudio_Play((byte)cl_main_c.cls.forcetrack, true);
+                    }
+                    else
+                    {
+                        cd_audio_c.CDAudio_Play((byte)cl_main_c.cl.cdtrack, true);
+                    }
+
+                    break;
+
+                case protocol_c.svc_intermission:
+                    cl_main_c.cl.intermission = 1;
+                    cl_main_c.cl.completed_time = (int)cl_main_c.cl.time;
+                    vid_c.vid.recalc_refdef = 1;
+                    break;
+
+                case protocol_c.svc_finale:
+                    cl_main_c.cl.intermission = 2;
+                    cl_main_c.cl.completed_time = (int)cl_main_c.cl.time;
+                    vid_c.vid.recalc_refdef = 1;
+                    screen_c.SCR_CenterPrint(common_c.MSG_ReadString());
+                    break;
+
+                case protocol_c.svc_cutscene:
+                    cl_main_c.cl.intermission = 3;
+                    cl_main_c.cl.completed_time = (int)cl_main_c.cl.time;
+                    vid_c.vid.recalc_refdef = 1;
+                    screen_c.SCR_CenterPrint(common_c.MSG_ReadString());
+                    break;
+
+                case protocol_c.svc_sellscreen:
+                    cmd_c.Cmd_ExecuteString("help", cmd_c.cmd_source_t.src_command);
+                    break;
             }
         }
     }

@@ -217,7 +217,7 @@ public unsafe class client_c
 
     public render_c.efrag_t[] cl_efrags = new render_c.efrag_t[MAX_EFRAGS];
     public static render_c.entity_t[] cl_entities = new render_c.entity_t[quakedef_c.MAX_EDICTS];
-    public render_c.entity_t[] cl_static_entities = new render_c.entity_t[MAX_STATIC_ENTITIES];
+    public static render_c.entity_t* cl_static_entities;
     public lightstyle_t[] cl_lightstyle = new lightstyle_t[quakedef_c.MAX_LIGHTSTYLES];
     public dlight_t[] cl_dlights = new dlight_t[MAX_DLIGHTS];
     public render_c.entity_t[] cl_temp_entities = new render_c.entity_t[MAX_TEMP_ENTITIES];

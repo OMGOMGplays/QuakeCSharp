@@ -2,8 +2,6 @@
 
 public unsafe class errno_c
 {
-#pragma once
-
     public const int EPERM = 1;
     public const int ENOENT = 2;
     public const int ESRCH = 3;

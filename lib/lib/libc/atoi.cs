@@ -26,7 +26,7 @@ public unsafe class atoi_c
     {
         if (LONG_IS_INT == 0)
         {
-            return 0;
+            //return 0;
         }
         else
         {
@@ -38,11 +38,11 @@ public unsafe class atoi_c
     {
         if (LONG_IS_INT == 0)
         {
-            return 0;
+            //return 0;
         }
         else
         {
-            return atoul(num);
+            return (uint)atoul(num);
         }
     }
 
@@ -55,7 +55,7 @@ public unsafe class atoi_c
         {
             num += 2;
 
-            while (*num != 0 && isxdigit(*num))
+            while (*num != 0 && ctype_c.isxdigit(*num))
             {
                 value = value * 16 + hexval(*num++);
             }
@@ -68,7 +68,7 @@ public unsafe class atoi_c
                 num++;
             }
 
-            while (*num != 0 && isdigit(*num))
+            while (*num != 0 && ctype_c.isdigit(*num))
             {
                 value = value * 10 + *num++ - '0';
             }
@@ -90,14 +90,14 @@ public unsafe class atoi_c
         {
             num += 2;
 
-            while (*num != 0 && isxdigit(*num))
+            while (*num != 0 && ctype_c.isxdigit(*num))
             {
                 value = value * 16 + (ulong)hexval(*num++);
             }
         }
         else
         {
-            while (*num != 0 && isdigit(*num))
+            while (*num != 0 && ctype_c.isdigit(*num))
             {
                 value = value * 10 + *num++ - '0';
             }
@@ -105,6 +105,4 @@ public unsafe class atoi_c
 
         return value;
     }
-
-
 }

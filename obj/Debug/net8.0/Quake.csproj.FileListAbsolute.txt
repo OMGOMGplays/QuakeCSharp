@@ -1,0 +1,3 @@
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\obj\Debug\net8.0\Quake.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\obj\Debug\net8.0\Quake.csproj.CoreCompileInputs.cache
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\obj\Debug\net8.0\Quake.sourcelink.json

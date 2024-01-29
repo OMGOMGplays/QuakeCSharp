@@ -81,10 +81,10 @@ public unsafe class cl_tent_c
 		console_c.Con_Printf("beam list overflow!\n");
 	}
 
-	public void CL_ParseTEnt()
+	public static void CL_ParseTEnt()
 	{
 		int type;
-		Vector3 pos = new Vector3(0);
+		Vector3 pos = new();
 #if QUAKE2
 		Vector3 endpos;
 #endif
@@ -140,7 +140,7 @@ public unsafe class cl_tent_c
 				pos[2] = common_c.MSG_ReadCoord();
 				R_RunParticleEffect(pos, mathlib_c.vec3_origin, 0, 20);
 
-				if ((rand_c.() % 5) != 0)
+				if ((rand_c.rand() % 5) != 0)
 				{
 					S_StartSound(-1, 0, cl_sfx_tink1, pos, 1, 1);
 				}

@@ -49,7 +49,7 @@ public unsafe class screen_c
 	public static int scr_erase_lines;
 	public static int scr_erase_center;
 
-	public void SCR_CenterPrint(char* str)
+	public static void SCR_CenterPrint(char* str)
 	{
 		common_c.Q_strncpy(scr_centerstring->ToCharArray(), str->ToString().ToCharArray(), 1023);
 		scr_centertime_off = scr_centertime.value;

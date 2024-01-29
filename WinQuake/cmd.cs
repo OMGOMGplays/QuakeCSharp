@@ -533,6 +533,11 @@ public unsafe class cmd_c
         }
     }
 
+    public static void Cmd_ExecuteString(string text, cmd_source_t src)
+    {
+        Cmd_ExecuteString(common_c.StringToChar(text), src);
+    }
+
     public static void Cmd_ForwardToServer()
     {
         if (client_c.cls.state != client_c.cactive_t.ca_connected)

@@ -2,14 +2,14 @@
 
 public unsafe class d_local_c
 {
-    public static int SCANBUFFERPAD = 0x1000;
+    public const int SCANBUFFERPAD = 0x1000;
 
-    public static int R_SKY_SMASK = 0x007F0000;
-    public static int R_SKY_TMASK = 0x007F0000;
+    public const int R_SKY_SMASK = 0x007F0000;
+    public const int R_SKY_TMASK = 0x007F0000;
 
-    public static int DS_SPAN_LIST_END = -128;
+    public const int DS_SPAN_LIST_END = -128;
 
-    public static int SURFCACHE_SIZE_AT_320X200 = 600 * 1024;
+    public const int SURFCACHE_SIZE_AT_320X200 = 600 * 1024;
 
     public struct surfcache_t
     {
@@ -30,39 +30,35 @@ public unsafe class d_local_c
         public int u, v, count;
     }
 
-    public cvar_c.cvar_t d_subdiv16;
+    public static cvar_c.cvar_t d_subdiv16;
 
-    public float scale_for_mip;
+    public static float scale_for_mip;
 
-    public bool d_roverwrapped;
-    public surfcache_t* sc_rover;
-    public surfcache_t* d_initial_rover;
+    public static bool d_roverwrapped;
+    public static surfcache_t* sc_rover;
+    public static surfcache_t* d_initial_rover;
 
-    public float d_sdivzstepu, d_tdivzstepu, d_zistepu;
-    public float d_sdivzstepv, d_tdivzstepv, d_zistepv;
-    public float d_sdivzorigin, d_tdivzorigin, d_ziorigin;
+    public static float d_sdivzstepu, d_tdivzstepu, d_zistepu;
+    public static float d_sdivzstepv, d_tdivzstepv, d_zistepv;
+    public static float d_sdivzorigin, d_tdivzorigin, d_ziorigin;
 
-    public int sadjust, tadjust;
-    public int bbextents, bbextentt;
+    public static int sadjust, tadjust;
+    public static int bbextents, bbextentt;
 
-    public delegate void* prealspandrawer();
+    public static short* d_pzbuffer;
+    public static uint d_zrowbytes, d_zwidth;
 
-    public short* d_pzbuffer;
-    public uint d_zrowbytes, d_zwidth;
+    public static int* d_pscantable;
+    public static int[] d_scantable = new int[r_shared_c.MAXHEIGHT];
 
-    public int* d_pscantable;
-    public int[] d_scantable = new int[r_shared_c.MAXHEIGHT];
+    public static int d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
 
-    public int d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
+    public static int d_y_aspect_shift, d_pix_min, d_pix_max, d_pix_shift;
 
-    public int d_y_aspect_shift, d_pix_min, d_pix_max, d_pix_shift;
+    public static byte* d_viewbuffer;
 
-    public vid_c.pixel_t* d_viewbuffer;
+    public static short* zspantable;
 
-    public short* zspantable;
-
-    public int d_minmip;
+    public static int d_minmip;
     public float[] d_scalemip = new float[3];
-
-    public delegate void* d_drawspans(r_shared_c.espan_t* pspan);
 }
