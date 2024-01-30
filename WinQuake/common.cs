@@ -172,6 +172,11 @@ public unsafe class common_c
 		dest = null;
 	}
 
+	public static void Q_strcpy(char* dest, char* src)
+	{
+		Q_strcpy(dest->ToString(), src->ToString());
+	}
+
 	public static void Q_strncpy(char[] dest, char[] src, int count)
 	{
 		int i = 0;
@@ -221,10 +226,20 @@ public unsafe class common_c
 		return null;
 	}
 
+	public static string Q_strrchr(char* s, char c)
+	{
+		return Q_strrchr(s->ToString(), c);
+	}
+
 	public static void Q_strcat(string dest, string src)
 	{
 		dest += Q_strlen(dest);
 		Q_strcpy(dest, src);
+	}
+
+	public static void Q_strcat(char* dest, string src)
+	{
+		Q_strcat(dest->ToString(), src);
 	}
 
 	public static void Q_strcat(char* dest, char* src)
