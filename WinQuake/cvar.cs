@@ -128,9 +128,9 @@ public unsafe class cvar_c
 
         if (var->value != 0 && changed)
         {
-            if (sv.active)
+            if (server_c.sv.active)
             {
-                SV_BroadcastPrintf($"\"{var->name}\" changed to \"{var->str}\"\n");
+                sv_main_c.SV_BroadcastPrintf($"\"{var->name}\" changed to \"{var->str}\"\n");
             }
         }
     }
