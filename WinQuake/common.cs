@@ -16,7 +16,9 @@ public unsafe class common_c
 
 	public static bool proghack;
 
-	static int static_registered = 1; // Only for startup check, then set
+	public static int static_registered = 1; // Only for startup check, then set
+
+	public static bool msg_surpress_1 = false;
 
 	//public void COM_InitFileSystem() { }
 
@@ -177,10 +179,15 @@ public unsafe class common_c
 		Q_strcpy(dest->ToString(), src->ToString());
 	}
 
+	public static void Q_strcpy(char* dest, string src)
+	{
+		Q_strcpy(dest->ToString(), src);
+	}
+
 	public static void Q_strncpy(char[] dest, char[] src, int count)
 	{
 		int i = 0;
-
+		
 		while (src[i] != '\0' && count > 0)
 		{
 			dest[i] = src[i];
@@ -304,6 +311,11 @@ public unsafe class common_c
 		return -1; // Also unreachable
 	}
 
+	public static int Q_strncmp(char* s1, string s2, int count)
+	{
+		return Q_strncmp(s1, StringToChar(s2), count);
+	}
+
 	public static int Q_strncasecmp(char* s1, string s2, int n)
 	{
 		int c1, c2;
@@ -424,6 +436,11 @@ public unsafe class common_c
 	}
 
 	public static int Q_atoi(char* str)
+	{
+		return Q_atoi(str->ToString());
+	}
+
+	public static int Q_atoi(char str)
 	{
 		return Q_atoi(str->ToString());
 	}

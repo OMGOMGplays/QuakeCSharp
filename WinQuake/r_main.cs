@@ -2,15 +2,15 @@
 
 public unsafe class r_main_c
 {
-    public void* colormap;
+    public static void* colormap;
     public static Vector3 viewlightvec;
     public alight_t r_viewlighting = new alight_t { 128, 192, viewlightvec };
-    public float r_time1;
+    public static float r_time1;
     public static int r_numallocatededges;
     public static bool r_drawpolys;
     public static bool r_drawculledpolys;
     public static bool r_worldpolysbacktofront;
-    public bool r_recursiveaffinetriangles = true;
+    public static bool r_recursiveaffinetriangles = true;
     public static int r_pixbytes = 1;
     public static float r_aliasuvscale = 1.0f;
     public static int r_outofsurfaces;
@@ -22,20 +22,20 @@ public unsafe class r_main_c
     public static btofpoly_t* pbtofpolys;
     public static model_c.mvertex_t* r_pcurrentvertbase;
 
-    public int c_surf;
-    public int r_maxsurfsseen, r_maxedgesseen, r_cnumsurfs;
-    public bool r_surfsonstack;
+    public static int c_surf;
+    public static int r_maxsurfsseen, r_maxedgesseen, r_cnumsurfs;
+    public static bool r_surfsonstack;
     public static int r_clipflags;
 
-    public byte* r_warpbuffer;
+    public static byte* r_warpbuffer;
 
-    public byte* r_stack_start;
+    public static byte* r_stack_start;
 
-    public bool r_fov_greater_than_90;
+    public static bool r_fov_greater_than_90;
 
-    public Vector3 vup, base_vup;
-    public Vector3 vpn, base_vpn;
-    public Vector3 vright, base_vright;
+    public static Vector3 vup, base_vup;
+    public static Vector3 vpn, base_vpn;
+    public static Vector3 vright, base_vright;
     public static Vector3 r_origin;
 
     public static render_c.refdef_t r_refdef;
@@ -62,15 +62,15 @@ public unsafe class r_main_c
     public static int r_wholepolycount;
 
     public const int VIDEOMODNAME_LENGTH = 256;
-    public char[] viewmodname = new char[VIDEOMODNAME_LENGTH];
+    public static char[] viewmodname = new char[VIDEOMODNAME_LENGTH];
     public static int modcount;
 
     public static int* pfrustum_indexes;
-    public static int[] r_frustrum_indexes = new int[4 * 6];
+    public static int* r_frustrum_indexes;
 
     public static int reinit_surfcache = 1;
 
-    public static mleaf_t* r_viewleaf, r_oldviewleaf;
+    public static model_c.mleaf_t* r_viewleaf, r_oldviewleaf;
 
     public static model_c.texture_t* r_notexture_mip;
 
@@ -308,22 +308,22 @@ public unsafe class r_main_c
 
         r_viewchanged = true;
 
-        R_SetVrect(pvrect, render_c.r_refdef.vrect, lineadj);
+        R_SetVrect(pvrect, vid_c.vrect, lineadj);
 
         r_refdef.horizontalFieldOfView = 2.0f * MathF.Tan(r_refdef.fov_x / 360 * MathF.PI);
-        r_refdef.fvrectx = (float)r_refdef.vrect.x;
-        r_refdef.fvrectx_adj = (float)r_refdef.vrect.x;
-        r_refdef.fvrectx_adj_shift20 = (r_refdef.vrect.x << 20) + (1 << 19) - 1;
-        r_refdef.fvrecty = (float)r_refdef.vrect.y;
-        r_refdef.fvrecty_adj = (float)r_refdef.vrect.y;
+        r_refdef.fvrectx = r_refdef.vrect.x;
+        r_refdef.fvrectx_adj = r_refdef.vrect.x;
+        r_refdef.vrect_x_adj_shift20 = (r_refdef.vrect.x << 20) + (1 << 19) - 1;
+        r_refdef.fvrecty = r_refdef.vrect.y;
+        r_refdef.fvrecty_adj = r_refdef.vrect.y;
         r_refdef.vrectright = r_refdef.vrect.x + r_refdef.vrect.width;
         r_refdef.vrectright_adj_shift20 = (r_refdef.vrectright << 20) + (1 << 19) - 1;
-        r_refdef.fvrectright = (float)r_refdef.vrectright;
-        r_refdef.fvrectright_adj = (float)r_refdef.vrectright - 0.5f;
-        r_refdef.vrectrightedge = (float)r_refdef.vrectright - 0.99f;
+        r_refdef.fvrectright = r_refdef.vrectright;
+        r_refdef.fvrectright_adj = r_refdef.vrectright - 0.5f;
+        r_refdef.vrectrightedge = r_refdef.vrectright - 0.99f;
         r_refdef.vrectbottom = r_refdef.vrect.y + r_refdef.vrect.height;
-        r_refdef.fvrectbottom = (float)r_refdef.vrectbottom;
-        r_refdef.fvrectbottom_adj = (float)r_refdef.vrectbottom - 0.5f;
+        r_refdef.fvrectbottom = r_refdef.vrectbottom;
+        r_refdef.fvrectbottom_adj = r_refdef.vrectbottom - 0.5f;
 
         r_refdef.aliasvrect.x = (int)(r_refdef.vrect.x * r_aliasuvscale);
         r_refdef.aliasvrect.y = (int)(r_refdef.vrect.y * r_aliasuvscale);
@@ -379,7 +379,7 @@ public unsafe class r_main_c
             mathlib_c.VectorNormalize(screenedge[i].normal);
         }
 
-        res_scale = mathlib_c.sqrt((double)(r_refdef.vrect.width * r_refdef.vrect.height) / (320.0f * 152.0f) * (2.0f / r_refdef.horizontalFieldOfView));
+        res_scale = (float)mathlib_c.sqrt((double)(r_refdef.vrect.width * r_refdef.vrect.height) / (320.0f * 152.0f) * (2.0f / r_refdef.horizontalFieldOfView));
         r_aliastransition = r_aliastransbase.value * res_scale;
         r_resfudge = r_aliastransadj.value * res_scale;
 
@@ -415,7 +415,7 @@ public unsafe class r_main_c
     public void R_MarkLeaves()
     {
         byte* vis;
-        mnode_t* node;
+        model_c.mnode_t* node;
         int i;
 
         if (r_oldviewleaf == r_viewleaf)
@@ -426,13 +426,13 @@ public unsafe class r_main_c
         r_visframecount++;
         r_oldviewleaf = r_viewleaf;
 
-        vis = Mod_LeafPVS(r_viewleaf, cl.worldmodel);
+        vis = model_c.Mod_LeafPVS(r_viewleaf, cl_main_c.cl.worldmodel);
 
-        for (i = 0; i < cl.worldmodel->numleafs; i++)
+        for (i = 0; i < cl_main_c.cl.worldmodel->numleafs; i++)
         {
             if ((vis[i >> 3] & (1 << (i & 7))) != 0)
             {
-                node = (mnode_t*)&cl.worldmodel->leafs[i + 1];
+                node = (model_c.mnode_t*)&cl_main_c.cl.worldmodel->leafs[i + 1];
 
                 do
                 {
@@ -464,24 +464,24 @@ public unsafe class r_main_c
 
         for (i = 0; i < client_c.cl_numvisedicts; i++)
         {
-            currententity = client_c.cl_visedicts[i];
+            r_bsp_c.currententity = &client_c.cl_visedicts[i];
 
-            if (currententity == &client_c.cl_entities[cl.viewentity])
+            if (r_bsp_c.currententity == &client_c.cl_entities[cl_main_c.cl.viewentity])
             {
                 continue;
             }
 
-            switch (currententity->model->type)
+            switch (r_bsp_c.currententity->model->type)
             {
-                case mod_sprite:
-                    Vector<r_entorigin>.CopyTo(currententity->origin);
-                    Vector3.Subtract(r_origin, r_entorigin);
+                case model_c.modtype_t.mod_sprite:
+
+                    Vector3.Subtract(r_origin, r_bsp_c.r_entorigin);
                     draw_c.R_DrawSprite();
                     break;
 
-                case mod_alias:
-                    Vector<r_entorigin>.CopyTo(currententity->origin);
-                    Vector3.Subtract(r_origin, r_entorigin);
+                case model_c.modtype_t.mod_alias:
+
+                    Vector3.Subtract(r_origin, r_bsp_c.r_entorigin);
 
                     if (R_AliasCheckBBox())
                     {
@@ -536,30 +536,30 @@ public unsafe class r_main_c
         float add;
         client_c.dlight_t* dl;
 
-        if (!r_drawviewmodel.value || r_fov_greater_than_90)
+        if (r_drawviewmodel.value == 0 || r_fov_greater_than_90)
         {
             return;
         }
 
-        if ((cl.items & quakedef_c.IT_INVISIBILITY) == 0)
+        if ((cl_main_c.cl.items & quakedef_c.IT_INVISIBILITY) == 0)
         {
             return;
         }
 
-        if (cl.stats[STAT_HEALTH] <= 0)
+        if (cl_main_c.cl.stats[quakedef_c.STAT_HEALTH] <= 0)
         {
             return;
         }
 
-        currententity = &cl.viewent;
+        r_bsp_c.currententity = &cl_main_c.cl.viewent;
 
-        if (!currententity->model)
+        if (r_bsp_c.currententity->model == null)
         {
             return;
         }
 
-        Array.Copy(currententity->origin, r_entorigin);
-        Vector3.Subtract(r_origin, r_entorigin);
+        Array.Copy(r_bsp_c.currententity->origin, r_bsp_c.r_entorigin);
+        Vector3.Subtract(r_origin, r_bsp_c.r_entorigin);
 
         Array.Copy(vup, viewlightvec, (int)vup.Length());
     }

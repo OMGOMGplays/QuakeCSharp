@@ -10,7 +10,7 @@ public unsafe class vid_c
     public struct vrect_t
     {
         public int x, y, width, height;
-        public vrect_t* next;
+        public vrect_t* pnext;
     }
 
     public struct viddef_t

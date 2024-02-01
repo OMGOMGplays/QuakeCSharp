@@ -4,16 +4,16 @@ namespace Quake;
 
 public unsafe class r_sky_c
 {
-    public int iskyspeed = 8;
-    public int iskyspeed2 = 2;
-    public float skyspeed, skyspeed2;
+    public static int iskyspeed = 8;
+    public static int iskyspeed2 = 2;
+    public static float skyspeed, skyspeed2;
 
-    public float skytime;
+    public static float skytime;
 
     public static byte* r_skysource;
 
-    public int r_skymade;
-    public int r_skydirect;
+    public static int r_skymade;
+    public static int r_skydirect;
 
     public static byte[] bottomsky = new byte[128 * 131];
     public static byte[] bottommask = new byte[128 * 131];
@@ -54,7 +54,7 @@ public unsafe class r_sky_c
         r_skysource = newsky;
     }
 
-    public void R_MakeSky()
+    public static void R_MakeSky()
     {
         int x, y;
         int ofs, baseofs;
@@ -135,7 +135,6 @@ public unsafe class r_sky_c
                 pd++;
             }
 #else
-
             for (x = 0; x < d_iface_c.SKYSIZE; x++)
             {
                 ofs = baseofs + ((x + xshift) & d_iface_c.SKYMASK);
@@ -150,7 +149,7 @@ public unsafe class r_sky_c
         }
     }
 
-    public void R_GenSkyTile16(void* pdest)
+    public static void R_GenSkyTile16(void* pdest)
     {
         int x, y;
         int ofs, baseofs;
@@ -181,7 +180,7 @@ public unsafe class r_sky_c
         }
     }
 
-    public void R_SetSkyFrame()
+    public static void R_SetSkyFrame()
     {
         int g, s1, s2;
         float temp;
@@ -194,7 +193,7 @@ public unsafe class r_sky_c
         s2 = iskyspeed2 / g;
         temp = d_iface_c.SKYSIZE * s1 * s2;
 
-        skytime = cl_main_c.cl.time - ((int)(cl_main_c.cl.time / temp) * temp);
+        skytime = (float)cl_main_c.cl.time - ((int)(cl_main_c.cl.time / temp) * temp);
 
         r_skymade = 0;
     }

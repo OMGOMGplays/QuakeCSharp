@@ -4,19 +4,19 @@ public unsafe class r_shared_c
 {
 #if !GLQUAKE
 
-    public static int MAXVERTS = 16;
-    public static int MAXWORKINGVERTS = (MAXVERTS + 4);
+    public const int MAXVERTS = 16;
+    public const int MAXWORKINGVERTS = (MAXVERTS + 4);
 
-    public static int MAXHEIGHT = 1024;
-    public static int MAXWIDTH = 1280;
-    public static int MAXDIMENSION = ((MAXHEIGHT > MAXWIDTH) ? MAXHEIGHT : MAXWIDTH);
+    public const int MAXHEIGHT = 1024;
+    public const int MAXWIDTH = 1280;
+    public const int MAXDIMENSION = ((MAXHEIGHT > MAXWIDTH) ? MAXHEIGHT : MAXWIDTH);
 
-    public static int SIN_BUFFER_SIZE = (MAXDIMENSION + CYCLE);
+    public const int SIN_BUFFER_SIZE = (MAXDIMENSION + CYCLE);
 
-    public static int INFINITE_DISTANCE = 0x10000;
+    public const int INFINITE_DISTANCE = 0x10000;
 
     public static int cachewidth;
-    public static pixel_t* cacheblock;
+    public static byte* cacheblock;
     public static int screenwidth;
 
     public static float pixelAspect;
@@ -33,11 +33,11 @@ public unsafe class r_shared_c
     public static Vector3 vright, base_vright;
     public static render_c.entity_t* currententity;
 
-    public static int NUMSTACKEDGES = 2400;
-    public static int MINEDGES = NUMSTACKEDGES;
-    public static int NUMSTACKSURFACES = 800;
-    public static int MINSURFACES = NUMSTACKSURFACES;
-    public static int MAXSPANS = 3000;
+    public const int NUMSTACKEDGES = 2400;
+    public const int MINEDGES = NUMSTACKEDGES;
+    public const int NUMSTACKSURFACES = 800;
+    public const int MINSURFACES = NUMSTACKSURFACES;
+    public const int MAXSPANS = 3000;
 
     public struct espan_t
     {
@@ -82,14 +82,14 @@ public unsafe class r_shared_c
 
     public static int ubasestep, errorterm, erroradjustup, erroradjustdown;
 
-    public static int ALIAS_LEFT_CLIP = 0x0001;
-    public static int ALIAS_TOP_CLIP = 0x0002;
-    public static int ALIAS_RIGHT_CLIP = 0x0004;
-    public static int ALIAS_BOTTOM_CLIP = 0x0008;
-    public static int ALIAS_Z_CLIP = 0x0010;
-    public static int ALIAS_ONSEAM = 0x0020;
+    public const int ALIAS_LEFT_CLIP = 0x0001;
+    public const int ALIAS_TOP_CLIP = 0x0002;
+    public const int ALIAS_RIGHT_CLIP = 0x0004;
+    public const int ALIAS_BOTTOM_CLIP = 0x0008;
+    public const int ALIAS_Z_CLIP = 0x0010;
+    public const int ALIAS_ONSEAM = 0x0020;
 
-    public static int ALIAS_XY_CLIP_MASK = 0x000F;
+    public const int ALIAS_XY_CLIP_MASK = 0x000F;
 
     public struct edge_t
     {

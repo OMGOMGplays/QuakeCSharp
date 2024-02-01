@@ -2,10 +2,10 @@
 
 public unsafe class render_c
 {
-    public static int MAXCLIPPLANES = 11;
+    public const int MAXCLIPPLANES = 11;
 
-    public static int TOP_RANGE = 16;
-    public static int BOTTOM_RANGE = 96;
+    public const int TOP_RANGE = 16;
+    public const int BOTTOM_RANGE = 96;
 
     public struct efrag_t
     {
@@ -41,14 +41,14 @@ public unsafe class render_c
         public int dlightbits;
 
         public int trivial_accept;
-        public mnode_t* topnode;
+        public model_c.mnode_t* topnode;
     }
 
     public struct refdef_t
     {
-        public vid_win_c.vrect_t vrect;
+        public vid_c.vrect_t vrect;
 
-        public vid_win_c.vrect_t aliasvrect;
+        public vid_c.vrect_t aliasvrect;
         public int vrectright, vrectbottom;
         public int aliasvrectright, aliasvrectbottom;
         public float vrectrightedge;
@@ -74,12 +74,12 @@ public unsafe class render_c
         public int ambientlight;
     }
 
-    public int reinit_surfcache;
+    public static int reinit_surfcache;
 
     public static refdef_t r_refdef;
     public static Vector3 r_origin, vpn, vright, vup;
 
-    public model_c.texture_t* r_notexture_mip;
+    public static model_c.texture_t* r_notexture_mip;
 
-    public bool r_cache_trash;
+    public static bool r_cache_trash;
 }

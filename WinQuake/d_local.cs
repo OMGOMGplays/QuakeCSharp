@@ -15,14 +15,14 @@ public unsafe class d_local_c
     {
         public surfcache_t* next;
         public surfcache_t** owner;
-        public int[] lightadj;
+        public int* lightadj;
         public int dlight;
         public int size;
         public uint width;
         public uint height;
         public float mipscale;
         public model_c.texture_t* texture;
-        public byte[] data;
+        public byte* data;
     }
 
     public struct sspan_t
@@ -60,5 +60,5 @@ public unsafe class d_local_c
     public static short* zspantable;
 
     public static int d_minmip;
-    public float[] d_scalemip = new float[3];
+    public static float[] d_scalemip = new float[3];
 }
