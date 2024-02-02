@@ -109,19 +109,19 @@ public unsafe class d_iface_c
 	public static int r_skydirect;
 	public static byte* r_skysource;
 
-	public static int DR_SOLID = 0;
-	public static int DR_TRANSPARENT = 1;
+	public const int DR_SOLID = 0;
+	public const int DR_TRANSPARENT = 1;
 
-	public static int TRANSPARENT_COLOR = 0xFF;
+	public const int TRANSPARENT_COLOR = 0xFF;
 
 	public static void* acolormap;
 
 	public struct drawsurf_t
 	{
-		public vid_c.pixel_t* surfdat;
+		public byte* surfdat;
 		public int rowbytes;
 		public model_c.msurface_t* surf;
-		public int lightadj;
+		public int* lightadj;
 
 		public model_c.texture_t* texture;
 		public int surfmip;
@@ -131,15 +131,15 @@ public unsafe class d_iface_c
 
 	public static drawsurf_t r_drawsurf;
 
-	public static int TURB_TEX_SIZE = 64;
+	public const int TURB_TEX_SIZE = 64;
 
-	public static int CYCLE = 128;
+	public const int CYCLE = 128;
 
-	public static int TILE_SIZE = 128;
+	public const int TILE_SIZE = 128;
 
-	public static int SKYSHIFT = 7;
-	public static int SKYSIZE = 1 << SKYSHIFT;
-	public static int SKYMASK = SKYSIZE - 1;
+	public const int SKYSHIFT = 7;
+	public const int SKYSIZE = 1 << SKYSHIFT;
+	public const int SKYMASK = SKYSIZE - 1;
 
 	public static float skyspeed, skyspeed2;
 	public static float skytime;

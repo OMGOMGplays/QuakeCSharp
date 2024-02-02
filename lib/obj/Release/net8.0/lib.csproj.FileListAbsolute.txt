@@ -8,3 +8,9 @@ C:\Users\Loke.Vigstrand\Skolprojekt\VS22\lib\obj\Release\net8.0\lib.dll
 C:\Users\Loke.Vigstrand\Skolprojekt\VS22\lib\obj\Release\net8.0\refint\lib.dll
 C:\Users\Loke.Vigstrand\Skolprojekt\VS22\lib\obj\Release\net8.0\lib.pdb
 C:\Users\Loke.Vigstrand\Skolprojekt\VS22\lib\obj\Release\net8.0\ref\lib.dll
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.csproj.CoreCompileInputs.cache
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.sourcelink.json
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.dll
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\refint\lib.dll
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.pdb

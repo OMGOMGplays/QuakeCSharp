@@ -4,7 +4,7 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quake", "Quake.csproj", "{46E509F0-2433-4884-9438-E5125228C7DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib", "..\lib\lib.csproj", "{91171D85-54DE-4E05-BEDE-D40344D19200}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib", "lib\lib.csproj", "{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,10 +16,10 @@ Global
 		{46E509F0-2433-4884-9438-E5125228C7DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46E509F0-2433-4884-9438-E5125228C7DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46E509F0-2433-4884-9438-E5125228C7DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91171D85-54DE-4E05-BEDE-D40344D19200}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91171D85-54DE-4E05-BEDE-D40344D19200}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91171D85-54DE-4E05-BEDE-D40344D19200}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91171D85-54DE-4E05-BEDE-D40344D19200}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

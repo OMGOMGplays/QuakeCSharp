@@ -107,7 +107,7 @@ public unsafe class r_sky_c
         r_skymade = 1;
     }
 
-    public void R_GenSkyTile(void* pdest)
+    public static void R_GenSkyTile(void* pdest)
     {
         int x, y;
         int ofs, baseofs;

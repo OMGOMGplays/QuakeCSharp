@@ -2,8 +2,8 @@
 
 public unsafe class vid_c
 {
-    public static int VID_CBITS = 6;
-    public static int VID_GRADES = (1 << VID_CBITS);
+    public const int VID_CBITS = 6;
+    public const int VID_GRADES = (1 << VID_CBITS);
 
     public struct vrect_t
     {
@@ -13,8 +13,8 @@ public unsafe class vid_c
 
     public struct viddef_t
     {
-        public pixel_t* buffer;
-        public pixel_t* colormap;
+        public byte* buffer;
+        public byte* colormap;
         public ushort* colormap16;
         public int fullbright;
         public uint rowbytes;
@@ -23,18 +23,16 @@ public unsafe class vid_c
         public float aspect;
         public int numpages;
         public int recalc_refdef;
-        public pixel_t* conbuffer;
+        public byte* conbuffer;
         public int conrowbytes;
         public uint conwidth;
         public uint conheight;
         public int maxwarpwidth;
         public int maxwarpheight;
-        public pixel_t* direct;
+        public byte* direct;
     }
 
     public static viddef_t vid;
     public static ushort[] d_8to16table = new ushort[256];
     public static ushort[] d_8to24table = new ushort[256];
-    public delegate void* vid_menudrawfn();
-    public delegate void* vid_menukeyfn(int key);
 }

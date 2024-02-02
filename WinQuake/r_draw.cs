@@ -25,8 +25,8 @@ public unsafe class r_draw_c
     public static bool makeleftedge, makerightedge;
     public static bool r_nearzionly;
 
-    public int sintable;
-    public int intsintable;
+    public static int sintable;
+    public static int intsintable;
 
     public static model_c.mvertex_t r_leftenter, r_leftexit;
     public static model_c.mvertex_t r_rightenter, r_rightexit;

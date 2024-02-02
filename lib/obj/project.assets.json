@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\lib\\lib.csproj",
+      "projectUniqueName": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib.csproj",
       "projectName": "lib",
-      "projectPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\lib\\lib.csproj",
+      "projectPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib.csproj",
       "packagesPath": "C:\\Users\\Loke.Vigstrand\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\lib\\obj\\",
+      "outputPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -60,6 +60,9 @@
           "projectReferences": {
             "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\lib\\lib.csproj": {
               "projectPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\lib\\lib.csproj"
+            },
+            "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib.csproj": {
+              "projectPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib.csproj"
             }
           }
         }

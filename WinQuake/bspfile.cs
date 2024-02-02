@@ -151,7 +151,7 @@ public unsafe class bspfile_c
         public ushort[] v;
     }
 
-    public static int MAXLIGHTMAPS = 4;
+    public const int MAXLIGHTMAPS = 4;
 
     public struct dface_t
     {
