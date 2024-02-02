@@ -1,6 +1,4 @@
-﻿using pixel_t = System.Byte;
-
-namespace Quake;
+﻿namespace Quake;
 
 public unsafe class vid_c
 {
