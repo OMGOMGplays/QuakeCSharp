@@ -48,7 +48,7 @@ public unsafe class console_c
             }
             else
             {
-                M_Menu_Main_f();
+                menu_c.M_Menu_Main_f();
             }
         }
         else
@@ -57,7 +57,7 @@ public unsafe class console_c
         }
 
         screen_c.SCR_EndLoadingPlaque();
-        common_c.Q_memset(con_times, 0, NUM_CON_TIMES);
+        common_c.Q_memset(*con_times, 0, NUM_CON_TIMES);
     }
 
     public static void Con_Clear_f()
@@ -174,7 +174,7 @@ public unsafe class console_c
 
         Con_Printf(common_c.StringToChar("Console initialized\n"));
 
-        cvar_c.Cvar_RegisterVariable(&con_notifytime);
+        cvar_c.Cvar_RegisterVariable(con_notifytime);
 
         cmd_c.Cmd_AddCommand("toggleconsole", Con_ToggleConsole_f);
         cmd_c.Cmd_AddCommand("messagemode", Con_MessageMode_f);
@@ -193,7 +193,7 @@ public unsafe class console_c
     public static void Con_Print(char* txt)
     {
         int y;
-        int c, l;
+        int c = 0, l;
         int cr = 0;
         int mask;
 
@@ -215,7 +215,7 @@ public unsafe class console_c
             mask = 0;
         }
 
-        while ((c == *txt))
+        while (c == *txt)
         {
             for (l = 0; l < con_linewidth; l++)
             {
@@ -380,14 +380,14 @@ public unsafe class console_c
     {
         int y;
         int i;
-        char* text;
+        char* text = null;
 
         if (keys_c.key_dest != keys_c.keydest_t.key_console && !con_forcedup)
         {
             return;
         }
 
-        text = &key_lines[edit_line][0];
+        *text = key_lines[edit_line][0];
 
         text[key_linepos] = (char)(10 + ((int)(quakedef_c.realtime * con_cursorspeed) & 1));
 
@@ -526,12 +526,12 @@ public unsafe class console_c
     {
         double t1, t2;
 
-        Con_Printf(common_c.StringToChar('\n\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n'));
+        //Con_Printf(common_c.StringToChar('\n\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n'));
 
         Con_Printf(text);
 
         Con_Printf(common_c.StringToChar("Press a key.\n"));
-        Con_Printf('\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n');
+        //Con_Printf('\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\37\n');
 
         keys_c.key_count = -2;
         keys_c.key_dest = keys_c.keydest_t.key_console;

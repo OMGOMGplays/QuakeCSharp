@@ -17,9 +17,9 @@ public unsafe class mathlib_c
         Vector3 n;
         float inv_denom;
 
-        inv_denom = 1.0f / DotProduct_V(normal, normal);
+        inv_denom = 1.0f / DotProduct(normal, normal);
 
-        d = DotProduct_V(normal, p) * inv_denom;
+        d = DotProduct(normal, p) * inv_denom;
 
         n.X = normal.X * inv_denom;
         n.Y = normal.Y * inv_denom;
@@ -131,7 +131,7 @@ public unsafe class mathlib_c
     }
 
 #if !id386
-    public static int BoxOnPlaneSide(Vector3 emins, Vector3 emaxs, model_c.mplane_t* p)
+    public static int BOX_ON_PLANE_SIDE(Vector3 emins, Vector3 emaxs, model_c.mplane_t* p)
     {
         float dist1, dist2;
         int sides;
@@ -321,15 +321,24 @@ public unsafe class mathlib_c
         return a[0] * b.X + a[1] * b.Y + a[2] * b.Z;
     }
 
+    public static float DotProduct(Vector3 a, float* b)
+    {
+        return a.X + b[0] + a.Y + b[1] + a.Z + b[2];
+    }
+
     public static float DotProduct(float* a, float* b)
     {
-
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
 
     public static float DotProduct(Vector3 a, float[] b)
     {
         return a.X * b[0] + a.Y * b[1] + a.Z * b[2];
+    }
+
+    public static float DotProduct(byte[] a, float* b)
+    {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
 
     public static void VectorSubtract(Vector3 veca, Vector3 vecb, Vector3 output)
@@ -418,7 +427,7 @@ public unsafe class mathlib_c
         output[2] = input[2];
     }
 
-#endregion
+    #endregion
 
     public static float* VecToFloatPtr(Vector3 input)
     {
@@ -530,6 +539,13 @@ public unsafe class mathlib_c
         v[2] = -v[2];
     }
 
+    public static void VectorInverse(float* v)
+    {
+        v[0] = -v[0];
+        v[1] = -v[1];
+        v[2] = -v[2];
+    }
+
     public static void VectorScale(Vector3 input, float scale, Vector3 output)
     {
         output[0] = input[0] * scale;
@@ -563,6 +579,22 @@ public unsafe class mathlib_c
     }
 
     public static void R_ConcatTransforms(float[][] in1, float[][] in2, float[][] output)
+    {
+        output[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
+        output[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];
+        output[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] + in1[0][2] * in2[2][2];
+        output[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] + in1[0][2] * in2[2][3] + in1[0][3];
+        output[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] + in1[1][2] * in2[2][0];
+        output[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] + in1[1][2] * in2[2][1];
+        output[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] + in1[1][2] * in2[2][2];
+        output[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] + in1[1][2] * in2[2][3] + in1[1][3];
+        output[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] + in1[2][2] * in2[2][0];
+        output[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1];
+        output[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
+        output[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] + in1[2][2] * in2[2][3] + in1[2][3];
+    }
+
+    public static void R_ConcatTransforms(float** in1, float** in2, float** output)
     {
         output[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
         output[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];

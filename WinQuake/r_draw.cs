@@ -2,22 +2,22 @@
 
 public unsafe class r_draw_c
 {
-    public static int MAXLEFTCLIPEDGES = 100;
+    public const int MAXLEFTCLIPEDGES = 100;
 
-    public static uint FULLY_CLIPPED_CACHED = 0x80000000;
-    public static int FRAMECOUNT_MASK = 0x7FFFFFFF;
+    public const uint FULLY_CLIPPED_CACHED = 0x80000000;
+    public const int FRAMECOUNT_MASK = 0x7FFFFFFF;
 
     public static uint cacheoffset;
 
     public static int c_faceclip;
 
-    public d_iface_c.zpointdesc_t r_zpointdesc;
+    public static d_iface_c.zpointdesc_t r_zpointdesc;
 
     public static d_iface_c.polydesc_t r_polydesc;
 
-    public r_local_c.clipplane_t* entity_clipplanes;
-    public static r_local_c.clipplane_t[] view_clipplanes = new r_local_c.clipplane_t[4];
-    public r_local_c.clipplane_t world_clipplanes;
+    public static r_local_c.clipplane_t* entity_clipplanes;
+    public static r_local_c.clipplane_t* view_clipplanes;
+    public static r_local_c.clipplane_t world_clipplanes;
 
     public static model_c.medge_t* r_pedge;
 
@@ -46,7 +46,7 @@ public unsafe class r_draw_c
 
 #if !id386
 
-    public void R_EmitEdge(model_c.mvertex_t* pv0, model_c.mvertex_t* pv1)
+    public static void R_EmitEdge(model_c.mvertex_t* pv0, model_c.mvertex_t* pv1)
     {
         r_shared_c.edge_t* edge, pcheck;
         int u_check;
@@ -66,10 +66,10 @@ public unsafe class r_draw_c
         }
         else
         {
-            world = pv0->position[0];
+            *world = pv0->position[0];
 
-            mathlib_c.VectorSubtract_FVV(world, r_bsp_c.modelorg, local);
-            r_misc_c.TransformedVector(local, transformed);
+            mathlib_c.VectorSubtract(world, r_bsp_c.modelorg, local);
+            r_misc_c.TransformVector(local, transformed);
 
             if (transformed[2] < r_local_c.NEAR_CLIP)
             {
@@ -107,9 +107,9 @@ public unsafe class r_draw_c
             ceilv0 = (int)MathF.Ceiling(v0);
         }
 
-        world = pv1->position;
+        world = mathlib_c.VecToFloatPtr(pv1->position);
 
-        mathlib_c.VectorSubtract_FVV(world, r_bsp_c.modelorg, local);
+        mathlib_c.VectorSubtract(world, r_bsp_c.modelorg, local);
         r_misc_c.TransformVector(local, transformed);
 
         if (transformed[2] < r_local_c.NEAR_CLIP)
@@ -187,7 +187,7 @@ public unsafe class r_draw_c
             v = ceilv0;
             v2 = r_ceilv1 - 1;
 
-            edge->surfs[0] = r_edge_c.surface_p - r_edge_c.surfaces;
+            edge->surfs[0] = (ushort)(r_edge_c.surface_p - r_edge_c.surfaces);
             edge->surfs[1] = 0;
 
             u_step = (r_u1 - u0) / (r_v1 - v0);
@@ -199,14 +199,14 @@ public unsafe class r_draw_c
             v = r_ceilv1;
 
             edge->surfs[0] = 0;
-            edge->surfs[1] = r_edge_c.surface_p - r_edge_c.surfaces;
+            edge->surfs[1] = (ushort)(r_edge_c.surface_p - r_edge_c.surfaces);
 
             u_step = (u0 - r_u1) / (v0 - r_v1);
             u = r_u1 + (v - r_v1) * u_step;
         }
 
-        edge->u_step = u_step * 0x100000;
-        edge->u = u * 0x100000 + 0xFFFFF;
+        edge->u_step = (int)u_step * 0x100000;
+        edge->u = (int)u * 0x100000 + 0xFFFFF;
 
         if (edge->u < render_c.r_refdef.vrect_x_adj_shift20)
         {
@@ -225,14 +225,14 @@ public unsafe class r_draw_c
             u_check++;
         }
 
-        if (r_edge_c.newedges[v] == 0 || r_edge_c.newedges[v]->u >= u_check)
+        if (r_edge_c.newedges[v] == 0|| r_edge_c.newedges[v].u >= u_check)
         {
-            edge->next = r_edge_c.newedges[v];
-            r_edge_c.newedges[v] = edge;
+            edge->next = &r_edge_c.newedges[v];
+            r_edge_c.newedges[v] = *edge;
         }
         else
         {
-            pcheck = r_edge_c.newedges[v];
+            pcheck = &r_edge_c.newedges[v];
 
             while (pcheck->next != null && pcheck->next->u < u_check)
             {
@@ -243,21 +243,21 @@ public unsafe class r_draw_c
             pcheck->next = edge;
         }
 
-        edge->nextremove = r_edge_c.removeedges[v2];
-        r_edge_c.removeedges[v2] = edge;
+        edge->nextremove = &r_edge_c.removeedges[v2];
+        r_edge_c.removeedges[v2] = *edge;
     }
 
-    public void R_ClipEdge(model_c.mvertex_t* pv0, model_c.mvertex_t* pv1, r_local_c.clipplane_t* clip)
+    public static void R_ClipEdge(model_c.mvertex_t* pv0, model_c.mvertex_t* pv1, r_local_c.clipplane_t* clip)
     {
         float d0, d1, f;
-        model_c.mvertex_t clipvert;
+        model_c.mvertex_t clipvert = new();
 
         if (clip != null)
         {
             do
             {
-                d0 = mathlib_c.DotProduct_V(pv0->position, clip->normal) - clip->dist;
-                d1 = mathlib_c.DotProduct_V(pv1->position, clip->normal) - clip->dist;
+                d0 = mathlib_c.DotProduct(pv0->position, clip->normal) - clip->dist;
+                d1 = mathlib_c.DotProduct(pv1->position, clip->normal) - clip->dist;
 
                 if (d0 >= 0)
                 {
@@ -273,18 +273,18 @@ public unsafe class r_draw_c
                     clipvert.position[1] = pv0->position[1] + f * (pv1->position[1] - pv0->position[1]);
                     clipvert.position[2] = pv0->position[2] + f * (pv1->position[2] - pv0->position[2]);
 
-                    if (clip->leftedge)
+                    if (clip->leftedge != 0)
                     {
                         r_leftclipped = true;
                         r_leftexit = clipvert;
                     }
-                    else if (clip->rightedge)
+                    else if (clip->rightedge != 0)
                     {
                         r_rightclipped = true;
                         r_rightexit = clipvert;
                     }
 
-                    R_ClipEdge(pv0, clipvert, clip->next);
+                    R_ClipEdge(pv0, &clipvert, clip->next);
                     return;
                 }
                 else
@@ -306,18 +306,18 @@ public unsafe class r_draw_c
                         clipvert.position[1] = pv0->position[1] + f * (pv1->position[1] - pv0->position[1]);
                         clipvert.position[2] = pv0->position[2] + f * (pv1->position[2] - pv0->position[2]);
 
-                        if (clip->leftedge)
+                        if (clip->leftedge != 0)
                         {
                             r_leftclipped = true;
                             r_leftenter = clipvert;
                         }
-                        else if (clip->rightedge)
+                        else if (clip->rightedge != 0)
                         {
                             r_rightclipped = true;
                             r_rightenter = clipvert;
                         }
 
-                        R_ClipEdge(clipvert, pv1, clip->next);
+                        R_ClipEdge(&clipvert, pv1, clip->next);
                         return;
                     }
                 }
@@ -337,11 +337,11 @@ public unsafe class r_draw_c
 
         if (pedge_t->surfs[0] == null)
         {
-            pedge_t->surfs[0] = r_edge_c.surface_p - r_edge_c.surfaces;
+            pedge_t->surfs[0] = (ushort)(r_edge_c.surface_p - r_edge_c.surfaces);
         }
         else
         {
-            pedge_t->surfs[1] = r_edge_c.surface_p - r_edge_c.surfaces;
+            pedge_t->surfs[1] = (ushort)(r_edge_c.surface_p - r_edge_c.surfaces);
         }
 
         if (pedge_t->nearzi > r_nearzi)
@@ -384,7 +384,7 @@ public unsafe class r_draw_c
             if ((clipflags & mask) != 0)
             {
                 view_clipplanes[i].next = pclip;
-                pclip = view_clipplanes[i];
+                pclip = &view_clipplanes[i];
             }
         }
 
@@ -401,7 +401,7 @@ public unsafe class r_draw_c
 
             if (lindex > 0)
             {
-                r_pedge = pedges[lindex];
+                r_pedge = &pedges[lindex];
 
                 if (!r_bsp_c.insubmodel)
                 {
@@ -426,7 +426,7 @@ public unsafe class r_draw_c
 
                 cacheoffset = (uint)((byte*)r_edge_c.edge_p - (byte*)r_edge_c.r_edges);
                 r_leftclipped = r_rightclipped = false;
-                R_ClipEdge(r_main_c.r_pcurrentvertbase[r_pedge->v[0]], r_main_c.r_pcurrentvertbase[r_pedge->v[1]], pclip);
+                R_ClipEdge(&r_main_c.r_pcurrentvertbase[r_pedge->v[0]], &r_main_c.r_pcurrentvertbase[r_pedge->v[1]], pclip);
                 r_pedge->cachededgeoffset = cacheoffset;
 
                 if (r_leftclipped)
@@ -444,7 +444,7 @@ public unsafe class r_draw_c
             else
             {
                 lindex = -lindex;
-                r_pedge = pedges[lindex];
+                r_pedge = &pedges[lindex];
 
                 if (!r_bsp_c.insubmodel)
                 {
@@ -469,7 +469,7 @@ public unsafe class r_draw_c
 
                 cacheoffset = (uint)((byte*)r_edge_c.edge_p - (byte*)r_edge_c.r_edges);
                 r_leftclipped = r_rightclipped = false;
-                R_ClipEdge(r_main_c.r_pcurrentvertbase[r_pedge->v[1]], r_main_c.r_pcurrentvertbase[r_pedge->v[0]], pclip);
+                R_ClipEdge(&r_main_c.r_pcurrentvertbase[r_pedge->v[1]], &r_main_c.r_pcurrentvertbase[r_pedge->v[0]], pclip);
                 r_pedge->cachededgeoffset = cacheoffset;
 
                 if (r_leftclipped)
@@ -488,17 +488,17 @@ public unsafe class r_draw_c
 
         if (makeleftedge)
         {
-            r_pedge = tedge;
+            r_pedge = &tedge;
             r_lastvertvalid = false;
-            R_ClipEdge(r_leftexit, r_leftenter, pclip->next);
+            R_ClipEdge(&r_leftexit, &r_leftenter, pclip->next);
         }
 
         if (makerightedge)
         {
-            r_pedge = tedge;
+            r_pedge = &tedge;
             r_lastvertvalid = false;
             r_nearzionly = true;
-            R_ClipEdge(r_rightexit, r_rightenter, view_clipplanes[1].next);
+            R_ClipEdge(&r_rightexit, &r_rightenter, view_clipplanes[1].next);
         }
 
         if (r_emitted == 0)
@@ -519,7 +519,7 @@ public unsafe class r_draw_c
 
         pplane = fa->plane;
         r_misc_c.TransformVector(pplane->normal, p_normal);
-        distinv = 1.0f / (pplane->dist - mathlib_c.DotProduct_V(r_bsp_c.modelorg, pplane->normal));
+        distinv = 1.0f / (pplane->dist - mathlib_c.DotProduct(r_bsp_c.modelorg, pplane->normal));
 
         r_edge_c.surface_p->d_zistepu = p_normal[0] * r_main_c.xscaleinv * distinv;
         r_edge_c.surface_p->d_zistepv = -p_normal[1] * r_main_c.yscaleinv * distinv;
@@ -552,7 +552,7 @@ public unsafe class r_draw_c
 
         c_faceclip++;
 
-        r_pedge = tedge;
+        r_pedge = &tedge;
 
         pclip = null;
 
@@ -561,7 +561,7 @@ public unsafe class r_draw_c
             if ((r_main_c.r_clipflags & mask) != 0)
             {
                 view_clipplanes[i].next = pclip;
-                pclip = view_clipplanes[i];
+                pclip = &view_clipplanes[i];
             }
         }
 
@@ -574,7 +574,7 @@ public unsafe class r_draw_c
         for (; pedges != null; pedges = pedges->next)
         {
             r_leftclipped = r_rightclipped = false;
-            R_ClipEdge(pedges->v[0], pedges->v[1], pclip);
+            R_ClipEdge(&pedges->v[0], &pedges->v[1], pclip);
 
             if (r_leftclipped)
             {
@@ -589,15 +589,15 @@ public unsafe class r_draw_c
 
         if (makeleftedge)
         {
-            r_pedge = tedge;
-            R_ClipEdge(r_leftexit, r_leftenter, pclip->next);
+            r_pedge = &tedge;
+            R_ClipEdge(&r_leftexit, &r_leftenter, pclip->next);
         }
 
         if (makerightedge)
         {
-            r_pedge = tedge;
+            r_pedge = &tedge;
             r_nearzionly = true;
-            R_ClipEdge(r_rightexit, r_rightenter, view_clipplanes[1].next);
+            R_ClipEdge(&r_rightexit, &r_rightenter, view_clipplanes[1].next);
         }
 
         if (r_emitted == 0)
@@ -618,7 +618,7 @@ public unsafe class r_draw_c
 
         pplane = psurf->plane;
         r_misc_c.TransformVector(pplane->normal, p_normal);
-        distinv = 1.0f / (pplane->dist - mathlib_c.DotProduct_V(r_bsp_c.modelorg, pplane->normal));
+        distinv = 1.0f / (pplane->dist - mathlib_c.DotProduct(r_bsp_c.modelorg, pplane->normal));
 
         r_edge_c.surface_p->d_zistepu = p_normal[0] * r_main_c.xscaleinv * distinv;
         r_edge_c.surface_p->d_zistepv = p_normal[1] * r_main_c.yscaleinv * distinv;
@@ -650,7 +650,7 @@ public unsafe class r_draw_c
             if ((clipflags & mask) != 0)
             {
                 view_clipplanes[i].next = pclip;
-                pclip = view_clipplanes[i];
+                pclip = &view_clipplanes[i];
             }
         }
 
@@ -664,12 +664,12 @@ public unsafe class r_draw_c
 
             if (lindex > 0)
             {
-                r_pedge = pedges[lindex];
+                r_pedge = &pedges[lindex];
                 verts[0][i] = r_main_c.r_pcurrentvertbase[r_pedge->v[0]];
             }
             else
             {
-                r_pedge = pedges[-lindex];
+                r_pedge = &pedges[-lindex];
                 verts[0][i] = r_main_c.r_pcurrentvertbase[r_pedge->v[1]];
             }
         }
@@ -677,7 +677,7 @@ public unsafe class r_draw_c
         while (pclip != null)
         {
             lastvert = lnumverts - 1;
-            lastdist = mathlib_c.DotProduct_V(verts[vertpage][lastvert].position, pclip->normal) - pclip.dist;
+            lastdist = mathlib_c.DotProduct(verts[vertpage][lastvert].position, pclip->normal) - pclip.dist;
 
             visible = false;
             newverts = 0;
@@ -685,7 +685,7 @@ public unsafe class r_draw_c
 
             for (i = 0; i < lnumverts; i++)
             {
-                dist = mathlib_c.DotProduct_V(verts[vertpage][i].position, pclip->normal) - pclip->dist;
+                dist = mathlib_c.DotProduct(verts[vertpage][i].position, pclip->normal) - pclip->dist;
 
                 if ((lastdist > 0) != (dist > 0))
                 {
@@ -721,20 +721,20 @@ public unsafe class r_draw_c
 
         switch (pplane->type)
         {
-            case PLANE_X:
-            case PLANE_ANYX:
+            case bspfile_c.PLANE_X:
+            case bspfile_c.PLANE_ANYX:
                 s_axis = 1;
                 t_axis = 2;
                 break;
 
-            case PLANE_Y:
-            case PLANE_ANYY:
+            case bspfile_c.PLANE_Y:
+            case bspfile_c.PLANE_ANYY:
                 s_axis = 0;
                 t_axis = 2;
                 break;
 
-            case PLANE_Z:
-            case PLANE_ANYZ:
+            case bspfile_c.PLANE_Z:
+            case bspfile_c.PLANE_ANYZ:
                 s_axis = 0;
                 t_axis = 1;
                 break;
@@ -807,16 +807,16 @@ public unsafe class r_draw_c
         float dot;
         model_c.mplane_t* pplane;
 
-        psurf = pmodel->surfaces[pmodel->firstmodelsurface];
+        psurf = &pmodel->surfaces[pmodel->firstmodelsurface];
         numsurfaces = pmodel->nummodelsurfaces;
 
         for (i = 0; i < numsurfaces; i++, psurf++)
         {
             pplane = psurf->plane;
 
-            dot = mathlib_c.DotProduct_V(r_bsp_c.modelorg, pplane->normal) - pplane->dist;
+            dot = mathlib_c.DotProduct(r_bsp_c.modelorg, pplane->normal) - pplane->dist;
 
-            if (((psurf->flags & model_c.SURF_PLANEBACK) != 0 && (dot < -r_local_c.BACKFACE_EPSILON)) || ((psurf->flags & r_model_c.SURF_PLANEBACK) == 0 && (dot > r_local_c.BACKFACE_EPSILON)))
+            if (((psurf->flags & model_c.SURF_PLANEBACK) != 0 && (dot < -r_local_c.BACKFACE_EPSILON)) || ((psurf->flags & model_c.SURF_PLANEBACK) == 0 && (dot > r_local_c.BACKFACE_EPSILON)))
             {
                 R_RenderPoly(psurf, 15);
             }

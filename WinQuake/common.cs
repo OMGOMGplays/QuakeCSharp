@@ -31,7 +31,7 @@ public unsafe class common_c
 	public static char* com_argv;
 
 	public const int CMDLINE_LENGTH = 256;
-	public static string[] cmd_cmdline = new string[CMDLINE_LENGTH];
+	public static char* com_cmdline;
 
 	public static bool standard_quake = true, rogue, hipnotic;
 
@@ -442,7 +442,7 @@ public unsafe class common_c
 
 	public static int Q_atoi(char str)
 	{
-		return Q_atoi(str->ToString());
+		return Q_atoi(str.ToString());
 	}
 
 	public static float Q_atof(char* str)
@@ -1191,7 +1191,7 @@ public unsafe class common_c
 			}
 		}
 
-		cvar_c.Cvar_Set("cmdline", cmd_c.com_cmdline);
+		cvar_c.Cvar_Set("cmdline", com_cmdline);
 		cvar_c.Cvar_Set("registered", "1");
 		static_registered = 1;
 		console_c.Con_Printf("Playing registered version.\n");
@@ -1212,12 +1212,12 @@ public unsafe class common_c
 
 			while ((n < (CMDLINE_LENGTH - 1)) && argv[j][i] != 0)
 			{
-				con_cmdline[n++] = argv[j][i++];
+				com_cmdline[n++] = argv[j][i++];
 			}
 
 			if (n < (CMDLINE_LENGTH - 1))
 			{
-				con_cmdline[n++] = ' ';
+                com_cmdline[n++] = ' ';
 			}
 			else
 			{
@@ -1225,7 +1225,7 @@ public unsafe class common_c
 			}
 		}
 
-		console_c.con_cmdline[n] = 0;
+		com_cmdline[n] = '\0';
 
 		safe = false;
 
@@ -1588,7 +1588,7 @@ public unsafe class common_c
 
 		for (s = com_searchpaths; !s->Equals(default(searchpath_t)); s = s->next)
 		{
-			if (s->pack != null && s->pack.handle == h)
+			if (&s->pack != null && s->pack.handle == h)
 			{
 				return;
 			}

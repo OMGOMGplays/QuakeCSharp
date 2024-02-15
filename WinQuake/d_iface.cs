@@ -44,7 +44,7 @@ public unsafe class d_iface_c
 
 	public struct finalvert_t
 	{
-		public int[] v;
+		public int* v;
 		public int flags;
 		public float reserved;
 	}

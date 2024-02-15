@@ -135,6 +135,11 @@ public unsafe class cvar_c
         }
     }
 
+    public static void Cvar_Set(string var_name, char* value)
+    {
+        Cvar_Set(var_name, value->ToString());
+    }
+
     public static void Cvar_SetValue(string var_name, float value)
     {
         string val = null;

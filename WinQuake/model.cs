@@ -138,7 +138,7 @@ public unsafe class model_c
 
     public struct mspriteframedesc_t
     {
-        public spritegen_c.spriteframetype_t type;
+        public spritegn_c.spriteframetype_t type;
         public mspriteframe_t* frameptr;
     }
 
@@ -295,7 +295,7 @@ public unsafe class model_c
         common_c.Q_memset(*mod_novis, 0xff, bspfile_c.MAX_MAP_LEAFS / 8);
     }
 
-    public void* Mod_ExtraData(model_t* mod)
+    public static void* Mod_Extradata(model_t* mod)
     {
         void* r;
 

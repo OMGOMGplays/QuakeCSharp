@@ -161,7 +161,7 @@ public unsafe class client_c
         public sound_c.sfx_t* sound_precache;
 
         public char* levelname;
-        public int viewentity;
+        public render_c.entity_t viewentity;
         public int maxclients;
         public int gametype;
 
@@ -169,7 +169,7 @@ public unsafe class client_c
         public render_c.efrag_t* free_efrags;
         public int num_entities;
         public int num_statics;
-        public int viewent;
+        public render_c.entity_t viewent;
 
         public int cdtrack, looptrack;
 

@@ -301,7 +301,7 @@ public unsafe class world_c
         }
 
         splitplane = node->plane;
-        sides = mathlib_c.BoxOnPlaneSide(ent->v.absmin, ent->v.absmax, splitplane);
+        sides = mathlib_c.BOX_ON_PLANE_SIDE(ent->v.absmin, ent->v.absmax, splitplane);
 
         if ((sides & 1) != 0)
         {
