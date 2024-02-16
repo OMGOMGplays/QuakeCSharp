@@ -351,7 +351,7 @@ public unsafe class draw_c
                 {
                     for (u = 0; u < pic->width; u++)
                     {
-                        if ((tbyte = (byte*)source[u]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u] = *tbyte;
                         }
@@ -367,42 +367,42 @@ public unsafe class draw_c
                 {
                     for (u = 0; u < pic->width; u++)
                     {
-                        if ((tbyte = (byte*)source[u]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u] = *tbyte;
                         }
 
-                        if ((tbyte = (byte*)source[u + 1]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u + 1]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u + 1] = *tbyte;
                         }
 
-                        if ((tbyte = (byte*)source[u + 2]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u + 2]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u + 2] = *tbyte;
                         }
 
-                        if ((tbyte = (byte*)source[u + 3]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u + 3]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u + 3] = *tbyte;
                         }
 
-                        if ((tbyte = (byte*)source[u + 4]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u + 4]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u + 4] = *tbyte;
                         }
 
-                        if ((tbyte = (byte*)source[u + 5]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u + 5]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u + 5] = *tbyte;
                         }
 
-                        if ((tbyte = (byte*)source[u + 6]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u + 6]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u + 6] = *tbyte;
                         }
 
-                        if ((tbyte = (byte*)source[u + 7]) != TRANSPARENT_COLOR)
+                        if ((tbyte = (byte*)source[u + 7]) != (byte*)d_iface_c.TRANSPARENT_COLOR)
                         {
                             dest[u + 7] = *tbyte;
                         }
@@ -423,7 +423,7 @@ public unsafe class draw_c
                 {
                     tbyte = (byte*)source[u];
 
-                    if (tbyte != TRANSPARENT_COLOR)
+                    if (tbyte != (byte*)d_iface_c.TRANSPARENT_COLOR)
                     {
                         pusdest[u] = vid_c.d_8to16table[(int)tbyte];
                     }
@@ -676,7 +676,7 @@ public unsafe class draw_c
                 {
                     t = *psrc;
 
-                    if (t != TRANSPARENT_COLOR)
+                    if (t != (byte)d_iface_c.TRANSPARENT_COLOR)
                     {
                         *pdest = t;
                     }
@@ -719,7 +719,7 @@ public unsafe class draw_c
                 {
                     t = *psrc;
 
-                    if (t != TRANSPARENT_COLOR)
+                    if (t != (byte)d_iface_c.TRANSPARENT_COLOR)
                     {
                         *pdest = vid_c.d_8to16table[t];
                     }
@@ -864,7 +864,7 @@ public unsafe class draw_c
         int x, y;
         byte* pbuf;
 
-        VID_UnlockBuffer();
+        vid_win_c.VID_UnlockBuffer();
         S_ExtraUpdate();
         VID_LockBuffer();
 
@@ -891,11 +891,11 @@ public unsafe class draw_c
 
     public static void Draw_BeginDisc()
     {
-        D_BeginDirectRect(vid_win_c.vid.width - 24, 0, draw_disc->data, 24, 24);
+        D_BeginDirectRect(vid_c.vid.width - 24, 0, draw_disc->data, 24, 24);
     }
 
     public static void Draw_EndDisc()
     {
-        D_EndDirectRect(vid_win_c.vid.width - 24, 0, 24, 24);
+        D_EndDirectRect(vid_c.vid.width - 24, 0, 24, 24);
     }
 }

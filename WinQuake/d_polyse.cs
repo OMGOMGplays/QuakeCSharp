@@ -117,7 +117,7 @@ public unsafe class d_polyse_c
                     *zbuf = (short)z;
                     pix = skintable[fv->v[3] >> 16][fv->v[2] >> 16];
                     pix = ((byte*)r_alias_c.acolormap)[pix + (fv->v[4] & 0xFF00)];
-                    d_vars_c.d_viewbuffer[d_modech_c.d_scantable[fv->v[1]] + fv->v[0]] = pix;
+                    d_vars_c.d_viewbuffer[d_modech_c.d_scantable[fv->v[1]] + fv->v[0]] = (byte)pix;
                 }
             }
         }
@@ -344,7 +344,7 @@ public unsafe class d_polyse_c
 
             *zbuf = (short)z;
             pix = d_pcolormap[skintable[_new[3] >> 16][_new[2] >> 16]];
-            d_vars_c.d_viewbuffer[d_modech_c.d_scantable[_new[1]] + _new[0]] = pix;
+            d_vars_c.d_viewbuffer[d_modech_c.d_scantable[_new[1]] + _new[0]] = (byte)pix;
         }
 
     nodraw:
@@ -715,6 +715,192 @@ public unsafe class d_polyse_c
             D_PolysetScanLeftEdge(initialleftheight);
         }
 
+        if (pedgetable->numleftedges == 2)
+        {
+            int height;
 
+            plefttop = pleftbottom;
+            pleftbottom = pedgetable->pleftedgevert2;
+
+            height = pleftbottom[1] - plefttop[1];
+
+            ystart = plefttop[1];
+            d_aspancount = plefttop[0] - prighttop[0];
+            d_ptex = (byte*)r_alias_c.r_affinetridesc.pskin + (plefttop[2] >> 16) + (plefttop[3] >> 16) * r_alias_c.r_affinetridesc.skinwidth;
+            d_sfrac = 0;
+            d_tfrac = 0;
+            d_light = plefttop[4];
+            d_zi = plefttop[5];
+
+            d_pdest = (byte*)d_vars_c.d_viewbuffer + ystart * d_edge_c.screenwidth + plefttop[0];
+            d_pz = d_vars_c.d_pzbuffer + ystart * d_vars_c.d_zwidth + plefttop[0];
+
+            if (height == 1)
+            {
+                d_pedgespanpackage->pdest = d_pdest;
+                d_pedgespanpackage->pz = d_pz;
+                d_pedgespanpackage->count = d_aspancount;
+                d_pedgespanpackage->ptex = d_ptex;
+
+                d_pedgespanpackage->sfrac = d_sfrac;
+                d_pedgespanpackage->tfrac = d_tfrac;
+
+                d_pedgespanpackage->light = d_light;
+                d_pedgespanpackage->zi = d_zi;
+
+                d_pedgespanpackage++;
+            }
+            else
+            {
+                D_PolysetSetUpForLineScan(plefttop[0], plefttop[1], pleftbottom[0], pleftbottom[1]);
+
+                d_pdestbasestep = d_edge_c.screenwidth + d_edge_c.ubasestep;
+                d_pdestextrastep = d_pdestbasestep + 1;
+
+#if id386
+                d_pzbasestep = (d_vars_c.d_zwidth + d_edge_c.ubasestep) << 1;
+                d_pzextrastep = d_pzbasestep + 1;
+#else
+                d_pzbasestep = (int)d_vars_c.d_zwidth + d_edge_c.ubasestep;
+                d_pzextrastep = d_pzbasestep + 1;
+#endif
+
+                if (d_edge_c.ubasestep < 0)
+                {
+                    working_lstepx = r_lstepx - 1;
+                }
+                else
+                {
+                    working_lstepx = r_lstepx;
+                }
+
+                d_countextrastep = d_edge_c.ubasestep + 1;
+                d_ptexbasestep = ((r_sstepy + r_sstepx * d_edge_c.ubasestep) >> 16) + ((r_tstepy + r_tstepx * d_edge_c.ubasestep) >> 16) * r_alias_c.r_affinetridesc.skinwidth;
+
+#if id386
+                d_sfracbasestep = (r_sstepy + r_sstepx * d_edge_c.ubasestep) << 16;
+                d_tfracbasestep = (r_tstepy + r_tstepx * d_edge_c.ubasestep) << 16;
+#else
+                d_sfracbasestep = (r_sstepy + r_sstepx * d_edge_c.ubasestep) & 0xFFFF;
+                d_tfracbasestep = (r_tstepy + r_tstepx * d_edge_c.ubasestep) & 0xFFFF;
+#endif
+                d_lightbasestep = r_lstepy + working_lstepx * d_edge_c.ubasestep;
+                d_zibasestep = r_zistepy + r_zistepx * d_edge_c.ubasestep;
+
+                d_ptexextrastep = ((r_sstepy + r_sstepx * d_countextrastep) >> 16) + ((r_tstepy + r_tstepx * d_countextrastep) >> 16) * r_alias_c.r_affinetridesc.skinwidth;
+
+#if id386
+                d_sfracextrastep = ((r_sstepy+r_sstepx*d_countextrastep) & 0xFFFF)<<16;
+			    d_tfracextrastep = ((r_tstepy+r_tstepx*d_countextrastep) & 0xFFFF)<<16;
+#else
+                d_sfracbasestep = (r_sstepy + r_sstepx * d_countextrastep) & 0xFFFF;
+                d_tfracbasestep = (r_tstepy + r_tstepx * d_countextrastep) & 0xFFFF;
+#endif
+                d_lightextrastep = d_lightbasestep + working_lstepx;
+                d_ziextrastep = d_zibasestep + r_zistepx;
+
+                D_PolysetScanLeftEdge(height);
+            }
+        }
+
+        d_pedgespanpackage = a_spans;
+
+        D_PolysetSetUpForLineScan(prighttop[0], prighttop[1], prightbottom[0], prightbottom[1]);
+
+        d_aspancount = 0;
+        d_countextrastep = d_edge_c.ubasestep + 1;
+        originalcount = a_spans[initialrightheight].count;
+        a_spans[initialrightheight].count = -999999;
+        D_PolysetDrawSpans8(a_spans);
+
+        if (pedgetable->numrightedges == 2)
+        {
+            int height = 2;
+            spanpackage_t* pstart;
+
+            pstart = a_spans + initialrightheight;
+            pstart->count = originalcount;
+
+            d_aspancount = prightbottom[0] - prighttop[0];
+
+            prighttop = prightbottom;
+            prightbottom = pedgetable->prightedgevert2;
+
+            height = prightbottom[1] - prighttop[1];
+
+            D_PolysetSetUpForLineScan(prighttop[0], prighttop[1], prightbottom[0], prightbottom[1]);
+
+            d_countextrastep = d_edge_c.ubasestep + 1;
+            a_spans[initialrightheight + height].count = -999999;
+
+            D_PolysetDrawSpans8(pstart);
+        }
+    }
+
+    public static void D_PolysetSetEdgeTable()
+    {
+        int edgetableindex;
+
+        edgetableindex = 0;
+
+        if (r_p0[1] >= r_p1[1])
+        {
+            if (r_p0[1] == r_p1[1])
+            {
+                if (r_p0[1] < r_p2[1])
+                {
+                    *pedgetable = edgetables[2];
+                }
+                else
+                {
+                    *pedgetable = edgetables[5];
+                }
+
+                return;
+            }
+            else
+            {
+                edgetableindex = 1;
+            }
+        }
+
+        if (r_p0[1] == r_p2[1])
+        {
+            if (edgetableindex != 0)
+            {
+                *pedgetable = edgetables[8];
+            }
+            else
+            {
+                *pedgetable = edgetables[9];
+            }
+
+            return;
+        }
+        else if (r_p1[1] == r_p2[1])
+        {
+            if (edgetableindex != 0)
+            {
+                *pedgetable = edgetables[10];
+            }
+            else
+            {
+                *pedgetable = edgetables[11];
+            }
+
+            return;
+        }
+
+        if (r_p0[1] > r_p2[1])
+        {
+            edgetableindex += 2;
+        }
+
+        if (r_p1[1] > r_p2[1])
+        {
+            edgetableindex += 4;
+        }
+
+        *pedgetable = edgetables[edgetableindex];
     }
 }

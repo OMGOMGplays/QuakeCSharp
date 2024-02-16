@@ -253,6 +253,11 @@ public unsafe class host_c
         common_c.MSG_WriteString(host_client->message, *fmt);
     }
 
+    public static void SV_ClientPrintf(string fmt, params object[] args)
+    {
+        SV_ClientPrintf(common_c.StringToChar(fmt));
+    }
+
     public static void SV_BroadcastPrintf(char* fmt, params object[] args)
     {
         int i;
@@ -300,7 +305,7 @@ public unsafe class host_c
             {
                 saveSelf = progs_c.pr_global_struct->self;
                 progs_c.pr_global_struct->self = progs_c.EDICT_TO_PROG(host_client->edict);
-                pr_execs_c.PR_ExecuteProgram(progs_c.pr_global_struct->ClientDisconnect);
+                pr_exec_c.PR_ExecuteProgram(progs_c.pr_global_struct->ClientDisconnect);
                 progs_c.pr_global_struct->self = saveSelf;
             }
 

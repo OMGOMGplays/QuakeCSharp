@@ -425,7 +425,7 @@ public unsafe class d_sprite_c
 
         d_vars_c.cachewidth = r_sprite_c.r_spritedesc.pspriteframe->width;
         sprite_height = r_sprite_c.r_spritedesc.pspriteframe->height;
-        d_vars_c.cacheblock = (byte*)&r_sprite_c.r_spritedesc.pspriteframe->pixels[0];
+        d_vars_c.cacheblock = (byte*)r_sprite_c.r_spritedesc.pspriteframe->pixels[0];
 
         nump = r_sprite_c.r_spritedesc.nump;
         pverts = r_sprite_c.r_spritedesc.pverts;

@@ -145,7 +145,7 @@ public unsafe class d_iface_c
 	public static float skytime;
 
 	public static int c_surf;
-	public static vid_win_c.vrect_t scr_vrect;
+	public static vid_c.vrect_t scr_vrect;
 
 	public static byte* r_warpbuffer;
 }

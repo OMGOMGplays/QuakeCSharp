@@ -143,7 +143,7 @@ public unsafe class d_edge_c
     {
         r_shared_c.surf_t* s;
         model_c.msurface_t* pface;
-        glquake_c.surfcache_t* pcurrentcache;
+        d_local_c.surfcache_t* pcurrentcache;
         Vector3 world_transformed_modelorg;
         Vector3 local_modelorg;
 
@@ -258,7 +258,7 @@ public unsafe class d_edge_c
 
                     D_CalcGradients(pface);
 
-                    (d_init_c.d_drawspams*)(s->spans);
+                    //(d_init_c.d_drawspams*)(s->spans);
 
                     d_scan_c.D_DrawZSpans(s->spans);
 

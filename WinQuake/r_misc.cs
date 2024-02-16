@@ -239,6 +239,13 @@ public unsafe class r_misc_c
         output[1] = mathlib_c.DotProduct(input, r_shared_c.vup);
         output[2] = mathlib_c.DotProduct(input, r_shared_c.vpn);
     }
+
+    public static void TransformVector(float[] input, Vector3 output)
+    {
+        output[0] = mathlib_c.DotProduct(input, r_shared_c.vright);
+        output[1] = mathlib_c.DotProduct(input, r_shared_c.vup);
+        output[2] = mathlib_c.DotProduct(input, r_shared_c.vpn);
+    }
 #endif
 
     public static void R_TransformPlane(model_c.mplane_t* p, float* normal, float* dist)
