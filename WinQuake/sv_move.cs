@@ -15,7 +15,7 @@ public unsafe class sv_move_c
         int x, y;
         float mid, bottom;
 
-        mins = maxs = start = stop = new()
+        mins = maxs = start = stop = new();
 
         mathlib_c.VectorAdd(ent->v.origin, ent->v.mins, mins);
         mathlib_c.VectorAdd(ent->v.origin, ent->v.maxs, maxs);

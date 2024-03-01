@@ -542,7 +542,7 @@ public unsafe class sys_win_c
 
         if (j != 0)
         {
-            curtime = (double)(common_c.Q_atof(&common_c.com_argv[j + 1]);
+            curtime = (double)(common_c.Q_atof(&common_c.com_argv[j + 1]));
         }
         else
         {

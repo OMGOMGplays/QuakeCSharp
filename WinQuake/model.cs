@@ -1589,7 +1589,7 @@ public unsafe class model_c
 
         for (i = 0; i < numframes; i++)
         {
-            ptemp = Mod_LoadAliasFrame(ptemp, paliasgroup->frames[i].frame, numv, paliasgroup->frames[i].bboxmin, paliasgroup->frames[i].bboxmax, pheader, name);
+            ptemp = Mod_LoadAliasFrame(ptemp, (int*)paliasgroup->frames[i].frame, numv, paliasgroup->frames[i].bboxmin, paliasgroup->frames[i].bboxmax, pheader, name);
         }
 
         return ptemp;
@@ -1670,7 +1670,7 @@ public unsafe class model_c
 
         for (i = 0; i < numskins; i++)
         {
-            ptemp = Mod_LoadAliasSkin(ptemp, paliasskingroup->skindescs[i].skin, skinsize, pheader);
+            ptemp = Mod_LoadAliasSkin(ptemp, (int*)paliasskingroup->skindescs[i].skin, skinsize, pheader);
         }
 
         return ptemp;

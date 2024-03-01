@@ -106,7 +106,7 @@ public unsafe class pr_comp_c
         public short type;
 
         public short ofs;
-        public int s_name,
+        public int s_name;
     }
 
     public static int DEF_SAVEGLOBAL = (1 << 15);
