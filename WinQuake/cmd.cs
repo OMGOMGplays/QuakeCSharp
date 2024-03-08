@@ -428,6 +428,11 @@ public unsafe class cmd_c
         }
     }
 
+    public static void Cmd_AddCommand(char* cmd_name, Action function)
+    {
+        Cmd_AddCommand(cmd_name->ToString(), function);
+    }
+
     public static void Cmd_AddCommand(string cmd_name, Action function)
     {
         cmd_function_t* cmd;
@@ -551,7 +556,7 @@ public unsafe class cmd_c
             return;
         }
 
-        common_c.MSG_WriteByte(client_c.cls.message, cl_main_c.clc_stringcmd);
+        common_c.MSG_WriteByte(client_c.cls.message, protocol_c.clc_stringcmd);
 
         if (common_c.Q_strcasecmp(Cmd_Argv(0)->ToString(), "cmd") != 0)
         {
@@ -569,7 +574,7 @@ public unsafe class cmd_c
         }
     }
 
-    public int Cmd_CheckParm(char* parm)
+    public static int Cmd_CheckParm(char* parm)
     {
         int i;
 
@@ -587,5 +592,10 @@ public unsafe class cmd_c
         }
 
         return 0;
+    }
+
+    public static int Cmd_CheckParm(string parm)
+    {
+        return Cmd_CheckParm(common_c.StringToChar(parm));
     }
 }

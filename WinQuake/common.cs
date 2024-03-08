@@ -201,6 +201,23 @@ public unsafe class common_c
 		}
 	}
 
+	public static void Q_strncpy(char* dest, char* src, int count)
+    {
+        int i = 0;
+
+        while (src[i] != '\0' && count > 0)
+        {
+            dest[i] = src[i];
+            i++;
+            count--;
+        }
+
+        if (count != 0)
+        {
+            dest[i] = '\0';
+        }
+    }
+
 	public static int Q_strlen(string str)
 	{
 		int count = 0;
@@ -1297,6 +1314,15 @@ public unsafe class common_c
 
 		COM_InitFileSystem();
 		COM_CheckRegistered();
+	}
+
+	public static char va(char format, params object[] args)
+	{
+		char _string = new();
+
+		Console.WriteLine($"{_string}");
+
+		return _string;
 	}
 
 	public static string va(string format, params object[] args)

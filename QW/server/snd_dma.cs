@@ -891,6 +891,11 @@ public unsafe class snd_dma_c
         console_c.Con_Printf($"Total resident: {total}\n");
     }
 
+    public static void S_LocalSound(string sound)
+    {
+        S_LocalSound(common_c.StringToChar(sound));
+    }
+
     public static void S_LocalSound(char* sound)
     {
         sound_c.sfx_t* sfx;

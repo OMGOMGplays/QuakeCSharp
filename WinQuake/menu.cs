@@ -10,7 +10,7 @@ public unsafe class menu_c
 
     public static int m_activenet;
 
-    public enum m_state { m_none, m_main, m_singleplayer, m_load, m_save, m_multiplayer, m_setup, m_net, m_options, m_video, m_keys, m_help, m_quit, m_serialconfig, m_modeconfig, m_lanconfig, m_gameoptions, m_search, m_slist }
+    public enum m_state { m_none, m_main, m_singleplayer, m_load, m_save, m_multiplayer, m_setup, m_net, m_options, m_video, m_keys, m_help, m_quit, m_serialconfig, m_modemconfig, m_lanconfig, m_gameoptions, m_search, m_slist }
 
     public static bool m_entersound;
 
@@ -34,11 +34,26 @@ public unsafe class menu_c
         draw_c.Draw_Character(cx + (int)((vid_c.vid.width - 320) >> 1), line, num);
     }
 
+    public static void M_Print(int cx, int cy, string str)
+    {
+        M_Print(cx, cy, common_c.StringToChar(str));
+    }
+
     public static void M_Print(int cx, int cy, char* str)
     {
         while (*str != 0)
         {
             M_DrawCharacter(cx, cy, (*str) + 128);
+            str++;
+            cx += 8;
+        }
+    }
+
+    public static void M_Print(int cx, int cy, char str)
+    {
+        while (str != 0)
+        {
+            M_DrawCharacter(cx, cy, (str) + 128);
             str++;
             cx += 8;
         }
@@ -471,7 +486,7 @@ public unsafe class menu_c
 
         for (i = 0; i < MAX_SAVEGAMES; i++)
         {
-            M_Print(16, 32 + 8 * i, &m_filenames[i][0]);
+            M_Print(16, 32 + 8 * i, m_filenames[i][0]);
         }
 
         M_DrawCharacter(8, 32 + load_cursor * 8, 12 + ((int)(quakedef_c.realtime * 4) & 1));
@@ -487,7 +502,7 @@ public unsafe class menu_c
 
         for (i = 0; i < MAX_SAVEGAMES; i++)
         {
-            M_Print(16, 32 + 8 * i, &m_filenames[i][0]);
+            M_Print(16, 32 + 8 * i, m_filenames[i][0]);
         }
 
         M_DrawCharacter(8, 32 + load_cursor * 8, 12 + ((int)(quakedef_c.realtime * 4) & 1));
@@ -1310,7 +1325,7 @@ public unsafe class menu_c
         M_DrawSlider(220, 56, r);
 
         M_Print(16, 64, common_c.StringToChar("            Brightness"));
-        r = (1.0 - view_c.v_gamma.value) / 0.5;
+        r = (1.0f - view_c.v_gamma.value) / 0.5f;
         M_DrawSlider(220, 64, r);
 
         M_Print(16, 72, common_c.StringToChar("           Mouse Speed"));
@@ -1908,7 +1923,7 @@ public unsafe class menu_c
         serialConfig_baud = n;
 
         m_return_onerror = false;
-        m_return_reason[0] = 0;
+        m_return_reason[0] = '0';
     }
 
     public static void M_SerialConfig_Draw()
@@ -1983,7 +1998,7 @@ public unsafe class menu_c
 
         if (serialConfig_cursor == 4)
         {
-            M_DrawCharacter(168 + 8 * common_c.Q_strlen(serialConfig_phone->ToString()), serialConfig_cursor_table[serialConfig_cursor], 10 + ((int)(realtime * 4) & 1));
+            M_DrawCharacter(168 + 8 * common_c.Q_strlen(serialConfig_phone->ToString()), serialConfig_cursor_table[serialConfig_cursor], 10 + ((int)(host_c.realtime * 4) & 1));
         }
 
         if (*m_return_reason != 0)
@@ -2149,7 +2164,7 @@ public unsafe class menu_c
                     break;
                 }
 
-                m_return_state = m_state.m_net;
+                m_return_state = (int)m_state.m_net;
                 m_return_onerror = true;
                 keys_c.key_dest = keys_c.keydest_t.key_game;
                 //m_state = m_state.m_none;
@@ -2175,7 +2190,185 @@ public unsafe class menu_c
 
                 break;
 
-            
+            default:
+                if (key < 32 || key > 127)
+                {
+                    break;
+                }
+
+                if (serialConfig_cursor == 4)
+                {
+                    l = strlen_c.strlen(serialConfig_phone);
+
+                    if (l < 15)
+                    {
+                        serialConfig_phone[l + 1] = (char)0;
+                        serialConfig_phone[l] = (char)key;
+                    }
+                }
+
+                break;
+        }
+
+        if (DirectConfig && (serialConfig_cursor == 3 || serialConfig_cursor == 4))
+        {
+            if (key == keys_c.K_UPARROW)
+            {
+                serialConfig_cursor = 2;
+            }
+            else
+            {
+                serialConfig_cursor = 5;
+            }
+        }
+
+        if (SerialConfig && StartingGame && serialConfig_cursor == 4)
+        {
+            if (key == keys_c.K_UPARROW)
+            {
+                serialConfig_cursor = 3;
+            }
+            else
+            {
+                serialConfig_cursor = 5;
+            }
+        }
+    }
+
+    public static int modemConfig_cursor;
+    public static int[] modemConfig_cursor_table = { 40, 56, 88, 120, 156 };
+    public const int NUM_MODEMCONFIG_CMDS = 5;
+
+    public static char modemConfig_dialing;
+    public static char* modemConfig_clear;
+    public static char* modemConfig_init;
+    public static char* modemConfig_hangup;
+
+    public static void M_Menu_ModemConfig_f()
+    {
+        keys_c.key_dest = keys_c.keydest_t.key_menu;
+        state = m_state.m_modemconfig;
+        m_entersound = true;
+        net_main_c.GetModemConfig(0, modemConfig_dialing, *modemConfig_clear, *modemConfig_init, *modemConfig_hangup);
+    }
+
+    public static void M_MenuConfig_Draw()
+    {
+        wad_c.qpic_t* p;
+        int basex;
+
+        M_DrawTransPic(16, 4, draw_c.Draw_CachePic("gfx/qplaque.lmp"));
+        p = draw_c.Draw_CachePic("gfx/p_multi.lmp");
+        basex = (320 - p->width) / 2;
+        M_DrawPic(basex, 4, p);
+        basex += 8;
+
+        if (modemConfig_dialing == 'P')
+        {
+            M_Print(basex, modemConfig_cursor_table[0], "Pulse Dialing");
+        }
+        else
+        {
+            M_Print(basex, modemConfig_cursor_table[0], "Touch Tone Dialing");
+        }
+
+        M_Print(basex, modemConfig_cursor_table[1], "Clear");
+        M_DrawTextBox(basex, modemConfig_cursor_table[1] + 4, 16, 1);
+        M_Print(basex + 8, modemConfig_cursor_table[1] + 12, modemConfig_clear);
+
+        if (modemConfig_cursor == 1)
+        {
+            M_DrawCharacter(basex + 8 + 8 * strlen_c.strlen(modemConfig_clear), modemConfig_cursor_table[1] + 12, 10 + ((int)(host_c.realtime * 4) & 1));
+        }
+
+        M_Print(basex, modemConfig_cursor_table[2], "Init");
+        M_DrawTextBox(basex, modemConfig_cursor_table[2] + 4, 30, 1);
+        M_Print(basex + 8, modemConfig_cursor_table[2] + 12, modemConfig_init);
+
+        if (modemConfig_cursor == 2)
+        {
+            M_DrawCharacter(basex + 8 + 8 * strlen_c.strlen(modemConfig_init), modemConfig_cursor_table[2] + 12, 10 + ((int)(host_c.realtime * 4) & 1));
+        }
+
+        M_Print(basex, modemConfig_cursor_table[3], "Hangup");
+        M_DrawTextBox(basex, modemConfig_cursor_table[3] + 4, 16, 1);
+        M_Print(basex + 8, modemConfig_cursor_table[3] + 12, modemConfig_hangup);
+
+        if (modemConfig_cursor == 3)
+        {
+            M_DrawCharacter(basex + 8 + 8 * strlen_c.strlen(modemConfig_hangup), modemConfig_cursor_table[3] + 12, 10 + ((int)(host_c.realtime * 4) & 1));
+        }
+
+        M_DrawTextBox(basex, modemConfig_cursor_table[4] - 8, 2, 1);
+        M_Print(basex + 8, modemConfig_cursor_table[4], "OK");
+
+        M_DrawCharacter(basex - 8, modemConfig_cursor_table[modemConfig_cursor], 12 + ((int)(host_c.realtime * 4) & 1));
+    }
+
+    public static void M_ModemConfig_Key(int key)
+    {
+        int l;
+
+        switch (key)
+        {
+            case keys_c.K_ESCAPE:
+                M_Menu_SerialConfig_f();
+                break;
+
+            case keys_c.K_UPARROW:
+                snd_dma_c.S_LocalSound("misc/menu1.wav");
+                modemConfig_cursor--;
+
+                if (modemConfig_cursor < 0)
+                {
+                    modemConfig_cursor = NUM_MODEMCONFIG_CMDS - 1;
+                }
+
+                break;
+
+            case keys_c.K_LEFTARROW:
+            case keys_c.K_RIGHTARROW:
+                if (modemConfig_cursor == 0)
+                {
+                    if (modemConfig_dialing == 'P')
+                    {
+                        modemConfig_dialing = 'T';
+                    }
+                    else
+                    {
+                        modemConfig_dialing = 'P';
+                    }
+
+                    snd_dma_c.S_LocalSound("misc/menu1.wav");
+                }
+
+                break;
+
+            case keys_c.K_ENTER:
+                if (modemConfig_cursor == 0)
+                {
+                    if (modemConfig_dialing == 'P')
+                    {
+                        modemConfig_dialing = 'T';
+                    }
+                    else
+                    {
+                        modemConfig_dialing = 'P';
+                    }
+
+                    m_entersound = true;
+                }
+
+                if (modemConfig_cursor == 4)
+                {
+                    net_main_c.SetModemConfig(0, common_c.va(modemConfig_dialing), modemConfig_clear, modemConfig_init, modemConfig_hangup);
+                    m_entersound = true;
+                    M_Menu_SerialConfig_f();
+                }
+
+                break;
+
+
         }
     }
 }
