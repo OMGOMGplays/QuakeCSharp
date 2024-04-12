@@ -1484,8 +1484,8 @@ public unsafe class model_c
             mod->firstmodelsurface = bm->firstface;
             mod->nummodelsurfaces = bm->numfaces;
 
-            mathlib_c.VectorCopy(common_c.FloatArrToVector(bm->maxs), mod->maxs);
-            mathlib_c.VectorCopy(common_c.FloatArrToVector(bm->mins), mod->mins);
+            mathlib_c.VectorCopy(common_c.FloatToVector(bm->maxs), mod->maxs);
+            mathlib_c.VectorCopy(common_c.FloatToVector(bm->mins), mod->mins);
             mod->radius = RadiusFromBounds(mod->mins, mod->maxs);
 
             mod->numleafs = bm->visleafs;

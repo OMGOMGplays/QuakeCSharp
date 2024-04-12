@@ -1,7 +1,4 @@
-﻿using lib.libc;
-using System.Security.Cryptography;
-
-namespace Quake;
+﻿namespace Quake;
 
 public unsafe class menu_c
 {
@@ -37,6 +34,19 @@ public unsafe class menu_c
     public static void M_Print(int cx, int cy, string str)
     {
         M_Print(cx, cy, common_c.StringToChar(str));
+    }
+
+    public static void M_Print(int cx, int cy, char[] str)
+    {
+        for (int i = 0; i < str.Length;)
+        {
+            while (str[i] != 0)
+            {
+                M_DrawCharacter(cx, cy, str[i] + 128);
+                i++;
+                cx += 8;
+            }
+        }
     }
 
     public static void M_Print(int cx, int cy, char* str)
@@ -1815,7 +1825,7 @@ public unsafe class menu_c
             case 'N':
                 if (wasInMenus)
                 {
-                    state = m_quit_prevstate;
+                    state = (m_state)m_quit_prevstate;
                     m_entersound = true;
                 }
                 else
@@ -1840,7 +1850,7 @@ public unsafe class menu_c
     {
         if (wasInMenus)
         {
-            state = m_quit_prevstate;
+            state = (m_state)m_quit_prevstate;
             m_recursiveDraw = true;
             M_Draw();
             state = m_state.m_quit;
@@ -2252,7 +2262,7 @@ public unsafe class menu_c
         net_main_c.GetModemConfig(0, modemConfig_dialing, *modemConfig_clear, *modemConfig_init, *modemConfig_hangup);
     }
 
-    public static void M_MenuConfig_Draw()
+    public static void M_ModemConfig_Draw()
     {
         wad_c.qpic_t* p;
         int basex;
@@ -2361,14 +2371,1321 @@ public unsafe class menu_c
 
                 if (modemConfig_cursor == 4)
                 {
-                    net_main_c.SetModemConfig(0, common_c.va(modemConfig_dialing), modemConfig_clear, modemConfig_init, modemConfig_hangup);
+                    net_main_c.SetModemConfig(0, common_c.va(modemConfig_dialing), *modemConfig_clear, *modemConfig_init, *modemConfig_hangup);
                     m_entersound = true;
                     M_Menu_SerialConfig_f();
                 }
 
                 break;
 
+            case keys_c.K_BACKSPACE:
+                if (modemConfig_cursor == 1)
+                {
+                    if (strlen_c.strlen(modemConfig_clear) != 0)
+                    {
+                        modemConfig_clear[strlen_c.strlen(modemConfig_clear) - 1] = (char)0;
+                    }
+                }
 
+                if (modemConfig_cursor == 2)
+                {
+                    if (strlen_c.strlen(modemConfig_init) != 0)
+                    {
+                        modemConfig_init[strlen_c.strlen(modemConfig_init) - 1] = (char)0;
+                    }
+                }
+
+                if (modemConfig_cursor == 3)
+                {
+                    if (strlen_c.strlen(modemConfig_hangup) != 0)
+                    {
+                        modemConfig_hangup[strlen_c.strlen(modemConfig_hangup) - 1] = (char)0;
+                    }
+                }
+
+                break;
+
+            default:
+                if (key < 32 || key > 127)
+                {
+                    break;
+                }
+
+                if (modemConfig_cursor == 1)
+                {
+                    l = strlen_c.strlen(modemConfig_clear);
+
+                    if (l < 15)
+                    {
+                        modemConfig_clear[l + 1] = '0';
+                        modemConfig_clear[l] = (char)key;
+                    }
+                }
+
+                if (modemConfig_cursor == 2)
+                {
+                    l = strlen_c.strlen(modemConfig_init);
+
+                    if (l < 29)
+                    {
+                        modemConfig_init[l + 1] = '0';
+                        modemConfig_init[l] = (char)key;
+                    }
+                }
+
+                if (modemConfig_cursor == 3)
+                {
+                    l = strlen_c.strlen(modemConfig_hangup);
+
+                    if (l < 15)
+                    {
+                        modemConfig_hangup[l + 1] = '0';
+                        modemConfig_hangup[l] = (char)key;
+                    }
+                }
+
+                break;
+        }
+    }
+
+    public static int lanConfig_cursor = -1;
+    public static int[] lanConfig_cursor_table = { 72, 92, 124 };
+    public const int NUM_LANCONFIG_CMDS = 3;
+
+    public static int lanConfig_port;
+    public static char[] lanConfig_portname = new char[6];
+    public static char[] lanConfig_joinname = new char[22];
+
+    public static void M_Menu_LanConfig_f()
+    {
+        keys_c.key_dest = keys_c.keydest_t.key_menu;
+        state = m_state.m_lanconfig;
+        m_entersound = true;
+
+        if (lanConfig_cursor == -1)
+        {
+            if (JoiningGame && TCPIPConfig)
+            {
+                lanConfig_cursor = 2;
+            }
+            else
+            {
+                lanConfig_cursor = 1;
+            }
+        }
+
+        if (StartingGame && lanConfig_cursor == 2)
+        {
+            lanConfig_cursor = 1;
+        }
+
+        lanConfig_port = net_main_c.DEFAULTnet_hostport;
+        Console.WriteLine($"{lanConfig_port}");
+
+        m_return_onerror = false;
+        m_return_reason[0] = (char)0;
+    }
+
+    public static void M_LanConfig_Draw()
+    {
+        wad_c.qpic_t* p;
+        int basex;
+        char* startJoin;
+        char* protocol;
+
+        M_DrawTransPic(16, 4, draw_c.Draw_CachePic("gfx/qplaque.lmp"));
+        p = draw_c.Draw_CachePic("gfx/p_multi.lmp");
+        basex = (320 - p->width) / 2;
+        M_DrawPic(basex, 4, p);
+
+        if (StartingGame)
+        {
+            startJoin = common_c.StringToChar("New Game");
+        }
+        else
+        {
+            startJoin = common_c.StringToChar("Join Game");
+        }
+
+        if (IPXConfig)
+        {
+            protocol = common_c.StringToChar("IPX");
+        }
+        else
+        {
+            protocol = common_c.StringToChar("TCP/IP");
+        }
+
+        M_Print(basex, 32, common_c.va($"{*startJoin} - {*protocol}"));
+        basex += 8;
+
+        M_Print(basex, 52, common_c.StringToChar("Address:"));
+
+        if (IPXConfig)
+        {
+            M_Print(basex + 9 * 8, 52, net_main_c.my_ipx_address);
+        }
+        else
+        {
+            M_Print(basex + 9 * 8, 52, net_main_c.my_tcpip_address);
+        }
+
+        M_Print(basex, lanConfig_cursor_table[0], "Port");
+        M_DrawTextBox(basex + 8 * 8, lanConfig_cursor_table[0] - 8, 6, 1);
+        M_Print(basex + 9 * 8, lanConfig_cursor_table[0], lanConfig_portname);
+
+        if (JoiningGame)
+        {
+            M_Print(basex, lanConfig_cursor_table[1], "Search for local games...");
+            M_Print(basex, 108, "Join game at:");
+            M_DrawTextBox(basex + 8, lanConfig_cursor_table[2] - 8, 22, 1);
+            M_Print(basex + 16, lanConfig_cursor_table[2], lanConfig_joinname);
+        }
+        else
+        {
+            M_DrawTextBox(basex, lanConfig_cursor_table[1] - 8, 2, 1);
+            M_Print(basex + 8, lanConfig_cursor_table[1], "OK");
+        }
+
+        M_DrawCharacter(basex - 8, lanConfig_cursor_table[lanConfig_cursor], 12 + ((int)(host_c.realtime * 4) & 1));
+
+        if (lanConfig_cursor == 0)
+        {
+            M_DrawCharacter(basex + 9 * 8 + 8 * strlen_c.strlen(lanConfig_portname), lanConfig_cursor_table[0], 10 + ((int)(host_c.realtime * 4) & 1));
+            M_Print(basex + 8, lanConfig_cursor_table[1], "OK");
+        }
+
+        M_DrawCharacter(basex - 8, lanConfig_cursor_table[lanConfig_cursor], 12 + ((int)(host_c.realtime * 4) & 1));
+
+        if (lanConfig_cursor == 0)
+        {
+            M_DrawCharacter(basex + 9 * 8 + 8 * strlen_c.strlen(lanConfig_portname), lanConfig_cursor_table[0], 10 + ((int)(host_c.realtime * 4) & 1));
+        }
+
+        if (lanConfig_cursor == 2)
+        {
+            M_DrawCharacter(basex + 16 + 8 * strlen_c.strlen(lanConfig_joinname), lanConfig_cursor_table[2], 10 + ((int)(host_c.realtime * 4) & 1));
+        }
+
+        if (*m_return_reason != null)
+        {
+            M_PrintWhite(basex, 148, m_return_reason);
+        }
+    }
+
+    public static void M_LanConfig_Key(int key)
+    {
+        int l;
+
+        switch (key)
+        {
+            case keys_c.K_ESCAPE:
+                M_Menu_Net_f();
+                break;
+
+            case keys_c.K_UPARROW:
+                snd_dma_c.S_LocalSound("misc/menu1.wav");
+                lanConfig_cursor--;
+
+                if (lanConfig_cursor < 0)
+                {
+                    lanConfig_cursor = NUM_LANCONFIG_CMDS - 1;
+                }
+
+                break;
+
+            case keys_c.K_DOWNARROW:
+                snd_dma_c.S_LocalSound("misc/menu1.wav");
+                lanConfig_cursor++;
+
+                if (lanConfig_cursor >= NUM_LANCONFIG_CMDS)
+                {
+                    lanConfig_cursor = 0;
+                }
+
+                break;
+
+            case keys_c.K_ENTER:
+                if (lanConfig_cursor == 0)
+                {
+                    break;
+                }
+
+                m_entersound = true;
+
+                if (lanConfig_cursor == 1)
+                {
+                    if (StartingGame)
+                    {
+                        M_Menu_GameOptions_f();
+                        break;
+                    }
+
+                    M_Menu_Search_f();
+                    break;
+                }
+
+                if (lanConfig_cursor == 2)
+                {
+                    m_return_state = (int)state;
+                    m_return_onerror = true;
+                    keys_c.key_dest = keys_c.keydest_t.key_game;
+                    state = m_state.m_none;
+                    cmd_c.Cbuf_AddText(common_c.va($"connect \"{lanConfig_joinname}\"\n"));
+                    break;
+                }
+
+                break;
+
+            case keys_c.K_BACKSPACE:
+                if (lanConfig_cursor == 0)
+                {
+                    if (strlen_c.strlen(lanConfig_portname) != 0)
+                    {
+                        lanConfig_portname[strlen_c.strlen(lanConfig_portname) - 1] = (char)0;
+                    }
+                }
+
+                if (lanConfig_cursor == 2)
+                {
+                    if (strlen_c.strlen(lanConfig_joinname) != 0)
+                    {
+                        lanConfig_joinname[strlen_c.strlen(lanConfig_joinname) - 1] = (char)0;
+                    }
+                }
+
+                break;
+
+            default:
+                if (key < 32 || key > 127)
+                {
+                    break;
+                }
+
+                if (lanConfig_cursor == 2)
+                {
+                    l = strlen_c.strlen(lanConfig_joinname);
+
+                    if (l < 21)
+                    {
+                        lanConfig_joinname[l + 1] = '0';
+                        lanConfig_joinname[l] = (char)key;
+                    }
+                }
+
+                if (key < '0' || key > '9')
+                {
+                    break;
+                }
+
+                if (lanConfig_cursor == 0)
+                {
+                    l = strlen_c.strlen(lanConfig_portname);
+
+                    if (l < 5)
+                    {
+                        lanConfig_portname[l + 1] = '0';
+                        lanConfig_portname[l] = (char)key;
+                    }
+                }
+
+                break;
+        }
+
+        if (StartingGame && lanConfig_cursor == 2)
+        {
+            if (key == keys_c.K_UPARROW)
+            {
+                lanConfig_cursor = 1;
+            }
+            else
+            {
+                lanConfig_cursor = 0;
+            }
+        }
+
+        l = common_c.Q_atoi(lanConfig_portname);
+
+        if (l > 65535)
+        {
+            l = lanConfig_port;
+        }
+        else
+        {
+            lanConfig_port = l;
+        }
+
+        Console.WriteLine($"{lanConfig_port}");
+    }
+
+    public struct level_t
+    {
+        public char* name;
+        public char* description;
+    }
+
+    public static level_t[] levels =
+    {
+        new level_t {name = common_c.StringToChar("start"), description = common_c.StringToChar("Entrance")},
+
+        new level_t {name = common_c.StringToChar("e1m1"), description = common_c.StringToChar("Slipgate Complex")},
+        new level_t {name = common_c.StringToChar("e1m2"), description = common_c.StringToChar("Castle of the Damned")},
+        new level_t {name = common_c.StringToChar("e1m3"), description = common_c.StringToChar("The Necropolis")},
+        new level_t {name = common_c.StringToChar("e1m4"), description = common_c.StringToChar("The Grisly Grotto") },
+        new level_t {name = common_c.StringToChar("e1m5"), description = common_c.StringToChar("Gloom Keep")},
+        new level_t {name = common_c.StringToChar("e1m6"), description = common_c.StringToChar("The Door To Chthon")},
+        new level_t {name = common_c.StringToChar("e1m7"), description = common_c.StringToChar("The House of Chthon")},
+        new level_t {name = common_c.StringToChar("e1m8"), description = common_c.StringToChar("Ziggurat Vertigo")},
+
+        new level_t {name = common_c.StringToChar("e2m1"), description = common_c.StringToChar("The Installation")},
+        new level_t {name = common_c.StringToChar("e2m2"), description = common_c.StringToChar("Ogre Citadel")},
+        new level_t {name = common_c.StringToChar("e2m3"), description = common_c.StringToChar("Crypt of Decay")},
+        new level_t {name = common_c.StringToChar("e2m4"), description = common_c.StringToChar("The Ebon Fortress")},
+        new level_t {name = common_c.StringToChar("e2m5"), description = common_c.StringToChar("The Wizard's Manse")},
+        new level_t {name = common_c.StringToChar("e2m6"), description = common_c.StringToChar("The Dismal Oubliette")},
+        new level_t {name = common_c.StringToChar("e2m7"), description = common_c.StringToChar("Underearth")},
+
+        new level_t {name = common_c.StringToChar("e3m1"), description = common_c.StringToChar("Termination Central")},
+        new level_t {name = common_c.StringToChar("e3m2"), description = common_c.StringToChar("The Vaults of Zin")},
+        new level_t {name = common_c.StringToChar("e3m3"), description = common_c.StringToChar("The Tomb of Terror")},
+        new level_t {name = common_c.StringToChar("e3m4"), description = common_c.StringToChar("Satan's Dark Delight")},
+        new level_t {name = common_c.StringToChar("e3m5"), description = common_c.StringToChar("Wind Tunnels")},
+        new level_t {name = common_c.StringToChar("e3m6"), description = common_c.StringToChar("Chambers of Torment")},
+        new level_t {name = common_c.StringToChar("e3m7"), description = common_c.StringToChar("The Haunted Halls")},
+
+        new level_t {name = common_c.StringToChar("e4m1"), description = common_c.StringToChar("The Sewage System")},
+        new level_t {name = common_c.StringToChar("e4m2"), description = common_c.StringToChar("The Tower of Despair")},
+        new level_t {name = common_c.StringToChar("e4m3"), description = common_c.StringToChar("The Elder God Shrine")},
+        new level_t {name = common_c.StringToChar("e4m4"), description = common_c.StringToChar("The Palace of Hate")},
+        new level_t {name = common_c.StringToChar("e4m5"), description = common_c.StringToChar("Hell's Atrium")},
+        new level_t {name = common_c.StringToChar("e4m6"), description = common_c.StringToChar("The Pain Maze")},
+        new level_t {name = common_c.StringToChar("e4m7"), description = common_c.StringToChar("Azure Agony")},
+        new level_t {name = common_c.StringToChar("e4m8"), description = common_c.StringToChar("The Nameless City")},
+
+        new level_t {name = common_c.StringToChar("end"), description = common_c.StringToChar("Shub-Niggurath's Pit")},
+
+        new level_t {name = common_c.StringToChar("dm1"), description = common_c.StringToChar("Place of Two Deaths")},
+        new level_t {name = common_c.StringToChar("dm2"), description = common_c.StringToChar("Claustrophobopolis")},
+        new level_t {name = common_c.StringToChar("dm3"), description = common_c.StringToChar("The Abandoned Base")},
+        new level_t {name = common_c.StringToChar("dm4"), description = common_c.StringToChar("The Bad Place")},
+        new level_t {name = common_c.StringToChar("dm5"), description = common_c.StringToChar("The Cistern")},
+        new level_t {name = common_c.StringToChar("dm6"), description = common_c.StringToChar("The Dark Zone")}
+    };
+
+    public static level_t[] hipnoticlevels =
+    {
+        new level_t {name = common_c.StringToChar("start"), description = common_c.StringToChar("Command HQ")},
+
+        new level_t {name = common_c.StringToChar("hip1m1"), description = common_c.StringToChar("The Pumping Station")},
+        new level_t {name = common_c.StringToChar("hip1m2"), description = common_c.StringToChar("Storage Facility")},
+        new level_t {name = common_c.StringToChar("hip1m3"), description = common_c.StringToChar("The Lost Mine")},
+        new level_t {name = common_c.StringToChar("hip1m4"), description = common_c.StringToChar("Research Facility")},
+        new level_t {name = common_c.StringToChar("hip1m5"), description = common_c.StringToChar("Military Complex")},
+
+        new level_t {name = common_c.StringToChar("hip2m1"), description = common_c.StringToChar("Ancient Realms")},
+        new level_t {name = common_c.StringToChar("hip2m2"), description = common_c.StringToChar("The Black Cathedral")},
+        new level_t {name = common_c.StringToChar("hip2m3"), description = common_c.StringToChar("The Catacombs")},
+        new level_t {name = common_c.StringToChar("hip2m4"), description = common_c.StringToChar("The Crypt")},
+        new level_t {name = common_c.StringToChar("hip2m5"), description = common_c.StringToChar("Mortum's Keep")},
+        new level_t {name = common_c.StringToChar("hip2m6"), description = common_c.StringToChar("The Gremlin's Domain")},
+
+        new level_t {name = common_c.StringToChar("hip3m1"), description = common_c.StringToChar("Tur Torment")},
+        new level_t {name = common_c.StringToChar("hip3m2"), description = common_c.StringToChar("Pandemonium")},
+        new level_t {name = common_c.StringToChar("hip3m3"), description = common_c.StringToChar("Limbo")},
+        new level_t {name = common_c.StringToChar("hip3m4"), description = common_c.StringToChar("The Gauntlet")},
+
+        new level_t {name = common_c.StringToChar("hipend"), description = common_c.StringToChar("Armagon's Lair")},
+
+        new level_t {name = common_c.StringToChar("hipdm1"), description = common_c.StringToChar("The Edge of Oblivion")}
+    };
+
+    public static level_t[] roguelevels =
+    {
+        new level_t {name = common_c.StringToChar("start"), description = common_c.StringToChar("Split Decision")},
+        new level_t {name = common_c.StringToChar("r1m1"), description = common_c.StringToChar("Deviant's Domain")},
+        new level_t {name = common_c.StringToChar("r1m2"), description = common_c.StringToChar("Dread Portal")},
+        new level_t {name = common_c.StringToChar("r1m3"), description = common_c.StringToChar("Judgement Call")},
+        new level_t {name = common_c.StringToChar("r1m4"), description = common_c.StringToChar("Cave of Death")},
+        new level_t {name = common_c.StringToChar("r1m5"), description = common_c.StringToChar("Towers of Wrath")},
+        new level_t {name = common_c.StringToChar("r1m6"), description = common_c.StringToChar("Temple of Pain")},
+        new level_t {name = common_c.StringToChar("r1m7"), description = common_c.StringToChar("Tomb of the Overlord")},
+        new level_t {name = common_c.StringToChar("r2m1"), description = common_c.StringToChar("Tempus Fugit")},
+        new level_t {name = common_c.StringToChar("r2m2"), description = common_c.StringToChar("Elemental Fury I")},
+        new level_t {name = common_c.StringToChar("r2m3"), description = common_c.StringToChar("Elemental Fury II")},
+        new level_t {name = common_c.StringToChar("r2m4"), description = common_c.StringToChar("Curse of Osiris")},
+        new level_t {name = common_c.StringToChar("r2m5"), description = common_c.StringToChar("Wizard's Keep")},
+        new level_t {name = common_c.StringToChar("r2m6"), description = common_c.StringToChar("Blood Sacrifice")},
+        new level_t {name = common_c.StringToChar("r2m7"), description = common_c.StringToChar("Last Bastion")},
+        new level_t {name = common_c.StringToChar("r2m8"), description = common_c.StringToChar("Source of Evil")},
+        new level_t {name = common_c.StringToChar("ctf1"), description = common_c.StringToChar("Division of Change")}
+    };
+
+    public struct episode_t
+    {
+        public char* description;
+        public int firstLevel;
+        public int levels;
+    }
+
+    public static episode_t[] episodes =
+    {
+        new episode_t {description = common_c.StringToChar("Welcome to Quake"), firstLevel = 0, levels = 1},
+        new episode_t {description = common_c.StringToChar("Doomed Dimension"), firstLevel = 1, levels = 8},
+        new episode_t {description = common_c.StringToChar("Realm of Black Magic"), firstLevel = 9, levels = 7},
+        new episode_t {description = common_c.StringToChar("Netherworld"), firstLevel = 16, levels = 7},
+        new episode_t {description = common_c.StringToChar("The Elder World"), firstLevel = 23, levels = 8},
+        new episode_t {description = common_c.StringToChar("Final Level"), firstLevel = 31, levels = 1},
+        new episode_t {description = common_c.StringToChar("Deathmatch Arena"), firstLevel = 32, levels = 6}
+    };
+
+    public static episode_t[] hipnoticepisodes =
+    {
+        new episode_t {description = common_c.StringToChar("Scourge of Armagon"), firstLevel = 0, levels = 1 },
+        new episode_t {description = common_c.StringToChar("Fortress of the Dead"), firstLevel = 1, levels = 5},
+        new episode_t {description = common_c.StringToChar("Dominion of Darkness"), firstLevel = 6, levels = 6},
+        new episode_t {description = common_c.StringToChar("The Rift"), firstLevel = 12, levels = 4},
+        new episode_t {description = common_c.StringToChar("Final Level"), firstLevel = 16, levels = 1},
+        new episode_t {description = common_c.StringToChar("Deathmatch Arena"), firstLevel = 17, levels = 1}
+    };
+
+    public static episode_t[] rogueepisodes =
+    {
+        new episode_t {description = common_c.StringToChar("Introduction"), firstLevel = 0, levels = 1},
+        new episode_t {description = common_c.StringToChar("Hell's Fortress"), firstLevel = 1, levels = 7},
+        new episode_t {description = common_c.StringToChar("Corridors of Time"), firstLevel = 8, levels = 8},
+        new episode_t {description = common_c.StringToChar("Deathmatch Arena"), firstLevel = 16, levels = 1}
+    };
+
+    public static int startepisode;
+    public static int startlevel;
+    public static int maxplayers;
+    public static bool m_serverInfoMessage = false;
+    public static double m_serverInfoMessageTime;
+
+    public static void M_Menu_GameOptions_f()
+    {
+        keys_c.key_dest = keys_c.keydest_t.key_menu;
+        state = m_state.m_gameoptions;
+        m_entersound = true;
+
+        if (maxplayers == 0)
+        {
+            maxplayers = server_c.svs.maxclients;
+        }
+
+        if (maxplayers < 2)
+        {
+            maxplayers = server_c.svs.maxclientslimit;
+        }
+    }
+
+    public static int[] gameoptions_cursor_table = { 40, 56, 64, 72, 80, 88, 96, 112, 120 };
+    public const int NUM_GAMEOPTIONS = 9;
+    public static int gameoptions_cursor;
+
+    public static void M_GameOptions_Draw()
+    {
+        wad_c.qpic_t* p;
+        int x;
+
+        M_DrawTransPic(16, 4, draw_c.Draw_CachePic("gfx/qplaque.lmp"));
+        p = draw_c.Draw_CachePic("gfx/p_multi.lmp");
+        M_DrawPic((320 - p->width) / 2, 4, p);
+
+        M_DrawTextBox(152, 32, 10, 1);
+        M_Print(160, 40, "begin game");
+
+        M_Print(0, 56, "    Max players");
+        M_Print(160, 56, common_c.va($"{maxplayers}"));
+
+        M_Print(0, 64, "    Game Type");
+
+        if (host_c.coop.value != null)
+        {
+            M_Print(160, 64, "Cooperative");
+        }
+        else
+        {
+            M_Print(160, 64, "Deathmatch");
+        }
+
+        M_Print(0, 72, "    Teamplay");
+
+        if (common_c.rogue)
+        {
+            char* msg;
+
+            switch ((int)host_c.teamplay.value)
+            {
+                case 1: msg = common_c.StringToChar("No Friendly Fire"); break;
+                case 2: msg = common_c.StringToChar("Friendly Fire"); break;
+                case 3: msg = common_c.StringToChar("Tag"); break;
+                case 4: msg = common_c.StringToChar("Capture The Flag"); break;
+                case 5: msg = common_c.StringToChar("One Flag CTF"); break;
+                case 6: msg = common_c.StringToChar("Three Team CTF"); break;
+                default: msg = common_c.StringToChar("Off"); break;
+            }
+
+            M_Print(160, 72, msg);
+        }
+        else
+        {
+            char* msg;
+
+            switch ((int)host_c.teamplay.value)
+            {
+                case 1: msg = common_c.StringToChar("No Friendly Fire"); break;
+                case 2: msg = common_c.StringToChar("Friendly Fire"); break;
+                default: msg = common_c.StringToChar("Off"); break;
+            }
+
+            M_Print(160, 72, msg);
+        }
+
+        M_Print(0, 80, "        Skill");
+
+        if (host_c.skill.value == '0')
+        {
+            M_Print(160, 80, "Easy Difficulty");
+        }
+        else if (host_c.skill.value == '1')
+        {
+            M_Print(160, 80, "Normal Difficulty");
+        }
+        else if (host_c.skill.value == '2')
+        {
+            M_Print(160, 80, "Hard Difficulty");
+        }
+        else
+        {
+            M_Print(160, 80, "Nightmare Difficulty");
+        }
+
+        M_Print(0, 88, "    Frag Limit");
+
+        if (host_c.fraglimit.value == '0')
+        {
+            M_Print(160, 88, "none");
+        }
+        else
+        {
+            M_Print(160, 88, common_c.va($"{(int)host_c.fraglimit.value} frags"));
+        }
+
+        M_Print(0, 96, "    Time Limit");
+
+        if (host_c.timelimit.value == '0')
+        {
+            M_Print(160, 96, "none");
+        }
+        else
+        {
+            M_Print(160, 96, common_c.va($"{(int)host_c.timelimit.value} minutes"));
+        }
+
+        M_Print(0, 112, "       Episode");
+
+        if (common_c.hipnotic)
+        {
+            M_Print(160, 112, hipnoticepisodes[startepisode].description);
+        }
+        else if (common_c.rogue)
+        {
+            M_Print(160, 112, rogueepisodes[startepisode].description);
+        }
+        else
+        {
+            M_Print(160, 112, episodes[startepisode].description);
+        }
+
+        M_Print(0, 120, "       Level");
+
+        if (common_c.hipnotic)
+        {
+            M_Print(160, 120, hipnoticlevels[hipnoticepisodes[startepisode].firstLevel + startlevel].description);
+            M_Print(160, 128, hipnoticlevels[hipnoticepisodes[startepisode].firstLevel + startlevel].name);
+        }
+        else if (common_c.rogue)
+        {
+            M_Print(160, 120, roguelevels[rogueepisodes[startepisode].firstLevel + startlevel].description);
+            M_Print(160, 128, roguelevels[rogueepisodes[startepisode].firstLevel + startlevel].name);
+        }
+        else
+        {
+            M_Print(160, 120, levels[episodes[startepisode].firstLevel + startlevel].description);
+            M_Print(160, 128, levels[episodes[startepisode].firstLevel + startlevel].name);
+        }
+
+        M_DrawCharacter(144, gameoptions_cursor_table[gameoptions_cursor], 12 + ((int)(host_c.realtime * 4) & 1));
+
+        if (m_serverInfoMessage)
+        {
+            if ((host_c.realtime - m_serverInfoMessageTime) < 5.0)
+            {
+                x = (320 - 26 * 8) / 2;
+                M_DrawTextBox(x, 138, 24, 4);
+                x += 8;
+                M_Print(x, 146, "  More than 4 players   ");
+                M_Print(x, 154, " requires using command ");
+                M_Print(x, 162, "line parameters; please ");
+                M_Print(x, 170, "   see techinfo.txt.    ");
+            }
+            else
+            {
+                m_serverInfoMessage = false;
+            }
+        }
+    }
+
+    public static void M_NetStart_Change(int dir)
+    {
+        int count;
+
+        switch (gameoptions_cursor)
+        {
+            case 1:
+                maxplayers += dir;
+
+                if (maxplayers > server_c.svs.maxclientslimit)
+                {
+                    maxplayers = server_c.svs.maxclientslimit;
+                    m_serverInfoMessage = true;
+                    m_serverInfoMessageTime = host_c.realtime;
+                }
+
+                if (maxplayers < 2)
+                {
+                    maxplayers = 2;
+                }
+
+                break;
+
+            case 2:
+                cvar_c.Cvar_SetValue("coop", host_c.coop.value == 0 ? 0 : 1);
+                break;
+
+            case 3:
+                if (common_c.rogue)
+                {
+                    count = 6;
+                }
+                else
+                {
+                    count = 2;
+                }
+
+                cvar_c.Cvar_SetValue("teamplay", host_c.teamplay.value + dir);
+
+                if (host_c.teamplay.value > count)
+                {
+                    cvar_c.Cvar_SetValue("teamplay", 0);
+                }
+                else if (host_c.teamplay.value < 0)
+                {
+                    cvar_c.Cvar_SetValue("teamplay", count);
+                }
+
+                break;
+
+            case 4:
+                cvar_c.Cvar_SetValue("skill", host_c.skill.value + dir);
+
+                if (host_c.skill.value > 3)
+                {
+                    cvar_c.Cvar_SetValue("skill", 0);
+                }
+
+                if (host_c.skill.value < 0)
+                {
+                    cvar_c.Cvar_SetValue("skill", 3);
+                }
+
+                break;
+
+            case 5:
+                cvar_c.Cvar_SetValue("fraglimit", host_c.fraglimit.value + dir * 10);
+
+                if (host_c.fraglimit.value > 100)
+                {
+                    cvar_c.Cvar_SetValue("fraglimit", 0);
+                }
+
+                if (host_c.fraglimit.value < 0)
+                {
+                    cvar_c.Cvar_SetValue("fraglimit", 100);
+                }
+
+                break;
+
+            case 6:
+                cvar_c.Cvar_SetValue("timelimit", host_c.timelimit.value + dir * 5);
+
+                if (host_c.timelimit.value > 60)
+                {
+                    cvar_c.Cvar_SetValue("timelimit", 0);
+                }
+
+                if (host_c.timelimit.value < 0)
+                {
+                    cvar_c.Cvar_SetValue("timelimit", 60);
+                }
+
+                break;
+
+            case 7:
+                startepisode += dir;
+
+                if (common_c.hipnotic)
+                {
+                    count = 6;
+                }
+                else if (common_c.rogue)
+                {
+                    count = 4;
+                }
+                else if (common_c.registered.value != 0)
+                {
+                    count = 7;
+                }
+                else
+                {
+                    count = 2;
+                }
+
+                if (startepisode < 0)
+                {
+                    startepisode = count - 1;
+                }
+
+                if (startepisode >= count)
+                {
+                    startepisode = 0;
+                }
+
+                startlevel = 0;
+                break;
+
+            case 8:
+                startlevel += dir;
+
+                if (common_c.hipnotic)
+                {
+                    count = hipnoticepisodes[startepisode].levels;
+                }
+                else if (common_c.rogue)
+                {
+                    count = rogueepisodes[startepisode].levels;
+                }
+                else
+                {
+                    count = episodes[startepisode].levels;
+                }
+
+                if (startlevel < 0)
+                {
+                    startlevel = count - 1;
+                }
+
+                if (startlevel >= count)
+                {
+                    startlevel = 0;
+                }
+
+                break;
+        }
+    }
+
+    public static void M_GameOptions_Key(int key)
+    {
+        switch (key)
+        {
+            case keys_c.K_ESCAPE:
+                M_Menu_Net_f();
+                break;
+
+            case keys_c.K_UPARROW:
+                snd_dma_c.S_LocalSound("misc/menu1.wav");
+                gameoptions_cursor--;
+
+                if (gameoptions_cursor < 0)
+                {
+                    gameoptions_cursor = NUM_GAMEOPTIONS - 1;
+                }
+
+                break;
+
+            case keys_c.K_DOWNARROW:
+                snd_dma_c.S_LocalSound("misc/menu1.wav");
+                gameoptions_cursor++;
+
+                if (gameoptions_cursor >= NUM_GAMEOPTIONS)
+                {
+                    gameoptions_cursor = 0;
+                }
+
+                break;
+
+            case keys_c.K_LEFTARROW:
+                if (gameoptions_cursor == 0)
+                {
+                    break;
+                }
+
+                snd_dma_c.S_LocalSound("misc/menu3.wav");
+                M_NetStart_Change(-1);
+                break;
+
+            case keys_c.K_RIGHTARROW:
+                if (gameoptions_cursor == 0)
+                {
+                    break;
+                }
+
+                snd_dma_c.S_LocalSound("misc/menu3.wav");
+                M_NetStart_Change(1);
+                break;
+
+            case keys_c.K_ENTER:
+                snd_dma_c.S_LocalSound("misc/menu2.wav");
+
+                if (gameoptions_cursor == 0)
+                {
+                    if (server_c.sv.active)
+                    {
+                        cmd_c.Cbuf_AddText("disconnect\n");
+                    }
+
+                    cmd_c.Cbuf_AddText("listen 0\n");
+                    cmd_c.Cbuf_AddText(common_c.va($"maxplayers {maxplayers}\n"));
+                    screen_c.SCR_BeginLoadingPlaque();
+
+                    if (common_c.hipnotic)
+                    {
+                        cmd_c.Cbuf_AddText(common_c.va($"map {*hipnoticlevels[hipnoticepisodes[startepisode].firstLevel + startlevel].name}"));
+                    }
+                    else if (common_c.rogue)
+                    {
+                        cmd_c.Cbuf_AddText(common_c.va($"map {*roguelevels[rogueepisodes[startepisode].firstLevel + startlevel].name}"));
+                    }
+                    else
+                    {
+                        cmd_c.Cbuf_AddText(common_c.va($"map {*levels[episodes[startepisode].firstLevel + startlevel].name}"));
+                    }
+
+                    return;
+                }
+
+                M_NetStart_Change(1);
+                break;
+        }
+    }
+
+    public static bool searchComplete = false;
+    public static double searchCompleteTime;
+
+    public static void M_Menu_Search_f()
+    {
+        keys_c.key_dest = keys_c.keydest_t.key_menu;
+        state = m_state.m_search;
+        m_entersound = false;
+        net_main_c.slistSilent = true;
+        net_main_c.slistLocal = false;
+        searchComplete = false;
+        net_main_c.NET_Slist_f();
+    }
+
+    public static void M_Search_Draw()
+    {
+        wad_c.qpic_t* p;
+        int x;
+
+        p = draw_c.Draw_CachePic("gfx/p_multi.lmp");
+        M_DrawPic((320 - p->width) / 2, 4, p);
+        x = (320 / 2) - ((12 * 8) / 2) + 4;
+        M_DrawTextBox(x - 8, 32, 12, 1);
+        M_Print(x, 40, "Searching...");
+
+        if (net_main_c.slistInProgress)
+        {
+            net_main_c.NET_Poll();
+            return;
+        }
+
+        if (!searchComplete)
+        {
+            searchComplete = true;
+            searchCompleteTime = host_c.realtime;
+        }
+
+        if (net_c.hostCacheCount != 0)
+        {
+            M_Menu_ServerList_f();
+            return;
+        }
+
+        M_PrintWhite((320 / 2) - ((22 * 8) / 2), 64, common_c.StringToChar("No Quake servers found"));
+
+        if ((host_c.realtime - searchCompleteTime) < 3.0)
+        {
+            return;
+        }
+
+        M_Menu_LanConfig_f();
+    }
+
+    public static void M_Search_Key(int key)
+    {
+    }
+
+    public static int slist_cursor;
+    public static bool slist_sorted;
+
+    public static void M_Menu_ServerList_f()
+    {
+        keys_c.key_dest = keys_c.keydest_t.key_menu;
+        state = m_state.m_slist;
+        m_entersound = true;
+        slist_cursor = 0;
+        m_return_onerror = false;
+        m_return_reason[0] = 0;
+        slist_sorted = false;
+    }
+
+    public static void M_ServerList_Draw()
+    {
+        int n;
+        char* str = null;
+        wad_c.qpic_t* p;
+
+        if (!slist_sorted)
+        {
+            if (net_c.hostCacheCount > 1)
+            {
+                int i, j;
+                net_c.hostcache_t temp = default;
+
+                for (i = 0; i < net_c.hostCacheCount; i++)
+                {
+                    for (j = i + 1; j < net_c.hostCacheCount; j++)
+                    {
+                        if (strcmp_c.strcmp(net_c.hostcache[j].name, net_c.hostcache[i].name) < 0)
+                        {
+                            common_c.Q_memcpy(temp, net_c.hostcache[j], sizeof(net_c.hostcache_t));
+                            common_c.Q_memcpy(net_c.hostcache[j], net_c.hostcache[i], sizeof(net_c.hostcache_t));
+                            common_c.Q_memcpy(net_c.hostcache[i], temp, sizeof(net_c.hostcache_t));
+                        }
+                    }
+                }
+
+            }
+            slist_sorted = true;
+        }
+
+        p = draw_c.Draw_CachePic("gfx/p_multi.lmp");
+        M_DrawPic((320 - p->width) / 2, 4, p);
+
+        for (n = 0; n < net_c.hostCacheCount; n++)
+        {
+            if (net_c.hostcache[n].maxusers != 0)
+            {
+                Console.WriteLine($"{*net_c.hostcache[n].name} {*net_c.hostcache[n].map} {net_c.hostcache[n].users}/{net_c.hostcache[n].maxusers}\n");
+            }
+            else
+            {
+                Console.WriteLine($"{*net_c.hostcache[n].name} {*net_c.hostcache[n].map}");
+            }
+
+            M_Print(16, 32 + 8 * n, str);
+        }
+
+        M_DrawCharacter(0, 32 + slist_cursor * 8, 12 + ((int)(host_c.realtime * 4) & 1));
+
+        if (*m_return_reason != 0)
+        {
+            M_PrintWhite(16, 148, m_return_reason);
+        }
+    }
+
+    public static void M_ServerList_Key(int k)
+    {
+        switch (k)
+        {
+            case keys_c.K_ESCAPE:
+                M_Menu_LanConfig_f();
+                break;
+
+            case keys_c.K_SPACE:
+                M_Menu_Search_f();
+                break;
+
+            case keys_c.K_UPARROW:
+            case keys_c.K_LEFTARROW:
+                snd_dma_c.S_LocalSound("misc/menu1.wav");
+                slist_cursor--;
+
+                if (slist_cursor < 0)
+                {
+                    slist_cursor = net_c.hostCacheCount - 1;
+                }
+
+                break;
+
+            case keys_c.K_DOWNARROW:
+            case keys_c.K_RIGHTARROW:
+                snd_dma_c.S_LocalSound("misc/menu1.wav");
+                slist_cursor++;
+                
+                if (slist_cursor >= net_c.hostCacheCount)
+                {
+                    slist_cursor = 0;
+                }
+
+                break;
+
+            case keys_c.K_ENTER:
+                snd_dma_c.S_LocalSound("misc/menu2.wav");
+                m_return_state = (int)state;
+                m_return_onerror = true;
+                slist_sorted = false;
+                keys_c.key_dest = keys_c.keydest_t.key_game;
+                state = m_state.m_none;
+                cmd_c.Cbuf_AddText(common_c.va($"connect \"{*net_c.hostcache[slist_cursor].cname}\"\n"));
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public static void M_Init()
+    {
+        cmd_c.Cmd_AddCommand("togglemenu", M_ToggleMenu_f);
+
+        cmd_c.Cmd_AddCommand("menu_main", M_Menu_Main_f);
+        cmd_c.Cmd_AddCommand("menu_singleplayer", M_Menu_SinglePlayer_f);
+        cmd_c.Cmd_AddCommand("menu_load", M_Menu_Load_f);
+        cmd_c.Cmd_AddCommand("menu_save", M_Menu_Save_f);
+        cmd_c.Cmd_AddCommand("menu_multiplayer", M_Menu_MultiPlayer_f);
+        cmd_c.Cmd_AddCommand("menu_setup", M_Menu_Setup_f);
+        cmd_c.Cmd_AddCommand("menu_options", M_Menu_Options_f);
+        cmd_c.Cmd_AddCommand("menu_keys", M_Menu_Keys_f);
+        cmd_c.Cmd_AddCommand("menu_video", M_Menu_Video_f);
+        cmd_c.Cmd_AddCommand("help", M_Menu_Help_f);
+        cmd_c.Cmd_AddCommand("menu_quit", M_Menu_Quit_f);
+    }
+
+    public static void M_Draw()
+    {
+        if (state == m_state.m_none || keys_c.key_dest != keys_c.keydest_t.key_menu)
+        {
+            return;
+        }
+
+        if (!m_recursiveDraw)
+        {
+            screen_c.scr_copyeverything = 1;
+
+            if (screen_c.scr_con_current != 0)
+            {
+                draw_c.Draw_ConsoleBackground((int)vid_c.vid.height);
+                vid_win_c.VID_UnlockBuffer();
+                snd_dma_c.S_ExtraUpdate();
+                vid_win_c.VID_LockBuffer();
+            }
+            else
+            {
+                draw_c.Draw_FadeScreen();
+            }
+
+            screen_c.scr_fullupdate = 0;
+        }
+        else
+        {
+            m_recursiveDraw = false;
+        }
+
+        switch (state)
+        {
+            case m_state.m_none:
+                break;
+
+            case m_state.m_main:
+                M_Main_Draw();
+                break;
+
+            case m_state.m_singleplayer:
+                M_SinglePlayer_Draw();
+                break;
+
+            case m_state.m_load:
+                M_Load_Draw();
+                break;
+
+            case m_state.m_save:
+                M_Save_Draw();
+                break;
+
+            case m_state.m_multiplayer:
+                M_MultiPlayer_Draw();
+                break;
+
+            case m_state.m_setup:
+                M_Setup_Draw();
+                break;
+
+            case m_state.m_net:
+                M_Net_Draw();
+                break;
+
+            case m_state.m_options:
+                M_Options_Draw();
+                break;
+
+            case m_state.m_keys:
+                M_Keys_Draw();
+                break;
+
+            case m_state.m_video:
+                M_Video_Draw();
+                break;
+
+            case m_state.m_help:
+                M_Help_Draw();
+                break;
+
+            case m_state.m_quit:
+                M_Quit_Draw();
+                break;
+
+            case m_state.m_serialconfig:
+                M_SerialConfig_Draw();
+                break;
+
+            case m_state.m_modemconfig:
+                M_ModemConfig_Draw();
+                break;
+
+            case m_state.m_lanconfig:
+                M_LanConfig_Draw();
+                break;
+
+            case m_state.m_gameoptions:
+                M_GameOptions_Draw();
+                break;
+
+            case m_state.m_search:
+                M_Search_Draw();
+                break;
+
+            case m_state.m_slist:
+                M_ServerList_Draw();
+                break;
+        }
+
+        if (m_entersound)
+        {
+            snd_dma_c.S_LocalSound("misc/menu2.wav");
+            m_entersound = false;
+        }
+
+        vid_win_c.VID_UnlockBuffer();
+        snd_dma_c.S_ExtraUpdate();
+        vid_win_c.VID_LockBuffer();
+    }
+
+    public static void M_Keydown(int key)
+    {
+        switch (state)
+        {
+            case m_state.m_none:
+                return;
+
+            case m_state.m_main:
+                M_Main_Key(key);
+                return;
+
+            case m_state.m_singleplayer:
+                M_SinglePlayer_Key(key);
+                return;
+
+            case m_state.m_load:
+                M_Load_Key(key);
+                return;
+
+            case m_state.m_save:
+                M_Save_Key(key);
+                return;
+
+            case m_state.m_multiplayer:
+                M_MultiPlayer_Key(key);
+                return;
+
+            case m_state.m_setup:
+                M_Setup_Key(key);
+                return;
+
+            case m_state.m_net:
+                M_Net_Key(key);
+                return;
+
+            case m_state.m_options:
+                M_Options_Key(key);
+                return;
+
+            case m_state.m_keys:
+                M_Keys_Key(key);
+                return;
+
+            case m_state.m_video:
+                M_Video_Key(key);
+                return;
+
+            case m_state.m_help:
+                M_Help_Key(key);
+                return;
+
+            case m_state.m_quit:
+                M_Quit_Key(key);
+                return;
+
+            case m_state.m_serialconfig:
+                M_SerialConfig_Key(key);
+                return;
+
+            case m_state.m_modemconfig:
+                M_ModemConfig_Key(key);
+                return;
+
+            case m_state.m_lanconfig:
+                M_LanConfig_Key(key);
+                return;
+
+            case m_state.m_gameoptions:
+                M_GameOptions_Key(key);
+                return;
+
+            case m_state.m_search:
+                M_Search_Key(key);
+                break;
+
+            case m_state.m_slist:
+                M_ServerList_Key(key);
+                return;
+        }
+    }
+
+    public static void M_ConfigureNetSubsystem()
+    {
+        cmd_c.Cbuf_AddText("stopdemo\n");
+
+        if (SerialConfig || DirectConfig)
+        {
+            cmd_c.Cbuf_AddText("com1 enable\n");
+        }
+
+        if (IPXConfig || TCPIPConfig)
+        {
+            net_c.net_hostport = lanConfig_port;
         }
     }
 }

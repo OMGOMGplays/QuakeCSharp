@@ -859,7 +859,7 @@ public unsafe class draw_c
         }
     }
 
-    public void Draw_FadeScreen()
+    public static void Draw_FadeScreen()
     {
         int x, y;
         byte* pbuf;

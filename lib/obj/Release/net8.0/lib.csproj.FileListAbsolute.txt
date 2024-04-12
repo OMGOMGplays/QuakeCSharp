@@ -14,3 +14,8 @@ C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.sour
 C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.dll
 C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\refint\lib.dll
 C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\lib.pdb
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\bin\Release\net8.0\lib.dll.config
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\bin\Release\net8.0\lib.deps.json
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\bin\Release\net8.0\lib.dll
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\bin\Release\net8.0\lib.pdb
+C:\Users\Loke.Vigstrand\Skolprojekt\VS22\QuakeC-\lib\obj\Release\net8.0\ref\lib.dll

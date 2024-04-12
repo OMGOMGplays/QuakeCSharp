@@ -1,0 +1,552 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\sys_win.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\sys_win.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|c:\\users\\loke.vigstrand\\skolprojekt\\vs22\\quakec-\\winquake\\common.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\common.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\cvar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\cvar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\pr_edict.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\pr_edict.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\pr_cmds.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\pr_cmds.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\cl_input.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\cl_input.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\d_modech.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\d_modech.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\r_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\r_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\net_comx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\net_comx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\qw\\server\\world.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:qw\\server\\world.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\qw\\server\\sv_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:qw\\server\\sv_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\qw\\server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:qw\\server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\host.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\host.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\qw\\client\\console.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:qw\\client\\console.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\console.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\console.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\sv_move.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\sv_move.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}|lib\\lib.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strncmp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}|lib\\lib.csproj|solutionrelative:lib\\lib\\libc\\string\\strncmp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}|lib\\lib.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\globals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}|lib\\lib.csproj|solutionrelative:lib\\lib\\globals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\draw.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\draw.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}|lib\\lib.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strcmp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FBC2457C-AB32-4A19-8788-6E1A710D7D4B}|lib\\lib.csproj|solutionrelative:lib\\lib\\libc\\string\\strcmp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strlen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:lib\\lib\\libc\\string\\strlen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\qw\\server\\snd_dma.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:qw\\server\\snd_dma.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\keys.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\keys.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\cd_audio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\cd_audio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\cl_demo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\cl_demo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\net_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\net_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\cmd.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\cmd.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\pr_comp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\pr_comp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\vregset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\vregset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\cl_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\cl_main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\net_ser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\net_ser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\winquake\\net_loop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46E509F0-2433-4884-9438-E5125228C7DE}|Quake.csproj|solutionrelative:winquake\\net_loop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 10,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "d_modech.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\d_modech.cs",
+              "RelativeDocumentMoniker": "WinQuake\\d_modech.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\d_modech.cs",
+              "RelativeToolTip": "WinQuake\\d_modech.cs",
+              "ViewState": "AQIAADYAAAAAAAAAAAAYwAYAAABKAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-15T08:02:14.448Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "host.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\host.cs",
+              "RelativeDocumentMoniker": "WinQuake\\host.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\host.cs",
+              "RelativeToolTip": "WinQuake\\host.cs",
+              "ViewState": "AQIAAO0CAAAAAAAAAAAuwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T14:11:56.289Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "console.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\console.cs",
+              "RelativeDocumentMoniker": "WinQuake\\console.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\console.cs",
+              "RelativeToolTip": "WinQuake\\console.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T14:10:37.926Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "console.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\client\\console.cs",
+              "RelativeDocumentMoniker": "QW\\client\\console.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\client\\console.cs",
+              "RelativeToolTip": "QW\\client\\console.cs",
+              "ViewState": "AQIAAEsCAAAAAAAAAAAiwFwCAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T14:09:28.35Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "globals.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\globals.cs",
+              "RelativeDocumentMoniker": "lib\\lib\\globals.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\globals.cs",
+              "RelativeToolTip": "lib\\lib\\globals.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T14:08:17.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "strncmp.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strncmp.cs",
+              "RelativeDocumentMoniker": "lib\\lib\\libc\\string\\strncmp.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strncmp.cs",
+              "RelativeToolTip": "lib\\lib\\libc\\string\\strncmp.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAswBUAAAA9AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T14:08:02.804Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "server.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\server.cs",
+              "RelativeDocumentMoniker": "QW\\server\\server.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\server.cs",
+              "RelativeToolTip": "QW\\server\\server.cs",
+              "ViewState": "AQIAAE8AAAAAAAAAAAAowGkAAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:38:19.595Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "common.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\common.cs",
+              "RelativeDocumentMoniker": "WinQuake\\common.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\common.cs",
+              "RelativeToolTip": "WinQuake\\common.cs",
+              "ViewState": "AQIAAIIFAAAAAAAAAAAqwJMFAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:40:53.073Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "menu.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\menu.cs",
+              "RelativeDocumentMoniker": "WinQuake\\menu.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\menu.cs",
+              "RelativeToolTip": "WinQuake\\menu.cs",
+              "ViewState": "AQIAAMMKAAAAAAAAAAAqwAEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T10:49:16.976Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "cvar.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cvar.cs",
+              "RelativeDocumentMoniker": "WinQuake\\cvar.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cvar.cs",
+              "RelativeToolTip": "WinQuake\\cvar.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T10:48:28.983Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "sys_win.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\sys_win.cs",
+              "RelativeDocumentMoniker": "WinQuake\\sys_win.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\sys_win.cs",
+              "RelativeToolTip": "WinQuake\\sys_win.cs",
+              "ViewState": "AQIAAA4BAAAAAAAAAAA+wCcBAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:37:37.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "cl_input.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cl_input.cs",
+              "RelativeDocumentMoniker": "WinQuake\\cl_input.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cl_input.cs",
+              "RelativeToolTip": "WinQuake\\cl_input.cs",
+              "ViewState": "AQIAALEBAAAAAAAAAADwv6IBAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-15T08:02:24.938Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "pr_cmds.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\pr_cmds.cs",
+              "RelativeDocumentMoniker": "WinQuake\\pr_cmds.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\pr_cmds.cs",
+              "RelativeToolTip": "WinQuake\\pr_cmds.cs",
+              "ViewState": "AQIAAH8DAAAAAAAAAAAtwDYBAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-15T08:06:23.46Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "pr_edict.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\pr_edict.cs",
+              "RelativeDocumentMoniker": "WinQuake\\pr_edict.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\pr_edict.cs",
+              "RelativeToolTip": "WinQuake\\pr_edict.cs",
+              "ViewState": "AQIAAEEEAAAAAAAAAAAqwOoDAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-15T08:06:48.168Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "net_comx.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_comx.cs",
+              "RelativeDocumentMoniker": "WinQuake\\net_comx.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_comx.cs",
+              "RelativeToolTip": "WinQuake\\net_comx.cs",
+              "ViewState": "AQIAAC0BAAAAAAAAAAAswD8BAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-05T13:54:56.487Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "sv_main.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\sv_main.cs",
+              "RelativeDocumentMoniker": "QW\\server\\sv_main.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\sv_main.cs",
+              "RelativeToolTip": "QW\\server\\sv_main.cs",
+              "ViewState": "AQIAAOoAAAAAAAAAAAAiwAwBAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T14:12:29.406Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "r_main.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\r_main.cs",
+              "RelativeDocumentMoniker": "WinQuake\\r_main.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\r_main.cs",
+              "RelativeToolTip": "WinQuake\\r_main.cs",
+              "ViewState": "AQIAAE0AAAAAAAAAAAAQwFMAAAA7AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:37:59.64Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "world.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\world.cs",
+              "RelativeDocumentMoniker": "QW\\server\\world.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\world.cs",
+              "RelativeToolTip": "QW\\server\\world.cs",
+              "ViewState": "AQIAAD4DAAAAAAAAAAAmwGEDAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T14:13:57.536Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "draw.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\draw.cs",
+              "RelativeDocumentMoniker": "WinQuake\\draw.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\draw.cs",
+              "RelativeToolTip": "WinQuake\\draw.cs",
+              "ViewState": "AQIAAEsDAAAAAAAAAAAswF0DAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T13:19:45.061Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "strcmp.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strcmp.cs",
+              "RelativeDocumentMoniker": "lib\\lib\\libc\\string\\strcmp.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strcmp.cs",
+              "RelativeToolTip": "lib\\lib\\libc\\string\\strcmp.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-11T12:37:53.404Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "strlen.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strlen.cs",
+              "RelativeDocumentMoniker": "lib\\lib\\libc\\string\\strlen.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\lib\\lib\\libc\\string\\strlen.cs",
+              "RelativeToolTip": "lib\\lib\\libc\\string\\strlen.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T10:58:52.506Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "net_main.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_main.cs",
+              "RelativeDocumentMoniker": "WinQuake\\net_main.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_main.cs",
+              "RelativeToolTip": "WinQuake\\net_main.cs",
+              "ViewState": "AQIAAHgDAAAAAAAAAAAmwPEDAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T10:44:08.53Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "cl_demo.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cl_demo.cs",
+              "RelativeDocumentMoniker": "WinQuake\\cl_demo.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cl_demo.cs",
+              "RelativeToolTip": "WinQuake\\cl_demo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T10:47:44.539Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "cd_audio.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cd_audio.cs",
+              "RelativeDocumentMoniker": "WinQuake\\cd_audio.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cd_audio.cs",
+              "RelativeToolTip": "WinQuake\\cd_audio.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T10:47:47.092Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "sv_move.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\sv_move.cs",
+              "RelativeDocumentMoniker": "WinQuake\\sv_move.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\sv_move.cs",
+              "RelativeToolTip": "WinQuake\\sv_move.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:37:32.897Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "snd_dma.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\snd_dma.cs",
+              "RelativeDocumentMoniker": "QW\\server\\snd_dma.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\QW\\server\\snd_dma.cs",
+              "RelativeToolTip": "QW\\server\\snd_dma.cs",
+              "ViewState": "AQIAAGsDAAAAAAAAAAAswH8DAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T11:30:47.495Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "cl_main.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cl_main.cs",
+              "RelativeDocumentMoniker": "WinQuake\\cl_main.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cl_main.cs",
+              "RelativeToolTip": "WinQuake\\cl_main.cs",
+              "ViewState": "AQIAAI0AAAAAAAAAAIBJwJQAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T10:42:32.09Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "cmd.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cmd.cs",
+              "RelativeDocumentMoniker": "WinQuake\\cmd.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\cmd.cs",
+              "RelativeToolTip": "WinQuake\\cmd.cs",
+              "ViewState": "AQIAAN8AAAAAAAAAAAAmwC0CAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T09:03:25.684Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "keys.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\keys.cs",
+              "RelativeDocumentMoniker": "WinQuake\\keys.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\keys.cs",
+              "RelativeToolTip": "WinQuake\\keys.cs",
+              "ViewState": "AQIAAIQCAAAAAAAAAAAqwBYDAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-08T11:03:33.017Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "net_loop.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_loop.cs",
+              "RelativeDocumentMoniker": "WinQuake\\net_loop.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_loop.cs",
+              "RelativeToolTip": "WinQuake\\net_loop.cs",
+              "ViewState": "AQIAANsAAAAAAAAAAAAowPAAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:43:03.99Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "pr_comp.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\pr_comp.cs",
+              "RelativeDocumentMoniker": "WinQuake\\pr_comp.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\pr_comp.cs",
+              "RelativeToolTip": "WinQuake\\pr_comp.cs",
+              "ViewState": "AQIAAFwAAAAAAAAAAAAkwGwAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:37:29.391Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "vregset.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\vregset.cs",
+              "RelativeDocumentMoniker": "WinQuake\\vregset.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\vregset.cs",
+              "RelativeToolTip": "WinQuake\\vregset.cs",
+              "ViewState": "AQIAADQAAAAAAAAAAAAswEYAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T11:28:47.281Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "net_ser.cs",
+              "DocumentMoniker": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_ser.cs",
+              "RelativeDocumentMoniker": "WinQuake\\net_ser.cs",
+              "ToolTip": "C:\\Users\\Loke.Vigstrand\\Skolprojekt\\VS22\\QuakeC-\\WinQuake\\net_ser.cs",
+              "RelativeToolTip": "WinQuake\\net_ser.cs",
+              "ViewState": "AQIAAOQBAAAAAAAAAAAEwAECAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-01T12:14:14.359Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

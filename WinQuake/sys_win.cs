@@ -4,13 +4,13 @@ namespace Quake;
 
 public unsafe class sys_win_c
 {
-    public static int MINIMUM_WIN_MEMORY = 0x0880000;
-    public static int MAXIMUM_WIN_MEMORY = 0x1000000;
+    public const int MINIMUM_WIN_MEMORY = 0x0880000;
+    public const int MAXIMUM_WIN_MEMORY = 0x1000000;
 
-    public static double CONSOLE_ERROR_TIMEOUT = 60.0;
+    public const double CONSOLE_ERROR_TIMEOUT = 60.0;
 
-    public static int PAUSE_SLEEP = 50;
-    public static int NOT_FOCUS_SLEEP = 20;
+    public const int PAUSE_SLEEP = 50;
+    public const int NOT_FOCUS_SLEEP = 20;
 
     public int starttime;
     public bool ActiveApp, Minimized;
@@ -50,7 +50,7 @@ public unsafe class sys_win_c
         }
     }
 
-    public static int MAX_HANDLES = 10;
+    public const int MAX_HANDLES = 10;
     public static FileStream* sys_handles;
 
     public static int findhandle()

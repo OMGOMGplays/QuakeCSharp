@@ -1,6 +1,4 @@
-﻿using stdlib;
-
-namespace Quake;
+﻿namespace Quake;
 
 public unsafe class sv_move_c
 {

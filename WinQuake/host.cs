@@ -1,6 +1,4 @@
-﻿using stdlib;
-
-namespace Quake;
+﻿namespace Quake;
 
 public unsafe class host_c
 {

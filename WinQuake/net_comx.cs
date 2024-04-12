@@ -321,7 +321,7 @@ public unsafe class net_comx_c
 
             if (p == &handleToPort[0])
             {
-                isr = COM1
+                isr = COM1;
             }
         }
     }

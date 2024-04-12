@@ -4,17 +4,17 @@ namespace Quake;
 
 public unsafe class cl_input_c
 {
-    public cvar_c.cvar_t cl_nodelta = new cvar_c.cvar_t { name = "cl_nodelta", value = (char)0 };
+    public static cvar_c.cvar_t cl_nodelta = new cvar_c.cvar_t { name = "cl_nodelta", value = (char)0 };
 
-    public client_c.kbutton_t in_mlook, in_klook;
-    public client_c.kbutton_t in_left, in_right, in_forward, in_back;
-    public client_c.kbutton_t in_lookup, in_lookdown, in_moveleft, in_moveright;
-    public client_c.kbutton_t in_strafe, in_speed, in_use, in_jump, in_attack;
-    public client_c.kbutton_t in_up, in_down;
+    public static client_c.kbutton_t in_mlook, in_klook;
+    public static client_c.kbutton_t in_left, in_right, in_forward, in_back;
+    public static client_c.kbutton_t in_lookup, in_lookdown, in_moveleft, in_moveright;
+    public static client_c.kbutton_t in_strafe, in_speed, in_use, in_jump, in_attack;
+    public static client_c.kbutton_t in_up, in_down;
 
-    public int in_impulse;
+    public static int in_impulse;
 
-    public void KeyDown(client_c.kbutton_t b)
+    public static void KeyDown(client_c.kbutton_t b)
     {
         int k;
         char* c;
@@ -57,7 +57,7 @@ public unsafe class cl_input_c
         b.state |= 1 + 2;
     }
 
-    public void KeyUp(client_c.kbutton_t b)
+    public static void KeyUp(client_c.kbutton_t b)
     {
         int k;
         char* c;
@@ -102,10 +102,10 @@ public unsafe class cl_input_c
         b.state |= 4;
     }
 
-    public void IN_KLookDown() { KeyDown(in_klook); }
-    public void IN_KLookUp() { KeyUp(in_klook); }
-    public void IN_MLookDown() { KeyDown(in_mlook); }
-    public void IN_MLookUp()
+    public static void IN_KLookDown() { KeyDown(in_klook); }
+    public static void IN_KLookUp() { KeyUp(in_klook); }
+    public static void IN_MLookDown() { KeyDown(in_mlook); }
+    public static void IN_MLookUp()
     {
         KeyUp(in_mlook);
 
@@ -114,43 +114,43 @@ public unsafe class cl_input_c
             V_StartPitchDrift();
         }
     }
-    public void IN_UpDown() { KeyDown(in_up); }
-    public void IN_UpUp() { KeyUp(in_up); }
-    public void IN_DownDown() { KeyDown(in_down); }
-    public void IN_DownUp() { KeyUp(in_down); }
-    public void IN_LeftDown() { KeyDown(in_left); }
-    public void IN_LeftUp() { KeyUp(in_left); }
-    public void IN_RightDown() { KeyDown(in_right); }
-    public void IN_RightUp() { KeyUp(in_right); }
-    public void IN_ForwardDown() { KeyDown(in_forward); }
-    public void IN_ForwardUp() { KeyUp(in_forward); }
-    public void IN_BackDown() { KeyDown(in_back); }
-    public void IN_BackUp() { KeyUp(in_back); }
-    public void IN_LookupDown() { KeyDown(in_lookup); }
-    public void IN_LookupUp() { KeyUp(in_lookup); }
-    public void IN_LookdownDown() { KeyDown(in_lookdown); }
-    public void IN_LookdownUp() { KeyUp(in_lookdown); }
-    public void IN_MoveleftDown() { KeyDown(in_moveleft); }
-    public void IN_MoveleftUp() { KeyUp(in_moveleft); }
-    public void IN_MoverightDown() { KeyDown(in_moveright); }
-    public void IN_MoverightUp() { KeyUp(in_moveright); }
+    public static void IN_UpDown() { KeyDown(in_up); }
+    public static void IN_UpUp() { KeyUp(in_up); }
+    public static void IN_DownDown() { KeyDown(in_down); }
+    public static void IN_DownUp() { KeyUp(in_down); }
+    public static void IN_LeftDown() { KeyDown(in_left); }
+    public static void IN_LeftUp() { KeyUp(in_left); }
+    public static void IN_RightDown() { KeyDown(in_right); }
+    public static void IN_RightUp() { KeyUp(in_right); }
+    public static void IN_ForwardDown() { KeyDown(in_forward); }
+    public static void IN_ForwardUp() { KeyUp(in_forward); }
+    public static void IN_BackDown() { KeyDown(in_back); }
+    public static void IN_BackUp() { KeyUp(in_back); }
+    public static void IN_LookupDown() { KeyDown(in_lookup); }
+    public static void IN_LookupUp() { KeyUp(in_lookup); }
+    public static void IN_LookdownDown() { KeyDown(in_lookdown); }
+    public static void IN_LookdownUp() { KeyUp(in_lookdown); }
+    public static void IN_MoveleftDown() { KeyDown(in_moveleft); }
+    public static void IN_MoveleftUp() { KeyUp(in_moveleft); }
+    public static void IN_MoverightDown() { KeyDown(in_moveright); }
+    public static void IN_MoverightUp() { KeyUp(in_moveright); }
 
-    public void IN_SpeedDown() { KeyDown(in_speed); }
-    public void IN_SpeedUp() { KeyUp(in_speed); }
-    public void IN_StrafeDown() { KeyDown(in_strafe); }
-    public void IN_StrafeUp() { KeyUp(in_strafe); }
+    public static void IN_SpeedDown() { KeyDown(in_speed); }
+    public static void IN_SpeedUp() { KeyUp(in_speed); }
+    public static void IN_StrafeDown() { KeyDown(in_strafe); }
+    public static void IN_StrafeUp() { KeyUp(in_strafe); }
 
-    public void IN_AttackDown() { KeyDown(in_attack); }
-    public void IN_AttackUp() { KeyUp(in_attack); }
+    public static void IN_AttackDown() { KeyDown(in_attack); }
+    public static void IN_AttackUp() { KeyUp(in_attack); }
 
-    public void IN_UseDown() { KeyDown(in_use); }
-    public void IN_UseUp() { KeyUp(in_use); }
-    public void IN_JumpDown() { KeyDown(in_jump); }
-    public void IN_JumpUp() { KeyUp(in_jump); }
+    public static void IN_UseDown() { KeyDown(in_use); }
+    public static void IN_UseUp() { KeyUp(in_use); }
+    public static void IN_JumpDown() { KeyDown(in_jump); }
+    public static void IN_JumpUp() { KeyUp(in_jump); }
 
-    public void IN_Impulse() { in_impulse = common_c.Q_atoi(cmd_c.Cmd_Argv(1)->ToString()); }
+    public static void IN_Impulse() { in_impulse = common_c.Q_atoi(cmd_c.Cmd_Argv(1)->ToString()); }
 
-    public float CL_KeyState(client_c.kbutton_t key)
+    public static float CL_KeyState(client_c.kbutton_t key)
     {
         float val;
         bool impulsedown, impulseup, down;
@@ -225,7 +225,7 @@ public unsafe class cl_input_c
 
     public static cvar_c.cvar_t cl_anglespeedkey = new cvar_c.cvar_t { name = "cl_anglespeedkey", value = (char)1.5f };
 
-    public void CL_AdjustAngles()
+    public static void CL_AdjustAngles()
     {
         float speed;
         float up, down;
@@ -291,7 +291,7 @@ public unsafe class cl_input_c
 
         common_c.Q_memset(cmd, 0, sizeof(client_c.usercmd_t));
 
-        mathlib_c.VectorCopy(cl_main_c.cl.viewangles, cmd->angles);
+        mathlib_c.VectorCopy(cl_main_c.cl.viewangles, cmd.angles);
 
         if ((in_strafe.state & 1) != 0)
         {
@@ -319,7 +319,7 @@ public unsafe class cl_input_c
         }
     }
 
-    public int MakeChar(int i)
+    public static int MakeChar(int i)
     {
         i &= ~3;
 
@@ -336,7 +336,7 @@ public unsafe class cl_input_c
         return i;
     }
 
-    public void CL_FinishMove(client_c.usercmd_t cmd)
+    public static void CL_FinishMove(client_c.usercmd_t cmd)
     {
         int i;
         int ms;
@@ -360,7 +360,7 @@ public unsafe class cl_input_c
 
         in_jump.state &= ~2;
 
-        ms = host_c.host_frametime * 1000;
+        ms = (int)host_c.host_frametime * 1000;
 
         if (ms > 250)
         {
@@ -384,7 +384,7 @@ public unsafe class cl_input_c
         }
     }
 
-    public void CL_SendCmd()
+    public static void CL_SendCmd()
     {
         common_c.sizebuf_t buf = default;
         byte[] data = new byte[128];
@@ -410,7 +410,7 @@ public unsafe class cl_input_c
             Cam_Track(cmd);
         }
 
-        CL_FinishMove();
+        CL_FinishMove(cmd);
 
         Cam_FinishMove();
 

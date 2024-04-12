@@ -103,7 +103,7 @@ public unsafe class server_c
         public float entgravity;
 
         public progs_c.edict_t* edict;
-        public char name;
+        public char* name;
 
         public int messagelevel;
 

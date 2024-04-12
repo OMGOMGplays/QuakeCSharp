@@ -10,4 +10,7 @@
     <ProjectReference Include="..\lib\lib.csproj" />
     <ProjectReference Include="lib\lib.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WinQuake\dxsdk\SDK\" />
+  </ItemGroup>
 </Project>

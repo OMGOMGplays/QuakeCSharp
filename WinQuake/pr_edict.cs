@@ -328,7 +328,7 @@ public unsafe class pr_edict_c
         pr_comp_c.ddef_t* def;
         pr_comp_c.dfunction_t* f;
 
-        type &= ~pr_comp_c.DEF_SAVEGLOBAL;
+        (int)type &= ~pr_comp_c.DEF_SAVEGLOBAL;
 
         switch (type)
         {
@@ -1000,7 +1000,7 @@ public unsafe class pr_edict_c
 
         console_c.Con_DPrintf($"Programs occupy {common_c.com_filesize / 1024}K.\n");
 
-        for (i = 0; i < *progs / 4; i++)
+        for (i = 0; i < (int)progs / 4; i++)
         {
             ((int*)progs)[i] = common_c.LittleLong(((int*)progs)[i]);
         }

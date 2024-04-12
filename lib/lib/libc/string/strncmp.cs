@@ -21,6 +21,6 @@ public unsafe class strncmp_c
 
     public static int strncmp(char* cs, string ct, IntPtr count)
     {
-        return strncmp(cs, Quake.common_c.StringToChar(ct), count);
+        return strncmp(cs, lib_c.StringToChar(ct), count);
     }
 }
