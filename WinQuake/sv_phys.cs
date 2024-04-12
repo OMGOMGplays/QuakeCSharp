@@ -176,7 +176,11 @@ public unsafe class sv_phys_c
         float time_left;
         int blocked;
 
+<<<<<<< Updated upstream
         primal_velocity = original_velocity = new_velocity = end = dir = new();
+=======
+        dir = primal_velocity = original_velocity = new_velocity = end = new();
+>>>>>>> Stashed changes
 
         numbumps = 4;
 
@@ -276,11 +280,19 @@ public unsafe class sv_phys_c
                             break;
                         }
                     }
+<<<<<<< Updated upstream
 
                     if (j == numplanes)
                     {
                         break;
                     }
+=======
+                }
+
+                if (j == numplanes)
+                {
+                    break;
+>>>>>>> Stashed changes
                 }
             }
 
@@ -305,6 +317,7 @@ public unsafe class sv_phys_c
             {
                 mathlib_c.VectorCopy(mathlib_c.vec3_origin, ent->v.velocity);
                 return blocked;
+<<<<<<< Updated upstream
             }
         }
 
@@ -487,10 +500,15 @@ public unsafe class sv_phys_c
                     world_c.SV_LinkEdict(moved_edict[i], false);
                 }
                 return;
+=======
+>>>>>>> Stashed changes
             }
         }
+
+        return blocked;
     }
 
+<<<<<<< Updated upstream
 #if QUAKE2
 	public static void SV_PushRotate(progs_c.edict_t* pusher, float movetime)
 	{
@@ -1497,4 +1515,38 @@ public unsafe class sv_phys_c
         return trace;
     }
 #endif
+=======
+    public static void SV_AddGravity(progs_c.edict_t* ent)
+    {
+        float ent_gravity;
+
+#if QUAKE2
+        if (ent->v.gravity != 0)
+        {
+            ent_gravity = ent->v.gravity;
+        }
+        else
+        {
+            ent_gravity = 1.0f;
+        }
+#else
+        progs_c.eval_t* val;
+
+        val = pr_edict_c.GetEdictFieldValue(ent, "gravity");
+
+        if (val != null && val->_float != 0)
+        {
+            ent_gravity = val->_float;
+        }
+        else
+        {
+            ent_gravity = 1.0f;
+        }
+#endif
+
+        ent->v.velocity[2] -= ent_gravity * sv_gravity.value * (float)host_c.host_frametime;
+    }
+
+
+>>>>>>> Stashed changes
 }

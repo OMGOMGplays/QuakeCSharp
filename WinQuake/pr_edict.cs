@@ -219,7 +219,11 @@ public unsafe class pr_edict_c
 
     public static progs_c.eval_t* GetEdictFieldValue(progs_c.edict_t* ed, string field)
     {
+<<<<<<< Updated upstream
         return GetEdictFieldValue(ed, common_c.StringToChar(field));
+=======
+        GetEdictFieldValue(ed, common_c.StringToChar(field));
+>>>>>>> Stashed changes
     }
 
     public static char* PR_ValueString(pr_comp_c.etype_t type, progs_c.eval_t* val)
